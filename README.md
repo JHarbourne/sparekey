@@ -1,6 +1,8 @@
 # Spare Key
 
-*Working name.* A small tool for anyone who builds or looks after websites for other people: charities, clubs, friends, small businesses.
+Live at https://sparekey.dev
+
+A small tool for anyone who builds or looks after websites for other people: charities, clubs, friends, small businesses.
 
 You add a client's domains. Spare Key looks up public records to find where their website, email and domain settings live and when the domain renews. You fill in whose name each account is in, who pays, and whether anyone else can get in. It then shows what would break if you were unavailable, and writes a Word handover document for the client to keep.
 
@@ -40,7 +42,6 @@ Locally, any static server works for the page. The lookup needs the Vercel funct
 ## Before going public
 
 - Change `FEEDBACK_URL` and `SOURCE_URL` at the top of `app.js` once the GitHub repository exists.
-- Choose the final name and domain.
 - Consider a rate limit on `/api/lookup` (Vercel Firewall rules work without code).
 
 ## Licence
