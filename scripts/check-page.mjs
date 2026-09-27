@@ -43,8 +43,8 @@ export const checkPage = ['Check it yourself', 'How to check for yourself that S
 <p>The code is open source, so anyone can copy it and we can’t stop that. A copy that asks for a password is not us.</p>
 
 <h2>Found a fake, or a security problem?</h2>
-<p>Tell us privately through <a href="https://github.com/JHarbourne/sparekey/security/advisories/new">GitHub’s security reporting</a>. Our <a href="/.well-known/security.txt">security.txt</a> has the details. In the UK you can also forward suspicious emails to <a href="mailto:report@phishing.gov.uk">report@phishing.gov.uk</a> and report a suspicious website to the <a href="https://www.ncsc.gov.uk/collection/phishing-scams/report-scam-website">National Cyber Security Centre</a>.</p>
+<p>Email <a href="mailto:hello@jharbourne.com">hello@jharbourne.com</a>, or report it privately through <a href="https://github.com/JHarbourne/sparekey/security/advisories/new">GitHub’s security reporting</a>. Our <a href="/.well-known/security.txt">security.txt</a> has the details. In the UK you can also forward suspicious emails to <a href="mailto:report@phishing.gov.uk">report@phishing.gov.uk</a> and report a suspicious website to the <a href="https://www.ncsc.gov.uk/collection/phishing-scams/report-scam-website">National Cyber Security Centre</a>.</p>
 
 <h2>Who made this</h2>
-<p>Spare Key is made by Jonathan Harbourne, a UX and accessibility designer in Essex who founded the <a href="https://lgbthistoryuk.org">LGBT History Project</a>. It started after one of his own websites went down and he realised everything depended on him. <a href="feedback.html">Get in touch</a>.</p>
+<p>Spare Key is made by Jonathan Harbourne, a UX and accessibility designer in Essex who founded the <a href="https://lgbthistoryuk.org">LGBT History Project</a>. It started after one of his own websites went down and he realised everything depended on him. Get in touch at <a href="mailto:hello@jharbourne.com">hello@jharbourne.com</a>.</p>
 `];

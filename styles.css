@@ -384,7 +384,8 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 /* Hover the logo and the key turns in the lock, with a small click at the end. */
 .brand:hover .logo .key { animation: unlock .7s cubic-bezier(.3,1.5,.5,1); }
 @keyframes unlock { 0% { transform: rotate(0); } 45% { transform: rotate(-90deg); } 60% { transform: rotate(-84deg); } 100% { transform: rotate(0); } }
-.foot-brand { font-family: var(--mono); font-size: .975rem; color: var(--ink); }
+.foot-brand { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .975rem; color: var(--ink); }
+.foot-key { color: var(--signal-text); flex: none; }
 .foot-brand b { font-weight: 500; color: var(--signal-text); }
 form > .actions, .field + .actions { margin-top: 24px; }
 .term-body .t-ok, .timeline .num { color: var(--signal-text); }

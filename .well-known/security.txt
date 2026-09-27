@@ -1,4 +1,5 @@
 # Spare Key. Please report security problems and fake copies of this site privately.
+Contact: mailto:hello@jharbourne.com
 Contact: https://github.com/JHarbourne/sparekey/security/advisories/new
 Expires: 2027-09-30T00:00:00.000Z
 Preferred-Languages: en
