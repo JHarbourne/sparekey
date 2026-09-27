@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.5 – 2026-09-27
+
+- A **beta** flag next to the wordmark and beside the version in the footer. Both link to the feedback page, which now says Spare Key is in beta. The header flag is hidden on the smallest phones.
+
 ## 0.5.4 – 2026-09-27
 
 - The menu fits at every width from 320px to wide desktop, tested every 10px. Full labels above 880px; "Builders" and "Owners" below that; Feedback and Source move to the footer below 760px, FAQs below 560px and the Guide below 370px.

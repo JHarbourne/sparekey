@@ -481,3 +481,10 @@ form > .actions, .field + .actions { margin-top: 24px; }
 @media (max-width: 760px) { .topnav a[href="feedback.html"], .topnav a[data-link="source"] { display: none; } }
 @media (max-width: 560px) { .topnav a[href="faq.html"] { display: none; } }
 @media (max-width: 370px) { .topnav a[href="guide.html"] { display: none; } }
+
+/* ---------- Beta flag ---------- */
+@media (min-width: 421px) { .topbar-inner { gap: 10px; } }
+.beta { margin-right: auto; font: 500 .6875rem/1 var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--signal-text); border: 1px solid color-mix(in srgb, var(--signal-text) 60%, transparent); border-radius: 999px; padding: 3px 7px; text-decoration: none; white-space: nowrap; transition: background .15s; }
+.beta:hover { background: color-mix(in srgb, var(--signal) 14%, transparent); }
+@media (max-width: 420px) { .beta { display: none; } }
+.footer-links .foot-beta { font: 500 .6875rem var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--signal-text); text-decoration: none; margin-left: -8px; }
