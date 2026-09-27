@@ -11,7 +11,7 @@ import { policyPage } from './policy-page.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 export function header(current) {
-  const nav = [['ask.html', '<span class="nav-long">For website owners</span><span class="nav-short">Owners</span>'], ['guide.html', 'Guide'], ['feedback.html', 'Feedback']]
+  const nav = [['./#start', '<span class="nav-long">For website builders</span><span class="nav-short">Builders</span>'], ['ask.html', '<span class="nav-long">For website owners</span><span class="nav-short">Owners</span>'], ['guide.html', 'Guide'], ['feedback.html', 'Feedback']]
     .map(([href, label]) => `<a href="${href}"${current === href ? ' aria-current="page"' : ''}>${label}</a>`).join('\n      ');
   return `<header class="topbar">
   <div class="shell topbar-inner">

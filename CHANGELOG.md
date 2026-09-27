@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.2 – 2026-09-27
+
+- The menu has **For website builders** alongside **For website owners** ("Builders" and "Owners" on phones). It opens the tool.
+- The header fits the smallest phones (320px) without sideways scrolling. On those, the Guide link is in the footer only.
+
 ## 0.5.1 – 2026-09-27
 
 - The domain policy page no longer assumes a UK address. The Gambling Commission and Report Fraud only appear after a .uk address is checked. Otherwise it points to the regulator or police in the address's country.

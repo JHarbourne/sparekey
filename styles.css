@@ -464,3 +464,12 @@ form > .actions, .field + .actions { margin-top: 24px; }
 .report-list { list-style: none; padding: 0; }
 .report-list li { margin: 10px 0; padding-left: 14px; border-left: 2px solid var(--line); }
 .check-grid a { font-size: .8125rem; }
+@media (max-width: 400px) {
+  .topnav { gap: 0; }
+  .topnav a { padding: 8px 6px; }
+  .brand { gap: 6px; }
+  .brand-name { font-size: .95rem; }
+  .logo { width: 32px; height: 32px; }
+}
+/* Smallest phones: the Guide stays in the footer */
+@media (max-width: 350px) { .topnav a[href="guide.html"] { display: none; } }
