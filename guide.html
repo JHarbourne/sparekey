@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide and FAQs · Spare Key</title>
+<meta name="description" content="How to use Spare Key, and answers to common questions.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<script src="theme-init.js"></script>
+<link rel="stylesheet" href="styles.css">
+<script type="module" src="lib/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a class="brand" href="./" aria-label="Spare Key, home">
+      <span class="logo" id="logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="22" height="22"><g class="key" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg>
+      </span>
+      <span class="brand-name">spare key</span>
+    </a>
+    <nav class="topnav" aria-label="Site">
+      <a href="guide.html" aria-current="page">Guide</a>
+      <a href="feedback.html">Feedback</a>
+      <a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a>
+      <button class="theme-switch" type="button" role="switch" aria-checked="false" data-theme-toggle>
+        <span class="vh">Dark mode</span>
+        <span class="track" aria-hidden="true"><span class="knob">
+          <svg class="moon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
+        </span></span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="shell prose" tabindex="-1">
+<p class="eyebrow">guide</p>
+<h1>Guide and FAQs</h1>
+<p class="lede">Spare Key helps anyone who builds or looks after websites for other people make sure their clients are not stuck if the builder is unavailable.</p>
+
+<h2 id="using">Using it</h2>
+<ol>
+  <li><strong>People.</strong> Add the client, yourself, and an emergency contact: someone who could reach your accounts and passwords if you could not, such as your executor.</li>
+  <li><strong>Domains.</strong> Type each of the client’s domain names. Spare Key reads public records to find the registrar and renewal date, where the domain settings (DNS) live, who hosts the website, who handles the email, which services may send mail as the domain, and whether the security certificate is valid.</li>
+  <li><strong>Services.</strong> Each finding becomes a service. For each one, record whose name the account is in, who pays, and whether a second person can manage it. Add anything the lookup cannot see, such as a database, a mailing list or a booking system.</li>
+  <li><strong>Access and backups.</strong> Say where the passwords are kept, and where backups are kept. Never type the passwords themselves.</li>
+  <li><strong>Risks.</strong> Spare Key lists what would break without you, most serious first. Fix what you can, then check again.</li>
+  <li><strong>Hand over.</strong> Download the Word document for the client, and save the inventory file. Anything highlighted in yellow in the document still needs filling in.</li>
+</ol>
+
+<h2 id="risks">What the risks mean</h2>
+<dl class="defs">
+  <dt>Only you can manage a service</dt><dd>The account is in your name and no one else has admin access. Add the client or a trusted helper as an admin, or move the account into the client’s name.</dd>
+  <dt>Paid by you</dt><dd>If your payments stop, the service will eventually stop too. Consider moving the bill to the client.</dd>
+  <dt>Domain renewal</dt><dd>A lapsed domain takes the website and email down, and after a short grace period anyone can buy the name. Turn on auto-renew and keep the card up to date.</dd>
+  <dt>Email on a privately managed server</dt><dd>Email that runs on a server one person looks after stops if they stop. A mail service in the client’s own name is safer.</dd>
+  <dt>No SPF or DMARC</dt><dd>These records tell other mail servers which services may send email for the domain. Without them, mail is more likely to land in spam or to be spoofed.</dd>
+  <dt>Wrong or expired certificate</dt><dd>Visitors see a security warning, and many will leave.</dd>
+</dl>
+
+<h2 id="faq">Frequently asked questions</h2>
+<details class="faq"><summary>Is anything I type stored on your server?</summary><p>No. Only the domain names you look up are sent, to a function that reads public records and keeps nothing. Everything else stays in your browser until you save the inventory file. See the <a href="privacy.html">privacy notice</a>.</p></details>
+<details class="faq"><summary>Why doesn’t it store passwords?</summary><p>A service holding the keys to other people’s accounts would be a target, and would itself become a single point of failure. Record where passwords are kept instead, for example a password manager your client can reach.</p></details>
+<details class="faq"><summary>What does my client get?</summary><p>A plain-English Word document explaining what their website and email depend on, who pays for what, what to do in the first week if you are unavailable, and what still needs fixing. Give them the inventory file too, so anyone can update it later.</p></details>
+<details class="faq"><summary>The lookup says “Unrecognised”. What does that mean?</summary><p>Spare Key recognises the common registrars, hosts and email providers. If it cannot tell who a provider is, it says so rather than guessing. Edit the service and type the provider’s name.</p></details>
+<details class="faq"><summary>Why is the renewal date missing?</summary><p>Some registries do not publish registration data in a form Spare Key can read. Look the date up in the registrar’s account and add it to the registration service.</p></details>
+<details class="faq"><summary>How do I update a handover next year?</summary><p>Open the inventory file with “Open inventory”, press “Check again” on each domain, update anything that has changed, and download a fresh document.</p></details>
+<details class="faq"><summary>Can I use it for my own websites?</summary><p>Yes. Put yourself in as the client and a family member or friend as the emergency contact.</p></details>
+<details class="faq"><summary>What if this website disappears?</summary><p>Nothing breaks. The documents and inventory files work without it, the file format is published, and the code is open source, so anyone can run their own copy.</p></details>
+<details class="faq"><summary>Does it cost anything?</summary><p>No. It is free and open source.</p></details>
+<p class="sub">Something missing? <a href="feedback.html">Suggest it</a>.</p>
+</main>
+
+<footer class="footer">
+  <div class="shell footer-inner">
+    <p>Free and open source. No cookies. Anonymous usage counts only, never the domains or anything you type.</p>
+    <p class="footer-links"><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
+  </div>
+</footer>
+</body>
+</html>

@@ -32,16 +32,35 @@ The lookup function uses Cloudflare's public DNS-over-HTTPS resolver, rdap.org f
 There is no build step.
 
 ```
-npm test                 # unit tests (Node 20+)
-npx vercel               # preview deployment
-npx vercel --prod        # production
+npm test                         # unit tests (Node 20+), including colour contrast
+node scripts/serve.mjs           # static server on http://localhost:4173
+npx playwright test              # browser and axe accessibility tests
+node scripts/pages.mjs           # after editing the shared header/footer or page text
+npx vercel dev                   # try real lookups locally
 ```
 
-Locally, any static server works for the page. The lookup needs the Vercel function, so use `npx vercel dev` to try lookups on your own machine.
+## Pipeline (GitHub Actions)
+
+`.github/workflows/ci.yml` runs on every push and pull request:
+
+1. **Unit tests**: lookup parsing, risk checks, the Word document, version, generated pages, CSP safety, analytics settings and WCAG colour contrast for both themes.
+2. **Browser and accessibility**: Playwright runs the main flows, then axe-core scans every page, in light and dark, against WCAG 2.0, 2.1 and 2.2 A and AA.
+3. **Deploy**: only if both pass. Pushes to `main` go to production, and pull requests get a preview.
+
+Vercel's own Git deployments are switched off in `vercel.json`, so nothing reaches production without passing the checks. Add three repository secrets: `VERCEL_TOKEN` (Vercel → Account settings → Tokens), `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` (both in `.vercel/project.json`).
+
+## Analytics
+
+PostHog, EU cloud, set up in `lib/analytics.js`. It does nothing until `POSTHOG_KEY` is set. It is cookieless, has no person profiles, autocapture or session recording, respects Do Not Track, and only sends a fixed list of named events with numbers. In the PostHog project settings, also turn on **Cookieless server hash mode** and **Discard client IP data**.
+
+## Feedback
+
+The feedback page links to the Nearmark feedback board, where ideas are tagged with the `sparekey` area (see `nearmark-website/supabase/add-sparekey-area.sql`). Bugs go to GitHub issues.
 
 ## Before going public
 
-- Change `FEEDBACK_URL` and `SOURCE_URL` at the top of `app.js` once the GitHub repository exists.
+- Create the GitHub repository `JHarbourne/sparekey` (links in `lib/site.js`).
+- Add the PostHog key, and fill in the privacy contact address in `scripts/pages.mjs`, then run it.
 - Consider a rate limit on `/api/lookup` (Vercel Firewall rules work without code).
 
 ## Licence

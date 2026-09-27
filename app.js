@@ -1,17 +1,36 @@
 import { emptyInventory, newService, servicesFromLookup, mergeServices, validateInventory, KINDS, WHO, YESNO } from './lib/model.js';
 import { assessRisks, groupRisks } from './lib/risks.js';
+import { stepStatus } from './lib/progress.js';
 import { buildHandover } from './lib/docgen.js';
+import { track } from './lib/site.js';
 
-// Where feedback and the source code live. Change these when the repository exists.
-const FEEDBACK_URL = 'https://github.com/JHarbourne/sparekey/issues/new';
-const SOURCE_URL = 'https://github.com/JHarbourne/sparekey';
 const DRAFT_KEY = 'sparekey:draft';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Unknown');
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let inv = loadDraft() || emptyInventory();
+const hasDraft = () => Boolean(inv.services.length || inv.domains.length || inv.client.name || inv.client.organisation);
+
+// ---------- views: cover page and the tool ----------
+function showView() {
+  const app = location.hash === '#start' || location.hash.startsWith('#start/');
+  $('#landing').hidden = app;
+  $('#app-view').hidden = !app;
+  $('#skip').setAttribute('href', app ? '#main' : '#landing');
+  return app;
+}
+window.addEventListener('hashchange', () => {
+  const app = showView();
+  if (app) { window.scrollTo(0, 0); $('#main').focus({ preventScroll: true }); }
+  else if (location.hash === '' || location.hash === '#') { window.scrollTo(0, 0); }
+});
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('#cta-start, #cta-start-2');
+  if (a) track('get_started', { returning: hasDraft() });
+});
 
 // ---------- persistence (this browser only) ----------
 function loadDraft() {
@@ -21,15 +40,21 @@ function loadDraft() {
   } catch { return null; }
 }
 let saveTimer;
+function writeDraft() {
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(inv)); } catch { /* storage unavailable: fine */ }
+}
 function saveDraft() {
   inv.updated = new Date().toISOString();
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(inv)); } catch { /* storage unavailable: fine */ }
-  }, 300);
+  saveTimer = setTimeout(writeDraft, 300);
 }
+// Never lose the last keystrokes if the page is closed or reloaded straight away.
+window.addEventListener('pagehide', () => { if (saveTimer) writeDraft(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && saveTimer) writeDraft(); });
 
-// ---------- simple bound fields ----------
+// ---------- bound fields ----------
 const getPath = (obj, path) => path.split('.').reduce((o, k) => (o ? o[k] : undefined), obj);
 function setPath(obj, path, val) {
   const keys = path.split('.');
@@ -47,35 +72,40 @@ document.addEventListener('input', (e) => {
     const s = inv.services.find((x) => x.id === el.dataset.sid);
     if (!s) return;
     s[el.dataset.field] = el.value;
-    if (['name', 'provider', 'accountOwner', 'kind'].includes(el.dataset.field)) updateSummary(s);
+    updateSummary(s);
   } else return;
   saveDraft();
   renderRisks();
 });
 
 // ---------- domains ----------
-function renderDomains() {
-  const box = $('#domains');
-  box.innerHTML = inv.domains.map((d, i) => {
+function row(label, value, flag = false) {
+  return `<dt>${esc(label)}</dt><dd${flag ? ' class="flag"' : ''}>${esc(value)}</dd>`;
+}
+function renderDomains(animateIndex = -1) {
+  $('#domains').innerHTML = inv.domains.map((d, i) => {
     const lk = d.lookup;
     const c = lk?.certificate;
-    const certText = c ? `${esc(c.issuer || 'Unknown issuer')}, valid until ${fmtDate(c.validTo)}${c.matchesName === false ? ' (wrong name: visitors see a warning)' : ''}` : 'Not found';
-    return `<article class="card" aria-labelledby="dom-${i}">
-      <header><h3 id="dom-${i}">${esc(d.name)}</h3>
-        <span><button type="button" class="link" data-recheck="${i}">Check again</button>
-        <button type="button" class="link" data-remove-domain="${i}">Remove<span class="visually-hidden"> ${esc(d.name)}</span></button></span></header>
-      ${lk ? `<dl class="facts">
-        <dt>Registered with</dt><dd>${esc(lk.registration?.registrar || 'Not found')}</dd>
-        <dt>Renews</dt><dd>${fmtDate(lk.registration?.expires)}</dd>
-        <dt>Domain settings</dt><dd>${esc(lk.dnsHost || 'Not found')}</dd>
-        <dt>Website</dt><dd>${esc(lk.webHost || 'No website found')}</dd>
-        <dt>Email</dt><dd>${esc(lk.emailHost || 'No email set up')}</dd>
-        <dt>Also sends email</dt><dd>${esc((lk.senders || []).join(', ') || 'None listed')}</dd>
-        <dt>Security certificate</dt><dd>${certText}</dd>
-        <dt>Checked</dt><dd>${fmtDate(lk.checkedAt)}</dd>
-      </dl>` : '<p>Not looked up yet.</p>'}
+    const cert = c ? `${c.issuer || 'Unknown issuer'} · valid until ${fmtDate(c.validTo)}${c.matchesName === false ? ' · wrong name, visitors see a warning' : ''}` : 'Not found';
+    const renews = lk?.registration?.expires ? fmtDate(lk.registration.expires) : 'Unknown';
+    return `<article class="record" aria-labelledby="dom-${i}">
+      <div class="record-head"><h3 id="dom-${i}">${esc(d.name)}</h3>
+        <span><button type="button" class="link" data-recheck="${i}">Check again<span class="vh"> ${esc(d.name)}</span></button>
+        <button type="button" class="link" data-remove-domain="${i}">Remove<span class="vh"> ${esc(d.name)}</span></button></span></div>
+      ${lk ? `<dl class="${i === animateIndex && !reducedMotion() ? 'reveal' : ''}">
+        ${row('registrar', lk.registration?.registrar || 'Not found')}
+        ${row('renews', renews)}
+        ${row('dns', lk.dnsHost || 'Not found')}
+        ${row('website', lk.webHost || 'No website found')}
+        ${row('email', lk.emailHost || 'No email set up', /^Own mail server/.test(lk.emailHost || ''))}
+        ${row('sends as', (lk.senders || []).join(', ') || 'None listed')}
+        ${row('certificate', cert, c?.matchesName === false)}
+        ${row('checked', fmtDate(lk.checkedAt))}
+      </dl>` : '<p class="sub">Not looked up yet.</p>'}
     </article>`;
   }).join('');
+  // stagger the rows for the reveal
+  document.querySelectorAll('#domains dl.reveal').forEach((dl) => [...dl.children].forEach((el, n) => el.style.setProperty('--i', Math.floor(n / 2))));
 }
 
 async function runLookup(name) {
@@ -87,16 +117,18 @@ async function runLookup(name) {
     const res = await fetch(`/api/lookup?domain=${encodeURIComponent(name)}`);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Lookup failed');
-    const existing = inv.domains.find((d) => d.name === data.domain);
-    if (existing) existing.lookup = data; else inv.domains.push({ name: data.domain, lookup: data });
+    let index = inv.domains.findIndex((d) => d.name === data.domain);
+    if (index >= 0) inv.domains[index].lookup = data; else { inv.domains.push({ name: data.domain, lookup: data }); index = inv.domains.length - 1; }
     const before = inv.services.length;
     inv.services = mergeServices(inv.services, servicesFromLookup(data));
     const added = inv.services.length - before;
-    status.textContent = `Found ${data.domain}. ${added ? `${added} service${added === 1 ? '' : 's'} added below for you to complete.` : 'Services updated.'}`;
+    status.textContent = `Found ${data.domain}. ${added ? `${added} service${added === 1 ? '' : 's'} added for you to complete.` : 'Services updated.'}`;
+    track('lookup_completed', { services_added: added, has_registration: Boolean(data.registration) });
     saveDraft();
-    renderAll();
+    renderDomains(index); renderServices(); renderRisks();
   } catch (err) {
     status.textContent = `Could not look up ${name}: ${err.message}`;
+    track('lookup_failed');
   } finally {
     btn.disabled = false;
   }
@@ -116,7 +148,7 @@ $('#domains').addEventListener('click', (e) => {
   if (t.dataset.recheck) runLookup(inv.domains[Number(t.dataset.recheck)].name);
   if (t.dataset.removeDomain) {
     const d = inv.domains[Number(t.dataset.removeDomain)];
-    if (!confirmInline(t, `Remove ${d.name}? Its looked-up services stay in the list.`)) return;
+    if (!confirmInline(t, `Press again to remove ${d.name}. Its services stay in the list.`, '#lookup-status')) return;
     inv.domains.splice(Number(t.dataset.removeDomain), 1);
     saveDraft(); renderAll();
     $('#domain-input').focus();
@@ -124,33 +156,34 @@ $('#domains').addEventListener('click', (e) => {
 });
 
 // Two-step confirm without browser dialogs: first press arms, second press acts.
-function confirmInline(btn, message) {
+function confirmInline(btn, message, statusSel) {
   if (btn.dataset.armed === '1') return true;
   btn.dataset.armed = '1';
   const original = btn.innerHTML;
   btn.innerHTML = 'Press again to confirm';
-  $('#lookup-status').textContent = message;
+  $(statusSel).textContent = message;
   setTimeout(() => { btn.dataset.armed = ''; btn.innerHTML = original; }, 4000);
   return false;
 }
 
 // ---------- services ----------
 const options = (map, val) => Object.entries(map).map(([k, v]) => `<option value="${k}"${k === val ? ' selected' : ''}>${esc(v)}</option>`).join('');
+const isComplete = (s) => s.accountOwner && s.paidBy && s.secondAdmin !== 'unknown';
 
 function summaryHtml(s) {
-  const owner = s.accountOwner ? `In ${WHO[s.accountOwner].toLowerCase()}’s name` : 'Account holder not recorded';
-  return `<h3>${esc(s.name || KINDS[s.kind])}</h3><span class="meta">${esc(s.provider || 'Provider not recorded')} · ${esc(owner)}</span>`;
+  const owner = s.accountOwner ? `in ${WHO[s.accountOwner].toLowerCase()}’s name` : 'account holder not recorded';
+  return `<span class="kind">${esc(s.kind)}</span><h3>${esc(s.name || KINDS[s.kind])}</h3>
+    <span class="meta">${esc(s.provider || 'provider not recorded')} · ${esc(owner)}</span>
+    <span class="svc-state${isComplete(s) ? ' done' : ''}" role="img" aria-label="${isComplete(s) ? 'Complete' : 'Needs details'}"></span>`;
 }
 function updateSummary(s) {
   const el = document.getElementById(`sum-${s.id}`);
   if (el) el.innerHTML = summaryHtml(s);
 }
-
 function field(s, key, label, control, cls = '') {
   const id = `f-${s.id}-${key}`;
   return `<label class="${cls}" for="${id}">${label}${control(id)}</label>`;
 }
-
 function renderServices(openId) {
   const box = $('#services');
   if (!inv.services.length) {
@@ -167,48 +200,70 @@ function renderServices(openId) {
         ${field(s, 'name', 'Name', inp('name'))}
         ${field(s, 'kind', 'Type', sel('kind', KINDS))}
         ${field(s, 'provider', 'Provider', inp('provider'))}
-        ${field(s, 'domain', 'Domain (if any)', inp('domain'))}
+        ${field(s, 'domain', 'Domain', inp('domain'))}
         ${field(s, 'purpose', 'What it does, in plain words', area('purpose'), 'wide')}
         ${field(s, 'accountOwner', 'Whose name is the account in?', sel('accountOwner', WHO))}
-        ${field(s, 'secondAdmin', 'Does a second person have admin access?', sel('secondAdmin', YESNO))}
+        ${field(s, 'secondAdmin', 'Can a second person manage it?', sel('secondAdmin', YESNO))}
         ${field(s, 'paidBy', 'Who pays?', sel('paidBy', WHO))}
         ${field(s, 'cost', 'Cost', inp('cost'))}
         ${field(s, 'renews', 'Renews on', inp('renews', 'date'))}
         ${field(s, 'autoRenew', 'Auto-renew on?', sel('autoRenew', YESNO))}
         ${field(s, 'notes', 'Notes for the client or a helper', area('notes'), 'wide')}
-        <p class="wide"><button type="button" class="link" data-remove-service="${s.id}">Remove this service<span class="visually-hidden">: ${esc(s.name)}</span></button></p>
+        <p class="wide"><button type="button" class="link" data-remove-service="${s.id}">Remove this service<span class="vh">: ${esc(s.name)}</span></button></p>
       </div>
     </details>`;
   }).join('');
 }
-
 $('#add-service').addEventListener('click', () => {
   const s = newService({ name: 'New service' });
   inv.services.push(s);
   saveDraft(); renderServices(s.id); renderRisks();
+  track('service_added');
   $(`#f-${s.id}-name`).focus();
   $(`#f-${s.id}-name`).select();
 });
 $('#services').addEventListener('click', (e) => {
   const t = e.target.closest('[data-remove-service]');
   if (!t) return;
-  if (!confirmInline(t, 'Press again to remove the service.')) return;
+  if (!confirmInline(t, 'Press again to remove the service.', '#save-status')) return;
   inv.services = inv.services.filter((s) => s.id !== t.dataset.removeService);
   saveDraft(); renderServices(); renderRisks();
   $('#add-service').focus();
 });
 
-// ---------- risks ----------
+// ---------- risks, progress and the moment of delight ----------
+let lastHigh = null;
 function renderRisks() {
   const list = assessRisks(inv);
+  const grouped = groupRisks(list, inv.builder.name || 'you');
   const n = { high: 0, medium: 0, low: 0 };
-  groupRisks(list, inv.builder.name || 'you').forEach((r) => n[r.level]++);
-  $('#risk-summary').textContent = list.length
-    ? `${n.high} serious, ${n.medium} to fix soon, ${n.low} to check.`
-    : (inv.services.length ? 'Nothing found that would break without you.' : 'Add a domain or service to see what depends on you.');
-  const label = { high: 'Serious', medium: 'Fix soon', low: 'Check' };
-  $('#risks').innerHTML = groupRisks(list, inv.builder.name || 'you').map((r) => `<li class="${r.level}"><strong><span class="visually-hidden">${label[r.level]}: </span>${esc(r.title)}</strong>${esc(r.detail)}
-    ${r.serviceId ? ` <a href="#svc-${r.serviceId}" data-open="${r.serviceId}">Go to this service</a>` : ''}</li>`).join('');
+  grouped.forEach((r) => n[r.level]++);
+  $('#m-high').textContent = n.high; $('#m-med').textContent = n.medium; $('#m-low').textContent = n.low;
+  const has = inv.services.length || inv.domains.length;
+  $('#risk-summary').innerHTML = !has ? 'Add a domain or service to see what depends on you.'
+    : grouped.length ? `${n.high} serious · ${n.medium} to fix soon · ${n.low} to check`
+      : '<span class="all-clear">Nothing would break without you. Every lock has a spare key.</span>';
+  const tag = { high: 'Serious', medium: 'Fix soon', low: 'Check' };
+  $('#risks').innerHTML = grouped.map((r) => `<li class="${r.level}"><span class="tag">${tag[r.level]}</span>
+    <strong>${esc(r.title)}</strong><p>${esc(r.detail)}${r.serviceId ? ` <a href="#svc-${r.serviceId}" data-open="${r.serviceId}">Go to service</a>` : ''}</p></li>`).join('');
+
+  const st = stepStatus(inv, list);
+  document.querySelectorAll('.dot[data-step]').forEach((d) => { if (st[d.dataset.step]) d.dataset.state = st[d.dataset.step]; });
+
+  // Delight: when the last serious risk is cleared, the key turns.
+  if (lastHigh !== null && lastHigh > 0 && n.high === 0 && has) celebrate();
+  lastHigh = n.high;
+}
+function celebrate() {
+  const logo = $('#logo');
+  if (!reducedMotion()) {
+    logo.classList.remove('turn'); void logo.offsetWidth; logo.classList.add('turn');
+  }
+  const toast = $('#toast');
+  toast.textContent = 'Spare key cut. Nothing serious left.';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3200);
+  track('all_clear');
 }
 $('#risks').addEventListener('click', (e) => {
   const a = e.target.closest('[data-open]');
@@ -229,15 +284,18 @@ const slug = () => (inv.client.organisation || inv.client.name || 'client').toLo
 
 $('#save-file').addEventListener('click', () => {
   download(new Blob([JSON.stringify(inv, null, 2)], { type: 'application/json' }), `${slug()}-handover-inventory.json`);
-  $('#save-status').textContent = 'Inventory file saved to your downloads. Keep it, and give the client a copy.';
+  $('#save-status').textContent = 'Inventory saved to your downloads. Keep it, and give the client a copy.';
+  track('inventory_saved', { services: inv.services.length });
 });
 $('#open-file').addEventListener('change', async (e) => {
   const f = e.target.files[0];
   if (!f) return;
   try {
     inv = validateInventory(JSON.parse(await f.text()));
+    lastHigh = null;
     saveDraft(); fillBound(); renderAll();
     $('#save-status').textContent = `Opened ${f.name}.`;
+    track('inventory_opened', { services: inv.services.length });
   } catch (err) {
     $('#save-status').textContent = `Could not open that file: ${err.message}`;
   }
@@ -248,32 +306,45 @@ $('#download-doc').addEventListener('click', async () => {
   btn.disabled = true;
   $('#save-status').textContent = 'Writing the handover document…';
   try {
-    const blob = await buildHandover(inv, assessRisks(inv));
+    const risks = assessRisks(inv);
+    const blob = await buildHandover(inv, risks);
     download(blob, `${slug()}-handover.docx`);
     $('#save-status').textContent = 'Handover document downloaded. Anything highlighted in yellow still needs filling in.';
+    track('handover_downloaded', { services: inv.services.length, domains: inv.domains.length, serious: risks.filter((r) => r.level === 'high').length });
   } catch (err) {
     $('#save-status').textContent = `Could not write the document: ${err.message}`;
   } finally { btn.disabled = false; }
 });
 $('#clear').addEventListener('click', (e) => {
-  if (!confirmInline(e.target.closest('button'), 'This clears the draft from this browser. Save the inventory file first if you need it.')) {
-    $('#save-status').textContent = 'Press “Start again” once more to clear this browser’s draft. Save the file first if you need it.';
-    return;
-  }
+  if (!confirmInline(e.target.closest('button'), 'Press “Start again” once more to clear this browser’s draft. Save the file first if you need it.', '#save-status')) return;
   inv = emptyInventory();
-  try { localStorage.removeItem(DRAFT_KEY); } catch {}
+  lastHigh = null;
+  try { localStorage.removeItem(DRAFT_KEY); } catch { /* fine */ }
   fillBound(); renderAll();
   $('#save-status').textContent = 'Cleared. Nothing is left in this browser.';
 });
 
+// ---------- cover page: the example lookup types itself in ----------
+function animateTerminal() {
+  const pre = $('#term');
+  if (!pre || reducedMotion()) return;
+  const code = pre.querySelector('code');
+  const lines = code.innerHTML.split('\n');
+  code.innerHTML = lines.map((l) => `<span class="line">${l}</span>`).join('\n');
+  // set via the CSSOM: the Content Security Policy blocks inline style attributes
+  code.querySelectorAll('.line').forEach((el, i) => el.style.setProperty('--i', i));
+  pre.classList.add('typing');
+}
+
 // ---------- start ----------
 function renderAll() { renderDomains(); renderServices(); renderRisks(); }
-$('#feedback-link').href = FEEDBACK_URL;
-$('#source-link').href = SOURCE_URL;
-if (inv.services.length || inv.domains.length || inv.client.name) {
+if (hasDraft()) {
   const note = $('#draft-note');
   note.hidden = false;
   note.textContent = `Your draft for ${inv.client.organisation || inv.client.name || 'this client'} has been restored from this browser.`;
+  $('#cta-start').textContent = 'Continue your draft';
 }
 fillBound();
 renderAll();
+showView();
+animateTerminal();

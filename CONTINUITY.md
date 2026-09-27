@@ -14,6 +14,9 @@ Nothing important. Every handover document is a Word file the client already hol
 | Hosting and lookup function | Vercel, team “jharbourne” | Jonathan Harbourne | Vercel Pro | [add a second member] |
 | Domain | sparekey.dev (GoDaddy, bought 27 Sep 2026) | Jonathan Harbourne | Jonathan Harbourne, about £12 a year | [add a GoDaddy delegate] |
 
+| Usage counts | PostHog (EU) | Jonathan Harbourne | Free tier | [add a second member] |
+| Feedback board | Nearmark website (Supabase project rzfrn…) | Jonathan Harbourne | Free tier | [add a second member] |
+
 ## If the site goes offline
 
 Anyone can deploy their own copy from the repository with `npx vercel --prod`, or serve the page from any static host. Only the lookup needs a serverless function. Without it, services can still be entered by hand.
