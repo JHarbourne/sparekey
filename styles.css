@@ -472,3 +472,7 @@ form > .actions, .field + .actions { margin-top: 24px; }
 }
 /* Smallest phones: the Guide stays in the footer */
 @media (max-width: 350px) { .topnav a[href="guide.html"] { display: none; } }
+
+/* Footer: two lines on desktop */
+.footer-inner p.foot-line { max-width: none; margin-bottom: 12px; }
+.footer-inner p.footer-links { max-width: none; margin: 0; column-gap: 18px; }
