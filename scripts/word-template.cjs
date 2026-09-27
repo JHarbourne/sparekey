@@ -195,7 +195,7 @@ import('../lib/policy.js').then(({ QUESTIONS, POLICY }) => {
         rule(),
         eyebrow('the policy'),
         ...POLICY.map(([h, text], i) => num(i + 1, [t(`${h}. `, { bold: true }), t(text)])),
-        callout('The clause most policies leave out', [`Clause ${POLICY.findIndex(([h]) => h === 'Releasing a domain') + 1}. When an address lapses, anyone can buy it with the links and search listings it built up, and use the old name to sell things. Checking first, and keeping it if in doubt, costs about £10 a year.`]),
+        callout('The clause most policies leave out', [`Clause ${POLICY.findIndex(([h]) => h === 'Releasing a domain') + 1}. When an address lapses, anyone can buy it with the links and search listings it built up, and use the old name to sell things. Checking first, and keeping it if in doubt, costs far less than losing it.`]),
         new Paragraph({ children: [new PageBreak()] }),
         eyebrow('appendix'),
         new Paragraph({ heading: HeadingLevel.HEADING_1, children: [t('Questions to answer when you adopt it')] }),

@@ -57,3 +57,20 @@ test('the domain policy page checks an old address from the browser', async ({ p
   const res = await request.get('/templates/spare-key-domain-policy.docx');
   expect(res.status()).toBe(200);
 });
+
+test('UK reporting routes appear only for a .uk address', async ({ page }) => {
+  const stub = (created) => `export const RDAP_HOSTS=[];export const LOOKUP_SERVICES=[];export async function lookup(){throw new Error('x')}
+    export async function checkOldAddress(d){return {domain:d,checkedAt:'',notRegistered:false,registration:{created:'${created}'},webHost:null,errors:[]}}`;
+  await page.route('**/lib/lookup.js', (r) => r.fulfill({ contentType: 'text/javascript', body: stub('2010-01-01T00:00:00Z') }));
+  await page.goto('/domain-policy');
+  const gc = page.getByRole('link', { name: 'The Gambling Commission' });
+  await expect(gc).toBeHidden();
+  await page.locator('#oc-input').fill('old-name.org');
+  await page.getByRole('button', { name: 'Check' }).click();
+  await expect(page.locator('#oc-result')).toContainText('old-name.org');
+  await expect(gc).toBeHidden();
+  await page.locator('#oc-input').fill('old-name.org.uk');
+  await page.getByRole('button', { name: 'Check' }).click();
+  await expect(gc).toBeVisible();
+  await expect(page.getByText('The regulator or police in the address’s country')).toBeHidden();
+});

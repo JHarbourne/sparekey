@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1 – 2026-09-27
+
+- The domain policy page no longer assumes a UK address. The Gambling Commission and Report Fraud only appear after a .uk address is checked. Otherwise it points to the regulator or police in the address's country.
+- Removed other UK-only wording (costs in pounds, NHS) from the policy, the risk text and the Word policy.
+
 ## 0.5.0 – 2026-09-27
 
 - **Old addresses.** Step 02 asks for addresses the organisation used before a rename, merger or old project, and checks the public registration record for each. An old address registered again after the organisation stopped using it is flagged as serious. One that is free for anyone to register is flagged to fix soon.
