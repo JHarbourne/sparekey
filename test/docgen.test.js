@@ -1,17 +1,20 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createRequire } from 'node:module';
 import { writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
 import { emptyInventory, servicesFromLookup } from '../lib/model.js';
 import { assessRisks } from '../lib/risks.js';
 import { buildHandover } from '../lib/docgen.js';
 
-const require = createRequire(import.meta.url);
-let docx;
-try { docx = require('docx'); } catch { docx = require(execSync('npm root -g').toString().trim() + '/docx'); }
+// Use the same vendored copy of docx the browser uses, so the test needs no install.
+function vendoredDocx() {
+  vm.runInThisContext(readFileSync(new URL('../vendor/docx.iife.js', import.meta.url), 'utf8'));
+  return globalThis.docx;
+}
+const docx = vendoredDocx();
 
 test('builds a valid Word document for the Tollesbury example', async () => {
   const inv = emptyInventory();
