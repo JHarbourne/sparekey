@@ -4,6 +4,7 @@
 
 - The menu has **For website builders** alongside **For website owners** ("Builders" and "Owners" on phones). It opens the tool.
 - The header fits the smallest phones (320px) without sideways scrolling. On those, the Guide link is in the footer only.
+- The key in the logo stands on its own, without the box around it. The favicon is now black with the green key.
 
 ## 0.5.1 – 2026-09-27
 
