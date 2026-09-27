@@ -44,3 +44,16 @@ test('the Word and Excel templates download', async ({ page, request }) => {
     expect((await res.body()).subarray(0, 2).toString()).toBe('PK'); // a real Office file
   }
 });
+
+test('the domain policy page checks an old address from the browser', async ({ page, request }) => {
+  await page.route('https://data.iana.org/**', (route) => route.fulfill({ json: { services: [[['uk'], ['https://rdap.nominet.uk/uk/']]] }, headers: { 'access-control-allow-origin': '*' } }));
+  await page.route('https://rdap.nominet.uk/**', (route) => route.fulfill({ json: { events: [{ eventAction: 'registration', eventDate: new Date(Date.now() - 200 * 864e5).toISOString() }] }, headers: { 'access-control-allow-origin': '*' } }));
+  await page.route('https://cloudflare-dns.com/**', (route) => route.fulfill({ json: { Answer: [] }, headers: { 'access-control-allow-origin': '*' } }));
+  await page.goto('/domain-policy');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Keep your old web addresses, or someone else will');
+  await page.locator('#oc-input').fill('old-name.org.uk');
+  await page.getByRole('button', { name: 'Check' }).click();
+  await expect(page.locator('#oc-result')).toContainText('probably belongs to someone else now');
+  const res = await request.get('/templates/spare-key-domain-policy.docx');
+  expect(res.status()).toBe(200);
+});

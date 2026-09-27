@@ -1,10 +1,10 @@
-import { emptyInventory, newService, servicesFromLookup, mergeServices, validateInventory, KINDS, WHO, YESNO } from './lib/model.js';
+import { emptyInventory, newService, servicesFromLookup, mergeServices, validateInventory, newOldDomain, KINDS, WHO, YESNO, DOMAIN_STATUS, PUBLIC_ACCOUNTS } from './lib/model.js';
 import { assessRisks, groupRisks } from './lib/risks.js';
 import { stepStatus } from './lib/progress.js';
 import { buildHandover } from './lib/docgen.js';
 import { track, incomingRequest } from './lib/site.js';
 import { mailtoUrl, recipient } from './lib/request.js';
-import { lookup } from './lib/lookup.js';
+import { lookup, checkOldAddress } from './lib/lookup.js';
 
 const DRAFT_KEY = 'sparekey:draft';
 
@@ -70,6 +70,14 @@ document.addEventListener('input', (e) => {
   const el = e.target;
   if (el.dataset.bind) {
     setPath(inv, el.dataset.bind, el.value);
+  } else if (el.dataset.ofield) {
+    const od = inv.oldDomains[Number(el.dataset.old)];
+    if (!od) return;
+    od[el.dataset.ofield] = el.value;
+  } else if (el.dataset.dstatus) {
+    const dm = inv.domains[Number(el.dataset.dstatus)];
+    if (!dm) return;
+    dm.status = el.value;
   } else if (el.dataset.sid) {
     const s = inv.services.find((x) => x.id === el.dataset.sid);
     if (!s) return;
@@ -104,6 +112,8 @@ function renderDomains(animateIndex = -1) {
         ${row('certificate', cert, c?.matchesName === false)}
         ${row('checked', fmtDate(lk.checkedAt))}
       </dl>` : '<p class="sub">Not looked up yet.</p>'}
+      <label class="dstatus" for="dstatus-${i}">What’s the plan for this address?
+        <select id="dstatus-${i}" data-dstatus="${i}">${options(DOMAIN_STATUS, d.status || 'active')}</select></label>
     </article>`;
   }).join('');
   // stagger the rows for the reveal
@@ -118,7 +128,7 @@ async function runLookup(name) {
   try {
     const data = await lookup(name);
     let index = inv.domains.findIndex((d) => d.name === data.domain);
-    if (index >= 0) inv.domains[index].lookup = data; else { inv.domains.push({ name: data.domain, lookup: data }); index = inv.domains.length - 1; }
+    if (index >= 0) inv.domains[index].lookup = data; else { inv.domains.push({ name: data.domain, status: 'active', lookup: data }); index = inv.domains.length - 1; }
     const before = inv.services.length;
     inv.services = mergeServices(inv.services, servicesFromLookup(data));
     const added = inv.services.length - before;
@@ -152,6 +162,64 @@ $('#domains').addEventListener('click', (e) => {
     inv.domains.splice(Number(t.dataset.removeDomain), 1);
     saveDraft(); renderAll();
     $('#domain-input').focus();
+  }
+});
+
+// ---------- old addresses ----------
+function oldSummary(lk) {
+  if (!lk) return 'Not checked yet.';
+  if (lk.notRegistered) return 'Not registered. Anyone can register it now.';
+  const reg = lk.registration;
+  if (!reg) return 'We couldn’t read the registration record for this ending.';
+  const parts = [];
+  if (reg.registrar) parts.push(`Registered with ${reg.registrar}`);
+  if (reg.created) parts.push(`registered on ${fmtDate(reg.created)}`);
+  if (reg.expires) parts.push(`renews ${fmtDate(reg.expires)}`);
+  return `${parts.join(', ') || 'Registered'}.${lk.webHost ? ` Its website is now hosted by ${lk.webHost}.` : ' No website found.'}`;
+}
+function renderOldDomains() {
+  $('#old-domains').innerHTML = inv.oldDomains.map((od, i) => `<article class="record old" aria-labelledby="old-${i}">
+      <div class="record-head"><h4 id="old-${i}">${esc(od.name)}</h4>
+        <span><button type="button" class="link" data-old-recheck="${i}">Check again<span class="vh"> ${esc(od.name)}</span></button>
+        <button type="button" class="link" data-old-remove="${i}">Remove<span class="vh"> ${esc(od.name)}</span></button></span></div>
+      <p class="old-sum">${esc(oldSummary(od.lookup))} <a href="https://${esc(od.name)}" target="_blank" rel="noopener noreferrer">Open it<span class="vh"> in a new tab</span></a></p>
+      <div class="old-fields">
+        <label for="od-ours-${i}">Is it still yours?<select id="od-ours-${i}" data-old="${i}" data-ofield="stillOurs">${options(YESNO, od.stillOurs)}</select></label>
+        <label for="od-year-${i}">Stopped using it in <span class="opt">year</span><input id="od-year-${i}" data-old="${i}" data-ofield="stoppedYear" inputmode="numeric" maxlength="4" value="${esc(od.stoppedYear)}"></label>
+      </div>
+    </article>`).join('');
+}
+async function runOldCheck(name) {
+  const status = $('#old-status');
+  status.textContent = `Checking ${name}…`;
+  try {
+    const data = await checkOldAddress(name);
+    let od = inv.oldDomains.find((d) => d.name === data.domain);
+    if (!od) { od = newOldDomain(data.domain); inv.oldDomains.push(od); }
+    od.lookup = data;
+    status.textContent = `${data.domain}: ${oldSummary(data)}`;
+    saveDraft(); renderOldDomains(); renderRisks();
+  } catch (err) {
+    status.textContent = `Could not check ${name}: ${err.message}`;
+  }
+}
+$('#old-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = $('#old-input');
+  const name = input.value.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
+  if (!name) { $('#old-status').textContent = 'Type an old address first, for example old-name.org.uk.'; input.focus(); return; }
+  input.value = '';
+  runOldCheck(name);
+});
+$('#old-domains').addEventListener('click', (e) => {
+  const t = e.target.closest('button');
+  if (!t) return;
+  if (t.dataset.oldRecheck) runOldCheck(inv.oldDomains[Number(t.dataset.oldRecheck)].name);
+  if (t.dataset.oldRemove) {
+    if (!confirmInline(t, 'Press again to remove this old address.', '#old-status')) return;
+    inv.oldDomains.splice(Number(t.dataset.oldRemove), 1);
+    saveDraft(); renderOldDomains(); renderRisks();
+    $('#old-input').focus();
   }
 });
 
@@ -338,7 +406,7 @@ function requestBanner() {
   const to = r.sendTo?.email ? r.sendTo : { name: r.name, email: r.email };
   if (to.email) {
     const first = (to.name || '').split(' ')[0];
-    const body = `${first ? `Dear ${first},` : 'Hello,'}\n\nHere is the continuity plan for ${r.domains?.join(', ') || 'your website'}. It's our continuity plan: what the website and email depend on, who pays for what, and what to do if I were ever unable to work for a long time. Anything highlighted in yellow is still to be confirmed.\n\nI've also attached the inventory file. Keep it safe: anyone can open it at sparekey.dev to update the plan later.\n\n${inv.builder.name || ''}`;
+    const body = `${first ? `Dear ${first},` : 'Hello,'}\n\nHere is the continuity plan for ${r.domains?.join(', ') || 'your website'}. It sets out what the website and email depend on, who pays for what, and what to do if I were ever unable to work for a long time. Anything highlighted in yellow is still to be confirmed.\n\nI've also attached the inventory file. Keep it safe: anyone can open it at sparekey.dev to update the plan later.\n\n${inv.builder.name || ''}`;
     $('#reply-link').href = mailtoUrl(to.email, `Website continuity plan for ${r.organisation || r.domains?.[0] || 'your website'}`, body);
     $('#reply-link').textContent = `Email the plan to ${first || (to.role ? `the ${to.role.replace(/^(our|the)\s+/i, '')}` : 'the owner')}`;
     $('#reply-row').hidden = false;
@@ -384,13 +452,14 @@ function animateTerminal() {
 }
 
 // ---------- start ----------
-function renderAll() { renderDomains(); renderServices(); renderRisks(); }
+function renderAll() { renderDomains(); renderOldDomains(); renderServices(); renderRisks(); }
 if (hasDraft()) {
   const note = $('#draft-note');
   note.hidden = false;
   note.textContent = `Your draft for ${inv.client.organisation || inv.client.name || 'this client'} has been restored from this browser.`;
   $('#cta-start').textContent = 'Continue your draft';
 }
+$('#public-accounts').innerHTML = options(PUBLIC_ACCOUNTS, inv.publicAccounts);
 fillBound();
 renderAll();
 showView();

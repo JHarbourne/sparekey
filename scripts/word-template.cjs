@@ -169,3 +169,47 @@ const doc = new Document({
 const out = path.join(__dirname, '..', 'templates', 'spare-key-continuity-plan-template.docx');
 fs.mkdirSync(path.dirname(out), { recursive: true });
 Packer.toBuffer(doc).then((b) => { fs.writeFileSync(out, b); console.log('Wrote', out); });
+
+// ---------- The domain name policy, as a Word document to adapt and adopt ----------
+import('../lib/policy.js').then(({ QUESTIONS, POLICY }) => {
+  const num = (i, text) => p([t(`${i}.  `, { bold: true, color: GREEN }), ...text], { indent: { left: 440, hanging: 440 }, spacing: { after: 160, line: 300 } });
+  const policyDoc = new Document({
+    creator: 'Spare Key', title: 'Domain name policy',
+    styles: {
+      default: { document: { run: { font: SANS, size: 21, color: INK } } },
+      paragraphStyles: [
+        { id: 'Heading1', name: 'Heading 1', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { font: SANS, size: 34, bold: true, color: INK }, paragraph: { spacing: { before: 0, after: 180 }, outlineLevel: 0, keepNext: true } },
+      ],
+    },
+    sections: [{
+      properties: { page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } } },
+      headers: { default: new Header({ children: [new Paragraph({ tabStops: [{ type: TabStopType.RIGHT, position: W }], children: [mono('spare', { size: 16, color: INK }), mono('key', { size: 16, color: GREEN }), mono('\tDomain name policy', { size: 16 })] })] }) },
+      footers: { default: new Footer({ children: [new Paragraph({ tabStops: [{ type: TabStopType.RIGHT, position: W }], children: [mono('Template from sparekey.dev/domain-policy · free to adapt', { size: 16 }), mono('\tPage ', { size: 16 }), new TextRun({ children: [PageNumber.CURRENT], font: MONO, size: 16, color: MUTED })] })] }) },
+      children: [
+        new Paragraph({ spacing: { after: 120 }, children: [t('Domain name policy', { size: 56, bold: true })] }),
+        p([hint('Organisation name')], { spacing: { after: 60 } }),
+        field('ADOPTED ON', 'Date of the meeting'),
+        field('APPROVED BY', 'Board, committee or trustees'),
+        field('RESPONSIBLE', 'Role, for example the IT lead or the secretary'),
+        field('NEXT REVIEW', 'A year from adoption'),
+        rule(),
+        eyebrow('the policy'),
+        ...POLICY.map(([h, text], i) => num(i + 1, [t(`${h}. `, { bold: true }), t(text)])),
+        callout('The clause most policies leave out', [`Clause ${POLICY.findIndex(([h]) => h === 'Releasing a domain') + 1}. When an address lapses, anyone can buy it with the links and search listings it built up, and use the old name to sell things. Checking first, and keeping it if in doubt, costs about £10 a year.`]),
+        new Paragraph({ children: [new PageBreak()] }),
+        eyebrow('appendix'),
+        new Paragraph({ heading: HeadingLevel.HEADING_1, children: [t('Questions to answer when you adopt it')] }),
+        ...QUESTIONS.map(([q, a]) => box(`${q} ${a}`)),
+        gap(),
+        eyebrow('appendix'),
+        new Paragraph({ heading: HeadingLevel.HEADING_1, children: [t('Our domains')] }),
+        table(['Domain', 'What it is for', 'Registered with', 'Renews', 'Responsible'], [2200, 2300, 1700, 1300, 1526], [
+          ['example.org', 'Our website and email', 'Registrar name', '1 May 2027', 'IT lead'],
+          ['old-name.org.uk', 'Our name before 2021. Points to example.org', 'Registrar name', '3 June 2027', 'IT lead'],
+        ], 6),
+      ],
+    }],
+  });
+  const out2 = path.join(__dirname, '..', 'templates', 'spare-key-domain-policy.docx');
+  return Packer.toBuffer(policyDoc).then((b) => { fs.writeFileSync(out2, b); console.log('Wrote', out2); });
+});

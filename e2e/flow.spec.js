@@ -58,3 +58,13 @@ test('clearing the last serious risk turns the key and says so', async ({ page }
   await expect(page.locator('#toast')).toHaveText('Spare key cut. Nothing serious left.');
   await expect(page.locator('#m-high')).toHaveText('0');
 });
+
+test('an old address registered by someone else is flagged as serious', async ({ page }) => {
+  await mockLookup(page);
+  await page.goto('/#start');
+  await page.locator('#old-input').fill('https://www.old-name.org.uk/');
+  await page.getByRole('button', { name: 'Check', exact: true }).click();
+  await expect(page.locator('#old-domains')).toContainText('registered on 14 March 2026');
+  await page.getByLabel('Stopped using it in').fill('2021');
+  await expect(page.locator('#risks')).toContainText('old-name.org.uk was registered again in March 2026, probably by someone else');
+});

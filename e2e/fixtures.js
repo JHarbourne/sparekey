@@ -9,7 +9,9 @@ export const LOOKUP = {
 // Most tests replace the lookup module with a stub that returns LOOKUP.
 export async function mockLookup(page) {
   const body = `export const RDAP_HOSTS = []; export const LOOKUP_SERVICES = [];
-    export async function lookup(d) { return { ...${JSON.stringify(LOOKUP)}, domain: String(d).trim().toLowerCase() }; }`;
+    export async function lookup(d) { return { ...${JSON.stringify(LOOKUP)}, domain: String(d).trim().toLowerCase() }; }
+    export async function checkOldAddress(d) { return { domain: String(d).trim().toLowerCase(), checkedAt: '2026-09-27T12:00:00Z', notRegistered: false,
+      registration: { registrar: 'Namecheap, Inc.', created: '2026-03-14T00:00:00Z', expires: '2027-03-14T00:00:00Z' }, webHost: 'Cloudflare', errors: [] }; }`;
   await page.route('**/lib/lookup.js', (route) => route.fulfill({ contentType: 'text/javascript', body }));
 }
 

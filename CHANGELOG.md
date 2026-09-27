@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0 – 2026-09-27
+
+- **Old addresses.** Step 02 asks for addresses the organisation used before a rename, merger or old project, and checks the public registration record for each. An old address registered again after the organisation stopped using it is flagged as serious. One that is free for anyone to register is flagged to fix soon.
+- **The plan for each address**: in use, points to our current website, retired and still renewed, or planned to be let go. Letting one go is flagged as serious until someone has checked what still links to it.
+- **Open sign-up forms.** Step 04 asks whether the public can create accounts on the website, and flags it if they can post without approval.
+- **Domain name policy page** (/domain-policy): check an old address in the browser, nine questions to answer, a nine-clause policy to copy (including what to check before releasing a domain), and who to tell if an old address is being misused. Also as a Word download.
+- The continuity plan has a new section 7, **Domain names**, with each domain's plan, old addresses and the policy. Contacts moves to section 8.
+- The cover's list of what Spare Key flags now includes old addresses and open sign-up forms, and says "expired certificates" rather than "the wrong certificate", which it can no longer see.
+- The reply email to an owner no longer repeats itself.
+- Contact address hello@jharbourne.com on the privacy page, the check page and security.txt. The footer wordmark has the key.
+- CI: the Word test uses the vendored library, actions updated to Node 24, and a **Run workflow** button.
+- Documentation in docs/: functional specification, architecture, security and privacy, testing, releasing and an accessibility statement.
+
 ## 0.4.0 – 2026-09-27
 
 - No server at all. Lookups now run in the browser and send only the domain name, straight to public services (Cloudflare DNS, IANA, the registry, Cert Spotter). The Content-Security-Policy blocks every other address, and a test keeps it in step with the code. The Vercel function has gone.

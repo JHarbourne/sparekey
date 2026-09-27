@@ -15,8 +15,21 @@ A handover inventory is a UTF-8 JSON file. Anyone can read it with a text editor
   "backupsLocation": "",
   "notes": "",
   "domains": [
-    { "name": "example.org", "lookup": { "...": "result of the last lookup, see below" } }
+    {
+      "name": "example.org",
+      "status": "active | redirect | retired | release",
+      "lookup": { "...": "result of the last lookup, see below" }
+    }
   ],
+  "oldDomains": [
+    {
+      "name": "old-name.org.uk",
+      "stillOurs": "yes | no | unknown",
+      "stoppedYear": "2021",
+      "lookup": { "domain": "old-name.org.uk", "notRegistered": false, "registration": { "registrar": "", "created": "", "expires": "" }, "webHost": "", "checkedAt": "" }
+    }
+  ],
+  "publicAccounts": "unknown | none | approved | open",
   "services": [
     {
       "id": "s1",
@@ -42,13 +55,15 @@ A handover inventory is a UTF-8 JSON file. Anyone can read it with a text editor
 
 | Field | Meaning |
 | --- | --- |
-| `registration.registrar`, `registration.expires` | From RDAP |
+| `registration.registrar`, `registration.expires`, `registration.created` | From the registry (RDAP) |
 | `dnsHost` | Who hosts the domain's DNS, from its nameservers |
 | `webHost` | Who serves the website, from its address, CNAME or reverse DNS |
 | `emailHost` | Who receives the domain's email, from its MX records |
 | `senders` | Services allowed to send as the domain, from its SPF record |
 | `spf`, `dmarc` | The raw SPF record and the DMARC policy |
-| `certificate` | Issuer, expiry, and whether it matches the domain name |
+| `certificate` | Issuer and expiry of the newest current certificate in the public Certificate Transparency logs, or `{ "missing": true }` |
 | `checkedAt` | When the lookup ran |
+
+`status`, `oldDomains` and `publicAccounts` were added in Spare Key 0.5.0. They are optional, and older files open with `active`, `[]` and `unknown`.
 
 Unknown fields are ignored when a file is opened, so later versions can add to the format without breaking older files.

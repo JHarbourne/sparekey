@@ -98,7 +98,9 @@
         <li><strong>Bills on your card</strong><span>They stop when your payments do.</span></li>
         <li><strong>Email on a server one person runs</strong><span>The most fragile part of most small setups.</span></li>
         <li><strong>Missing SPF and DMARC</strong><span>Mail that lands in spam, or can be spoofed.</span></li>
-        <li><strong>The wrong certificate</strong><span>Visitors see a security warning.</span></li>
+        <li><strong>Old addresses left to lapse</strong><span>Anyone can buy them and use your old name. <a href="domain-policy.html">Domain policy</a></span></li>
+        <li><strong>Open sign-up forms</strong><span>Used to publish adverts on trusted websites.</span></li>
+        <li><strong>Expired certificates</strong><span>Visitors see a security warning.</span></li>
       </ul>
     </section>
 
@@ -182,6 +184,19 @@
       </form>
       <p id="lookup-status" class="status" role="status" aria-live="polite"></p>
       <div id="domains"></div>
+
+      <div class="old-addresses">
+        <h3 id="old-h">Old addresses</h3>
+        <p class="sub">Addresses the organisation used before a rename, a merger, a move to a shorter address, or for an old project. When one lapses, anyone can buy it along with its old links, and use your name to sell things. Spare Key checks who holds each one now.</p>
+        <form id="old-form" class="lookup" novalidate>
+          <label for="old-input" class="vh">Old address</label>
+          <span class="prompt" aria-hidden="true">$ check</span>
+          <input id="old-input" name="old" placeholder="old-name.org.uk" autocomplete="off" spellcheck="false" autocapitalize="off" aria-describedby="old-status">
+          <button type="submit" class="btn">Check</button>
+        </form>
+        <p id="old-status" class="status" role="status" aria-live="polite"></p>
+        <div id="old-domains"></div>
+      </div>
     </section>
 
     <section class="panel" id="services-sec" aria-labelledby="services-h">
@@ -200,6 +215,10 @@
       <label class="block">Where are the backups kept?
         <span class="hint">At least one copy should be outside the hosting account.</span>
         <textarea data-bind="backupsLocation" rows="2"></textarea>
+      </label>
+      <label class="block">Can members of the public create accounts on the website?
+        <span class="hint">Membership forms, comments, forums. Spammers use open sign-ups to publish adverts on trusted websites.</span>
+        <select data-bind="publicAccounts" id="public-accounts"></select>
       </label>
       <label class="block">Anything else the client should know
         <textarea data-bind="notes" rows="3"></textarea>
@@ -232,7 +251,7 @@
   <div class="shell footer-inner">
     <p><strong>Spare Key never asks for a password.</strong> If a site calling itself Spare Key does, it isn’t us. <a href="check.html">Check it yourself</a></p>
     <p class="sub-foot">Free and open source. No cookies. Nothing you type is sent to us.</p>
-    <p class="footer-links"><span class="foot-brand"><svg class="foot-key" viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg><span>spare<b>key</b></span></span><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="check.html">Check it yourself</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
+    <p class="footer-links"><span class="foot-brand"><svg class="foot-key" viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg><span>spare<b>key</b></span></span><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="domain-policy.html">Domain policy</a><a href="check.html">Check it yourself</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
   </div>
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

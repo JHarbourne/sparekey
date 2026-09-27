@@ -57,10 +57,19 @@ PostHog, EU cloud, set up in `lib/analytics.js`. It does nothing until `POSTHOG_
 
 The feedback page links to the Nearmark feedback board, where ideas are tagged with the `sparekey` area (see `nearmark-website/supabase/add-sparekey-area.sql`). Bugs go to GitHub issues.
 
-## Before going public
+## Documentation
 
-- Create the GitHub repository `JHarbourne/sparekey` (links in `lib/site.js`).
-- Add the PostHog key, and fill in the privacy contact address in `scripts/pages.mjs`, then run it.
+- [Functional specification](docs/FSD.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Security and privacy](docs/SECURITY-AND-PRIVACY.md)
+- [Testing](docs/TESTING.md)
+- [Releasing](docs/RELEASING.md)
+- [Accessibility statement](docs/ACCESSIBILITY.md)
+- [Inventory file format](FORMAT.md), [Changelog](CHANGELOG.md), [Spare Key's own continuity plan](CONTINUITY.md)
+
+## Still to do
+
+- Add the PostHog key in `lib/analytics.js` if you want usage counts.
 - To support another registry, add its host to `RDAP_HOSTS` and run `node scripts/pages.mjs` (it regenerates the CSP).
 
 ## Licence
