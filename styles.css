@@ -326,7 +326,6 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 .banner .actions { margin-top: 10px; }
 .reply { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 14px 0 0; }
 .reply .hint { margin: 0; }
-@media (max-width: 520px) { .topnav a[href="feedback.html"] { display: none; } }
 .how-steps.compact { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .prose .how-steps h2, .prose .panel h2 { margin-top: 6px; }
 .prose .panel h2 { margin-top: 0; }
@@ -434,7 +433,6 @@ form > .actions, .field + .actions { margin-top: 24px; }
 .tpl-icon.x { background: #217346; }
 .topnav a { white-space: nowrap; }
 .nav-short { display: none; }
-@media (max-width: 520px) { .nav-long { display: none; } .nav-short { display: inline; } }
 
 /* ---------- Domain plan and old addresses ---------- */
 .record .dstatus { display: grid; gap: 4px; margin-top: 12px; font-size: .8125rem; color: var(--muted); max-width: 340px; }
@@ -470,13 +468,16 @@ form > .actions, .field + .actions { margin-top: 24px; }
   .brand-name { font-size: .95rem; }
   .logo { width: 26px; height: 26px; }
 }
-/* Smallest phones: the Guide stays in the footer */
-@media (max-width: 350px) { .topnav a[href="guide.html"] { display: none; } }
 
 /* Footer: two lines on desktop */
 .footer-inner p.foot-line { max-width: none; margin-bottom: 12px; }
 .footer-inner p.footer-links { max-width: none; margin: 0; column-gap: 18px; }
-@media (max-width: 520px) { .topnav a[href="faq.html"] { display: none; } }
 .toc-more { margin: 14px 0 0; font-size: .8125rem; }
 .toc-more a { color: var(--signal-text); text-decoration: none; }
 .toc-more a:hover { text-decoration: underline; }
+
+/* ---------- Menu breakpoints (hidden items stay in the footer) ---------- */
+@media (max-width: 880px) { .nav-long { display: none; } .nav-short { display: inline; } }
+@media (max-width: 760px) { .topnav a[href="feedback.html"], .topnav a[data-link="source"] { display: none; } }
+@media (max-width: 560px) { .topnav a[href="faq.html"] { display: none; } }
+@media (max-width: 370px) { .topnav a[href="guide.html"] { display: none; } }

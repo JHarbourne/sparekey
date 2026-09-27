@@ -351,7 +351,7 @@ function download(blob, filename) {
 const slug = () => (inv.client.organisation || inv.client.name || 'client').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'client';
 
 $('#save-file').addEventListener('click', () => {
-  download(new Blob([JSON.stringify(inv, null, 2)], { type: 'application/json' }), `${slug()}-handover-inventory.json`);
+  download(new Blob([JSON.stringify(inv, null, 2)], { type: 'application/json' }), `${slug()}-inventory.json`);
   $('#save-status').textContent = 'Inventory saved to your downloads. Keep it, and give the client a copy.';
   track('inventory_saved', { services: inv.services.length });
 });
@@ -372,12 +372,12 @@ $('#open-file').addEventListener('change', async (e) => {
 $('#download-doc').addEventListener('click', async () => {
   const btn = $('#download-doc');
   btn.disabled = true;
-  $('#save-status').textContent = 'Writing the handover document…';
+  $('#save-status').textContent = 'Writing the continuity plan…';
   try {
     const risks = assessRisks(inv);
     const blob = await buildHandover(inv, risks);
-    download(blob, `${slug()}-handover.docx`);
-    $('#save-status').textContent = 'Handover document downloaded. Anything highlighted in yellow still needs filling in.';
+    download(blob, `${slug()}-continuity-plan.docx`);
+    $('#save-status').textContent = 'Continuity plan downloaded. Anything highlighted in yellow still needs filling in.';
     track('handover_downloaded', { services: inv.services.length, domains: inv.domains.length, serious: risks.filter((r) => r.level === 'high').length });
   } catch (err) {
     $('#save-status').textContent = `Could not write the document: ${err.message}`;
@@ -402,7 +402,7 @@ function requestBanner() {
   banner.hidden = false;
   banner.innerHTML = `<p><strong>${esc(who || 'A website owner')}</strong> asked you for a website continuity plan${r.domains?.length ? ` for ${esc(r.domains.join(', '))}` : ''}.${r.sendTo?.email ? ` They’d like it sent to ${esc(recipient(r.sendTo))}.` : ''}</p>
     ${r.message ? `<blockquote>${esc(r.message)}</blockquote>` : ''}
-    <p class="sub">Their details are filled in and the domains are looked up. Complete the services, then download the handover and send it back.</p>`;
+    <p class="sub">Their details are filled in and the domains are looked up. Complete the services, then download the plan and send it back.</p>`;
   const to = r.sendTo?.email ? r.sendTo : { name: r.name, email: r.email };
   if (to.email) {
     const first = (to.name || '').split(' ')[0];

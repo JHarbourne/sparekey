@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.4 – 2026-09-27
+
+- The menu fits at every width from 320px to wide desktop, tested every 10px. Full labels above 880px; "Builders" and "Owners" below that; Feedback and Source move to the footer below 760px, FAQs below 560px and the Guide below 370px.
+- The tool, cover and downloads say "continuity plan" throughout: "New continuity plan", "Download the plan", "Email the plan to the owner". The downloaded file is now named …-continuity-plan.docx and the inventory …-inventory.json.
+
 ## 0.5.3 – 2026-09-27
 
 - The FAQs have their own page, /faq, with the filter, linked from the menu, the footer and the guide. The guide keeps the six steps, the risks, the jargon buster and the templates.

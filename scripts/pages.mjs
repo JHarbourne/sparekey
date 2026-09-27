@@ -79,7 +79,7 @@ const PAGES = {
   'check.html': checkPage,
   'domain-policy.html': policyPage,
 
-  'ask.html': ['For website owners', 'Someone else looks after your website? Ask them for a handover, so you are never stuck without them.', `
+  'ask.html': ['For website owners', 'Someone else looks after your website? Ask them for a continuity plan, so you are never stuck without them.', `
 <p class="eyebrow">for website owners</p>
 <h1>Someone else looks after your website? Make sure you’re never stuck without them.</h1>
 <p class="lede">If one person built your website or runs it for you, the keys to it are probably in their accounts, and often paid on their card. That’s fine until they’re ill, busy or move on. Spare Key helps them write down everything you would need, in plain English.</p>
@@ -87,7 +87,7 @@ const PAGES = {
 <ol class="how-steps compact">
   <li><span class="eyebrow">01</span><h2 class="h3">You fill in a few details</h2><p>Your name, your website address and who looks after it. About two minutes.</p></li>
   <li><span class="eyebrow">02</span><h2 class="h3">We write the email</h2><p>You send it to your web person. The link in it opens Spare Key with your details already filled in.</p></li>
-  <li><span class="eyebrow">03</span><h2 class="h3">You get a handover</h2><p>They add the technical details and send you a document to keep: what your website depends on, who pays for what, and what to do if they were ever unable to work for a long time.</p></li>
+  <li><span class="eyebrow">03</span><h2 class="h3">You get a continuity plan</h2><p>They add the technical details and send you a document to keep: what your website depends on, who pays for what, and what to do if they were ever unable to work for a long time.</p></li>
 </ol>
 
 <form id="ask-form" class="panel ask-form" novalidate>
@@ -159,7 +159,7 @@ const PAGES = {
   <h1>Write your first continuity plan in fifteen minutes</h1>
   <p class="lede">Everything you need to know to use Spare Key, whether you build websites or someone builds yours.</p>
   <div class="cta"><a class="btn primary" href="./#start">I build websites</a><a class="btn" href="ask.html">I own a website</a></div>
-  <p class="cta-note">Builders map a client’s setup and write the handover. Owners send a request to the person who looks after their website.</p>
+  <p class="cta-note">Builders map a client’s setup and write the continuity plan. Owners send a request to the person who looks after their website.</p>
 </div>
 
 <div class="guide-layout">
@@ -176,7 +176,7 @@ const PAGES = {
 
   <div class="guide-body">
     <section id="steps" aria-labelledby="steps-h">
-      <h2 id="steps-h" class="section-title"><span class="eyebrow">six steps</span>From domain name to handover</h2>
+      <h2 id="steps-h" class="section-title"><span class="eyebrow">six steps</span>From domain name to continuity plan</h2>
       <ol class="timeline">
         <li>
           <div class="tl-text"><h3>People</h3><p>Add the client, yourself, and an emergency contact: someone who could reach your accounts if you couldn’t, such as your executor.</p></div>
@@ -200,7 +200,7 @@ const PAGES = {
         </li>
         <li>
           <div class="tl-text"><h3>Hand over</h3><p>Download the Word document for the client and save the inventory file. Yellow highlights are gaps still to fill.</p></div>
-          <div class="tl-demo" aria-hidden="true"><span class="k">↓</span> village-arts-trail-handover.docx<br><span class="k">↓</span> village-arts-trail-inventory.json</div>
+          <div class="tl-demo" aria-hidden="true"><span class="k">↓</span> village-arts-trail-continuity-plan.docx<br><span class="k">↓</span> village-arts-trail-inventory.json</div>
         </li>
       </ol>
     </section>
@@ -295,7 +295,7 @@ const PAGES = {
 <p>Lookups run in your browser. Spare Key has no server that receives them. Your browser sends only the domain name, and only to public lookup services: Cloudflare’s public DNS, IANA’s list of registries, the registry for the domain’s ending (such as Nominet or Verisign), and Cert Spotter’s public log of security certificates. Those services have their own privacy policies. Spare Key never connects to the website itself. The page’s security policy stops your browser sending anything to any other address. <a href="check.html">See how to check this yourself</a>.</p>
 
 <h2>Usage counts</h2>
-<p>We use PostHog, hosted in the EU, to count how features are used, for example how many handover documents are downloaded. It is set up so that it:</p>
+<p>We use PostHog, hosted in the EU, to count how features are used, for example how many continuity plans are downloaded. It is set up so that it:</p>
 <ul>
   <li>sets no cookies and stores nothing on your device;</li>
   <li>builds no profile of you and records no sessions;</li>
@@ -318,7 +318,7 @@ const PAGES = {
 <p class="sub">Last updated ${updated}.</p>
 
 <h2>The service</h2>
-<p>Spare Key is a free tool, provided by Jonathan Harbourne (JHarbourne.com), for recording what a website depends on and producing a handover document. By using it you agree to these terms.</p>
+<p>Spare Key is a free tool, provided by Jonathan Harbourne (JHarbourne.com), for recording what a website depends on and producing a continuity plan. By using it you agree to these terms.</p>
 
 <h2>Your responsibilities</h2>
 <ul>

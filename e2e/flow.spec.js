@@ -7,7 +7,7 @@ test('cover page leads into the tool', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('spare key');
   await page.getByRole('link', { name: 'I build websites' }).first().click();
-  await expect(page.getByRole('heading', { name: 'New handover' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'New continuity plan' })).toBeVisible();
 });
 
 test('lookup, complete services, and download the handover', async ({ page }) => {
@@ -15,8 +15,8 @@ test('lookup, complete services, and download the handover', async ({ page }) =>
   await expect(page.locator('details.service')).toHaveCount(6);
   await expect(page.locator('#risk-summary')).toContainText('serious');
   const download = page.waitForEvent('download');
-  await page.getByRole('button', { name: /Download handover/ }).click();
-  expect((await download).suggestedFilename()).toBe('village-arts-trail-handover.docx');
+  await page.getByRole('button', { name: /Download the plan/ }).click();
+  expect((await download).suggestedFilename()).toBe('village-arts-trail-continuity-plan.docx');
 });
 
 test('draft survives a reload and can be cleared', async ({ page }) => {
