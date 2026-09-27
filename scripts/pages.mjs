@@ -16,7 +16,7 @@ export function header(current) {
       <span class="logo" id="logo" aria-hidden="true">
         <svg viewBox="0 0 32 32" width="22" height="22"><g class="key" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg>
       </span>
-      <span class="brand-name">spare key</span>
+      <span class="brand-name">spare <b>key</b></span>
     </a>
     <nav class="topnav" aria-label="Site">
       ${nav}
@@ -36,7 +36,7 @@ export function header(current) {
 export const footer = `<footer class="footer">
   <div class="shell footer-inner">
     <p>Free and open source. No cookies. Anonymous usage counts only, never the domains or anything you type.</p>
-    <p class="footer-links"><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
+    <p class="footer-links"><span class="foot-brand">spare <b>key</b></span><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
   </div>
 </footer>`;
 
@@ -140,7 +140,8 @@ const PAGES = {
   <p class="eyebrow">guide</p>
   <h1>Make your first handover in fifteen minutes</h1>
   <p class="lede">Everything you need to know to use Spare Key, whether you build websites or someone builds yours.</p>
-  <div class="cta"><a class="btn primary" href="./#start">Open the tool</a><a class="btn" href="ask.html">I own a website</a></div>
+  <div class="cta"><a class="btn primary" href="./#start">I build websites</a><a class="btn" href="ask.html">I own a website</a></div>
+  <p class="cta-note">Builders map a client’s setup and write the handover. Owners send a request to the person who looks after their website.</p>
 </div>
 
 <div class="guide-layout">

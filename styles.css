@@ -13,6 +13,9 @@
   --accent: #005fcc;
   --btn: #171717;
   --btn-ink: #ffffff;
+  --brass: #e8ad3f;
+  --brass-ink: #1c1405;
+  --brass-text: #8a5a00;
   --ok: #107a36;
   --high: #b3121a; --high-bg: #fff0f0;
   --med: #8a5300;  --med-bg: #fff6e5;
@@ -27,14 +30,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0a0a0a; --surface: #111111; --ink: #ededed; --muted: #a3a3a3; --line: #262626; --field: #707070;
-    --accent: #5aa9ff; --btn: #ededed; --btn-ink: #0a0a0a; --ok: #3ecf6e;
+    --accent: #5aa9ff; --btn: #ededed; --btn-ink: #0a0a0a; --ok: #3ecf6e; --brass: #f2b94f; --brass-ink: #1c1405; --brass-text: #f2b94f;
     --high: #ff8f8f; --high-bg: #2a1214; --med: #f2b650; --med-bg: #261c09; --low: #b9c3ce; --low-bg: #181b20;
     --grid: rgba(255, 255, 255, 0.05); --shadow: none; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0a0a0a; --surface: #111111; --ink: #ededed; --muted: #a3a3a3; --line: #262626; --field: #707070;
-  --accent: #5aa9ff; --btn: #ededed; --btn-ink: #0a0a0a; --ok: #3ecf6e;
+  --accent: #5aa9ff; --btn: #ededed; --btn-ink: #0a0a0a; --ok: #3ecf6e; --brass: #f2b94f; --brass-ink: #1c1405; --brass-text: #f2b94f;
   --high: #ff8f8f; --high-bg: #2a1214; --med: #f2b650; --med-bg: #261c09; --low: #b9c3ce; --low-bg: #181b20;
   --grid: rgba(255, 255, 255, 0.05); --shadow: none; color-scheme: dark;
 }
@@ -146,8 +149,8 @@ textarea { resize: vertical; }
 }
 .btn:hover { border-color: var(--ink); }
 .btn:active { transform: translateY(1px) scale(.99); }
-.btn.primary { background: var(--btn); color: var(--btn-ink); border-color: var(--btn); }
-.btn.primary:hover { opacity: .88; }
+.btn.primary { background: var(--brass); color: var(--brass-ink); border-color: color-mix(in srgb, var(--brass) 80%, #000); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
+.btn.primary:hover { background: color-mix(in srgb, var(--brass) 88%, #fff); }
 .btn.ghost { border-style: dashed; color: var(--muted); }
 .btn.ghost:hover { color: var(--ink); }
 .btn.danger { color: var(--high); border-color: color-mix(in srgb, var(--high) 60%, transparent); }
@@ -348,7 +351,7 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 .timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
 .prose .timeline li { counter-increment: step; position: relative; display: grid; gap: 12px 24px; padding: 0 0 22px 48px; margin: 0; }
 @media (min-width: 720px) { .prose .timeline li { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
-.timeline li::before { content: counter(step, decimal-leading-zero); position: absolute; left: 0; top: 0; width: 31px; height: 31px; border-radius: 50%; background: var(--surface); border: 1px solid var(--field); display: grid; place-items: center; font: 500 .7rem var(--mono); color: var(--ink); }
+.timeline li::before { content: counter(step, decimal-leading-zero); position: absolute; left: 0; top: 0; width: 31px; height: 31px; border-radius: 50%; background: var(--surface); border: 1px solid var(--field); display: grid; place-items: center; font: 500 .7rem var(--mono); color: var(--brass-text); }
 .tl-text h3 { margin: 4px 0 4px; font-size: 1rem; }
 .prose .tl-text p { margin: 0; color: var(--muted); font-size: .9375rem; line-height: 1.6; }
 .tl-demo { font: 400 .78rem/1.8 var(--mono); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; color: var(--ink); overflow-wrap: anywhere; }
@@ -373,3 +376,16 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 .jargon dt { font: 500 .8125rem var(--mono); color: var(--accent); margin-bottom: 4px; }
 .prose .jargon dd { margin: 0; font-size: .875rem; color: var(--muted); line-height: 1.55; }
 .faq-filter input { max-width: 420px; }
+
+/* ---------- A touch of brass: the colour of a real key ---------- */
+.brand-name b { font-weight: 500; color: var(--brass-text); }
+.logo { color: var(--brass-text); transition: border-color .2s; }
+.brand:hover .logo { border-color: var(--brass); }
+/* Hover the logo and the key turns in the lock, with a small click at the end. */
+.brand:hover .logo .key { animation: unlock .7s cubic-bezier(.3,1.5,.5,1); }
+@keyframes unlock { 0% { transform: rotate(0); } 45% { transform: rotate(-90deg); } 60% { transform: rotate(-84deg); } 100% { transform: rotate(0); } }
+.foot-brand { font-family: var(--mono); font-size: .8125rem; color: var(--ink); }
+.foot-brand b { font-weight: 500; color: var(--brass-text); }
+form > .actions, .field + .actions { margin-top: 24px; }
+.term-body .t-ok, .timeline .num { color: var(--brass-text); }
+.cta-note { margin: 12px 0 0; color: var(--muted); font-size: .875rem; max-width: 52ch; }

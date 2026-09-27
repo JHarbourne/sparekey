@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.2 – 2026-09-27
+
+- A touch of brass, the colour of a real key: main buttons, the logo, “key” in the name at the top and in the footer, and the step numbers in the guide.
+- Hover the logo and the key turns in the lock.
+- The two main buttons now say who they are for: “I build websites” and “I own a website”, with a line explaining each.
+- More space above the button at the end of a form.
+
 ## 0.3.1 – 2026-09-27
 
 - Guide redesigned: six-step timeline with previews, risk cards with fixes, a jargon buster, a filter for the questions and an "On this page" menu that follows you.

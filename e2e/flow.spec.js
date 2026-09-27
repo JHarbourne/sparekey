@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => { await mockLookup(page); });
 test('cover page leads into the tool', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('spare key');
-  await page.getByRole('link', { name: 'Get started' }).first().click();
+  await page.getByRole('link', { name: 'I build websites' }).first().click();
   await expect(page.getByRole('heading', { name: 'New handover' })).toBeVisible();
 });
 
