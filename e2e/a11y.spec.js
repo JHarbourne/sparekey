@@ -7,7 +7,7 @@ let AxeBuilder = null;
 try { ({ default: AxeBuilder } = await import('@axe-core/playwright')); } catch { /* not installed */ }
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
-const PAGES = ['/', '/ask', '/guide', '/privacy', '/terms', '/feedback'];
+const PAGES = ['/', '/ask', '/guide', '/check', '/privacy', '/terms', '/feedback'];
 
 async function scan(page) {
   const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();

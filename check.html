@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Check it yourself · Spare Key</title>
+<meta name="description" content="How to check for yourself that Spare Key keeps nothing, and how to recognise the real site.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<script src="theme-init.js"></script>
+<link rel="stylesheet" href="styles.css">
+<script type="module" src="lib/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a class="brand" href="./" aria-label="Spare Key, home">
+      <span class="logo" id="logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="26" height="26"><g class="key" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg>
+      </span>
+      <span class="brand-name">spare<b>key</b></span>
+    </a>
+    <nav class="topnav" aria-label="Site">
+      <a href="ask.html"><span class="nav-long">For website owners</span><span class="nav-short">Owners</span></a>
+      <a href="guide.html">Guide</a>
+      <a href="feedback.html">Feedback</a>
+      <a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a>
+      <button class="theme-switch" type="button" role="switch" aria-checked="false" data-theme-toggle>
+        <span class="vh">Dark mode</span>
+        <span class="track" aria-hidden="true"><span class="knob">
+          <svg class="moon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
+        </span></span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="shell prose" tabindex="-1">
+<p class="eyebrow">check it yourself</p>
+<h1>You shouldn’t have to take our word for it</h1>
+<p class="lede">Any site that asks how your website is set up should make you cautious. Here is exactly what Spare Key sends, where it goes, and how to check it with the tools already in your browser.</p>
+
+<div class="trust-grid">
+  <div class="tg"><span class="tg-k">sent to us</span><strong>Nothing</strong><p>There is no Spare Key server that receives what you type. The site is plain files.</p></div>
+  <div class="tg"><span class="tg-k">sent anywhere</span><strong>Domain names only</strong><p>Only to public lookup services, to read records that are already public.</p></div>
+  <div class="tg"><span class="tg-k">passwords</span><strong>Never asked for</strong><p>Not passwords, PINs, card numbers or recovery codes. Ever.</p></div>
+</div>
+
+<h2>Where a domain name goes when you look it up</h2>
+<p>Your browser sends the domain name, and nothing else, to these services. Spare Key never connects to the website itself.</p>
+<table class="svc-table">
+  <thead><tr><th scope="col">Address</th><th scope="col">Who</th><th scope="col">Why</th></tr></thead>
+  <tbody>
+  <tr><td><code>cloudflare-dns.com</code></td><td>Cloudflare public DNS</td><td>reads the DNS records: where the website and email point</td></tr>
+  <tr><td><code>data.iana.org</code></td><td>IANA</td><td>the official list of which registry looks after each domain ending</td></tr>
+  <tr><td><code>api.certspotter.com</code></td><td>Cert Spotter (SSLMate)</td><td>reads the public log of security certificates</td></tr>
+  <tr><td><code>(the registry for the ending)</code></td><td>Domain registries such as Nominet, Verisign and PIR</td><td>the public registration record: registrar and renewal date</td></tr>
+  </tbody>
+</table>
+<details class="more"><summary>The 37 registry addresses on the list</summary><p class="mono-list">pubapi.registry.google · rdap.blog.fury.ca · rdap.ca.fury.ca · rdap.cctld.au · rdap.centralnic.com · rdap.dns.pl · rdap.eco.fury.ca · rdap.fi · rdap.gmoregistry.net · rdap.identitydigital.services · rdap.isnic.is · rdap.nic.biz · rdap.nic.club · rdap.nic.design · rdap.nic.earth · rdap.nic.fr · rdap.nic.garden · rdap.nic.health · rdap.nic.law · rdap.nic.ly · rdap.nic.one · rdap.nic.scot · rdap.nic.tv · rdap.nic.yoga · rdap.nixiregistry.in · rdap.nominet.uk · rdap.norid.no · rdap.publicinterestregistry.org · rdap.radix.host · rdap.registry.bar · rdap.registry.cloud · rdap.registry.love · rdap.registryservices.music · rdap.sidn.nl · rdap.tonicregistry.to · rdap.verisign.com · tld-rdap.verisign.com</p></details>
+<p>Everything else, the people, services, notes and risks, stays in your browser on this device until you download it. Your draft is kept in this browser’s storage so a reload doesn’t lose it, and “Clear” removes it.</p>
+
+<h2>Four ways to check</h2>
+<ol class="timeline checks">
+  <li><div class="tl-text"><h3>Watch the traffic</h3><p>Open your browser’s developer tools (on a Mac, Option + Command + I) and choose <strong>Network</strong>. Look up a domain and fill in the rest. Every request is listed, and you’ll see only the addresses above.</p></div></li>
+  <li><div class="tl-text"><h3>Read the lock on the door</h3><p>In the same Network tab, click the page itself and find the <code>content-security-policy</code> header. Its <code>connect-src</code> line is the complete list of addresses this page may contact. Your browser, not us, blocks everything else.</p></div></li>
+  <li><div class="tl-text"><h3>Unplug it</h3><p>Once the page has loaded, turn off your Wi-Fi. You can still fill everything in and download the handover. Only new lookups need a connection.</p></div></li>
+  <li><div class="tl-text"><h3>Read the code, or run your own copy</h3><p>All of it is <a data-link="source" href="https://github.com/JHarbourne/sparekey">on GitHub</a>. To run it on your own computer, clone it, run <code>node scripts/serve.mjs</code> and open <code>http://localhost:4173</code>.</p></div></li>
+</ol>
+
+<h2>If someone stole everything you typed</h2>
+<p>They would learn which registrar, host and email provider you use, which anyone can already find in public records, and who pays for each. They would not get a password, because Spare Key never asks for one. That is deliberate: the safest data is data that isn’t worth stealing.</p>
+
+<h2>How to recognise the real Spare Key</h2>
+<ul class="checklist">
+  <li>The address is <strong>https://sparekey.dev</strong>.</li>
+  <li>A request from a website owner opens a link starting <strong>https://sparekey.dev/#start</strong>.</li>
+  <li>It never asks for a password, a code sent to your phone, or payment.</li>
+</ul>
+<p>The code is open source, so anyone can copy it and we can’t stop that. A copy that asks for a password is not us.</p>
+
+<h2>Found a fake, or a security problem?</h2>
+<p>Tell us privately through <a href="https://github.com/JHarbourne/sparekey/security/advisories/new">GitHub’s security reporting</a>. Our <a href="/.well-known/security.txt">security.txt</a> has the details. In the UK you can also forward suspicious emails to <a href="mailto:report@phishing.gov.uk">report@phishing.gov.uk</a> and report a suspicious website to the <a href="https://www.ncsc.gov.uk/collection/phishing-scams/report-scam-website">National Cyber Security Centre</a>.</p>
+
+<h2>Who made this</h2>
+<p>Spare Key is made by Jonathan Harbourne, a UX and accessibility designer in Essex who founded the <a href="https://lgbthistoryuk.org">LGBT History Project</a>. It started after one of his own websites went down and he realised everything depended on him. <a href="feedback.html">Get in touch</a>.</p>
+</main>
+
+<footer class="footer">
+  <div class="shell footer-inner">
+    <p><strong>Spare Key never asks for a password.</strong> If a site calling itself Spare Key does, it isn’t us. <a href="check.html">Check it yourself</a></p>
+    <p class="sub-foot">Free and open source. No cookies. Nothing you type is sent to us.</p>
+    <p class="footer-links"><span class="foot-brand">spare<b>key</b></span><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="check.html">Check it yourself</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
+  </div>
+</footer>
+</body>
+</html>

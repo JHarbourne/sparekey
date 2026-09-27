@@ -4,12 +4,12 @@ Live at https://sparekey.dev
 
 A small tool for anyone who builds or looks after websites for other people: charities, clubs, friends, small businesses.
 
-You add a client's domains. Spare Key looks up public records to find where their website, email and domain settings live and when the domain renews. You fill in whose name each account is in, who pays, and whether anyone else can get in. It then shows what would break if you were unavailable, and writes a Word handover document for the client to keep.
+You add a client's domains. Spare Key looks up public records to find where their website, email and domain settings live and when the domain renews. You fill in whose name each account is in, who pays, and whether anyone else can get in. It then finds the single points of failure and writes a Word continuity plan (a handover document) for the client to keep.
 
 ## Principles
 
 - **The map, not the keys.** It never asks for passwords. It records *where* they are kept.
-- **Nothing stored on a server.** The only thing sent anywhere is a domain name, to a lookup function that checks public DNS, registration (RDAP) and certificate records and keeps nothing. The inventory lives in the browser while you work, and in a JSON file you save.
+- **No server at all.** Lookups run in the browser. The only thing sent anywhere is a domain name, straight to public lookup services (Cloudflare DNS, IANA, the domain's registry, Cert Spotter). The Content-Security-Policy in `vercel.json` blocks every other address, and a test keeps it in step with `lib/lookup.js`. The inventory lives in the browser while you work, and in a JSON file you save.
 - **No accounts, cookies, analytics or tracking.** The draft is kept in the browser's local storage on your own device only, and "Start again" clears it.
 - **It must not become the single point of failure it warns about.** The outputs (the Word document and the inventory file) belong to the client and work without this site. The file format is documented in [FORMAT.md](FORMAT.md) so anyone can read it. The code is MIT-licensed so anyone can run it.
 - **Accessible.** Built to WCAG 2.2 AA: labelled controls, keyboard use, visible focus, status messages announced to screen readers, dark mode and reduced motion respected.
@@ -23,9 +23,9 @@ You add a client's domains. Spare Key looks up public records to find where thei
 | Inventory model and file format | `lib/model.js` |
 | Risk checks | `lib/risks.js` |
 | Word document | `lib/docgen.js` (uses the `docx` library, vendored as `vendor/docx.iife.js`) |
-| Lookup function (Vercel) | `api/lookup.js`, with provider recognition in `api/_lib/infer.js` |
+| Lookups (in the browser) | `lib/lookup.js`, with provider recognition in `lib/infer.js` |
 
-The lookup function uses Cloudflare's public DNS-over-HTTPS resolver, rdap.org for registration data, and a direct TLS connection for the certificate. It recognises common registrars, DNS hosts, website hosts, email providers and sending services, and says "Unrecognised" rather than guessing.
+Lookups use Cloudflare's public DNS-over-HTTPS resolver, each registry's RDAP service (found through IANA's list, limited to the registries in `RDAP_HOSTS`), and Cert Spotter's Certificate Transparency API for the certificate. Spare Key never connects to the website itself, so it cannot see a wrong certificate being served; it reports whether a current certificate exists. It recognises common registrars, DNS hosts, website hosts, email providers and sending services, and says "Unrecognised" rather than guessing.
 
 ## Run it
 
@@ -61,7 +61,7 @@ The feedback page links to the Nearmark feedback board, where ideas are tagged w
 
 - Create the GitHub repository `JHarbourne/sparekey` (links in `lib/site.js`).
 - Add the PostHog key, and fill in the privacy contact address in `scripts/pages.mjs`, then run it.
-- Consider a rate limit on `/api/lookup` (Vercel Firewall rules work without code).
+- To support another registry, add its host to `RDAP_HOSTS` and run `node scripts/pages.mjs` (it regenerates the CSP).
 
 ## Licence
 

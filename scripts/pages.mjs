@@ -1,22 +1,24 @@
 // Writes the shared header and footer into every page, and generates the
 // content pages (guide, privacy, terms, feedback). Run: node scripts/pages.mjs
 // A test fails if the committed pages are out of date.
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { RDAP_HOSTS } from '../lib/lookup.js';
+import { checkPage } from './check-page.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 export function header(current) {
-  const nav = [['ask.html', 'For website owners'], ['guide.html', 'Guide'], ['feedback.html', 'Feedback']]
+  const nav = [['ask.html', '<span class="nav-long">For website owners</span><span class="nav-short">Owners</span>'], ['guide.html', 'Guide'], ['feedback.html', 'Feedback']]
     .map(([href, label]) => `<a href="${href}"${current === href ? ' aria-current="page"' : ''}>${label}</a>`).join('\n      ');
   return `<header class="topbar">
   <div class="shell topbar-inner">
     <a class="brand" href="./" aria-label="Spare Key, home">
       <span class="logo" id="logo" aria-hidden="true">
-        <svg viewBox="0 0 32 32" width="22" height="22"><g class="key" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg>
+        <svg viewBox="0 0 32 32" width="26" height="26"><g class="key" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg>
       </span>
-      <span class="brand-name">spare <b>key</b></span>
+      <span class="brand-name">spare<b>key</b></span>
     </a>
     <nav class="topnav" aria-label="Site">
       ${nav}
@@ -35,8 +37,9 @@ export function header(current) {
 
 export const footer = `<footer class="footer">
   <div class="shell footer-inner">
-    <p>Free and open source. No cookies. Anonymous usage counts only, never the domains or anything you type.</p>
-    <p class="footer-links"><span class="foot-brand">spare <b>key</b></span><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
+    <p><strong>Spare Key never asks for a password.</strong> If a site calling itself Spare Key does, it isn’t us. <a href="check.html">Check it yourself</a></p>
+    <p class="sub-foot">Free and open source. No cookies. Nothing you type is sent to us.</p>
+    <p class="footer-links"><span class="foot-brand">spare<b>key</b></span><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="check.html">Check it yourself</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
   </div>
 </footer>`;
 
@@ -73,6 +76,7 @@ ${footer}
 const updated = '27 September 2026';
 
 const PAGES = {
+  'check.html': checkPage,
 
   'ask.html': ['For website owners', 'Someone else looks after your website? Ask them for a handover, so you are never stuck without them.', `
 <p class="eyebrow">for website owners</p>
@@ -82,7 +86,7 @@ const PAGES = {
 <ol class="how-steps compact">
   <li><span class="eyebrow">01</span><h2 class="h3">You fill in a few details</h2><p>Your name, your website address and who looks after it. About two minutes.</p></li>
   <li><span class="eyebrow">02</span><h2 class="h3">We write the email</h2><p>You send it to your web person. The link in it opens Spare Key with your details already filled in.</p></li>
-  <li><span class="eyebrow">03</span><h2 class="h3">You get a handover</h2><p>They add the technical details and send you a document to keep: what your website depends on, who pays for what, and what to do if they’re unavailable.</p></li>
+  <li><span class="eyebrow">03</span><h2 class="h3">You get a handover</h2><p>They add the technical details and send you a document to keep: what your website depends on, who pays for what, and what to do if they were ever unable to work for a long time.</p></li>
 </ol>
 
 <form id="ask-form" class="panel ask-form" novalidate>
@@ -105,6 +109,19 @@ const PAGES = {
       <p class="hint" id="builder-hint">Only used to address the email on your device. It isn’t put in the link.</p>
     </fieldset>
   </div>
+  <fieldset class="send-to">
+    <legend>Who should receive the finished plan?</legend>
+    <div class="seg" role="radiogroup">
+      <label class="seg-opt"><input type="radio" name="recipient" value="me" checked> Me</label>
+      <label class="seg-opt"><input type="radio" name="recipient" value="other"> Someone else, such as our IT or security lead</label>
+    </div>
+    <div class="grid" id="send-to-fields" hidden>
+      <label>Their name <span class="opt">optional</span><input name="toName" autocomplete="off"></label>
+      <label>Their role <span class="opt">optional</span><input name="toRole" autocomplete="off" placeholder="For example, IT manager"></label>
+      <label class="span2">Their email <input name="toEmail" type="email" autocomplete="off" aria-describedby="err-to"></label>
+      <p class="field-error span2" id="err-to" hidden>Please add their email address, like it@example.org.</p>
+    </div>
+  </fieldset>
   <label class="block">Your website addresses
     <span class="hint" id="domains-hint">One per line, for example villageartstrail.org. Include any other addresses you use for email.</span>
     <textarea name="domains" rows="2" required aria-describedby="domains-hint err-domains" spellcheck="false" autocapitalize="off"></textarea>
@@ -151,6 +168,7 @@ const PAGES = {
       <li><a href="#steps">Six steps</a></li>
       <li><a href="#risks">What the risks mean</a></li>
       <li><a href="#jargon">Jargon buster</a></li>
+      <li><a href="#templates">Templates</a></li>
       <li><a href="#faq">Questions</a></li>
     </ol>
   </nav>
@@ -213,15 +231,31 @@ const PAGES = {
       </dl>
     </section>
 
+    <section id="templates" aria-labelledby="tpl-h">
+      <h2 id="tpl-h" class="section-title"><span class="eyebrow">templates</span>Rather fill it in yourself?</h2>
+      <p>The same continuity plan as blank templates. Nothing to sign up for, and nothing leaves your computer.</p>
+      <div class="tpl-grid">
+        <a class="tpl" href="templates/spare-key-continuity-plan-template.docx" download>
+          <span class="tpl-icon" aria-hidden="true">W</span>
+          <span><strong>Word template</strong><span class="sub">The continuity plan with examples to replace. Print it or keep it in your own cloud storage.</span><span class="tpl-meta">.docx · 5 pages</span></span>
+        </a>
+        <a class="tpl" href="templates/spare-key-inventory-template.xlsx" download>
+          <span class="tpl-icon x" aria-hidden="true">X</span>
+          <span><strong>Excel inventory</strong><span class="sub">Services, domains and contacts, with drop-downs. It flags risks and renewals for you.</span><span class="tpl-meta">.xlsx · 4 tabs</span></span>
+        </a>
+      </div>
+    </section>
+
     <section id="faq" aria-labelledby="faq-h">
       <h2 id="faq-h" class="section-title"><span class="eyebrow">questions</span>Frequently asked</h2>
       <label class="faq-filter"><span class="vh">Filter questions</span><input id="faq-filter" type="search" placeholder="Filter questions…" autocomplete="off" aria-describedby="faq-count"></label>
       <p id="faq-count" class="status" role="status" aria-live="polite"></p>
       <div id="faqs">
       <details class="faq"><summary>I don’t build websites. Someone looks after mine. Can I use this?</summary><p>Yes. Go to <a href="ask.html">For website owners</a>, fill in a few details, and we write an email for you to send to your web person. They complete the handover and send it back to you.</p></details>
-      <details class="faq"><summary>Is anything I type stored on your server?</summary><p>No. Only the domain names you look up are sent, to a function that reads public records and keeps nothing. Everything else stays in your browser until you save the inventory file. See the <a href="privacy.html">privacy notice</a>.</p></details>
+      <details class="faq"><summary>Can I fill it in without the tool?</summary><p>Yes. Download the <a href="#templates">Word or Excel template</a> and fill it in by hand.</p></details>
+      <details class="faq"><summary>Is anything I type stored on your server?</summary><p>No. There is no Spare Key server. Lookups run in your browser and send only the domain name, to public lookup services. Everything else stays in your browser until you save the inventory file. <a href="check.html">Check it yourself</a>.</p></details>
       <details class="faq"><summary>Why doesn’t it store passwords?</summary><p>A service holding the keys to other people’s accounts would be a target, and would itself become a single point of failure. Record where passwords are kept instead, for example a password manager your client can reach.</p></details>
-      <details class="faq"><summary>What does my client get?</summary><p>A plain-English Word document explaining what their website and email depend on, who pays for what, what to do in the first week if you are unavailable, and what still needs fixing. Give them the inventory file too, so anyone can update it later.</p></details>
+      <details class="faq"><summary>What does my client get?</summary><p>A plain-English Word document explaining what their website and email depend on, who pays for what, what to do in the first week if you were unable to work for a long time, and what still needs fixing. Give them the inventory file too, so anyone can update it later.</p></details>
       <details class="faq"><summary>The lookup says “Unrecognised”. What does that mean?</summary><p>Spare Key recognises the common registrars, hosts and email providers. If it cannot tell who a provider is, it says so rather than guessing. Edit the service and type the provider’s name.</p></details>
       <details class="faq"><summary>Why is the renewal date missing?</summary><p>Some registries do not publish registration data in a form Spare Key can read. Look the date up in the registrar’s account and add it to the registration service.</p></details>
       <details class="faq"><summary>How do I update a handover next year?</summary><p>Open the inventory file with “Open inventory”, press “Check again” on each domain, update anything that has changed, and download a fresh document.</p></details>
@@ -247,7 +281,7 @@ const PAGES = {
 <p>Everything you type into Spare Key, such as names, contact details, services and notes, is kept only in your browser’s local storage on your own device, so you do not lose your work. It is not sent to us. “Start again” deletes it. Your light or dark choice is stored the same way.</p>
 
 <h2>Domain lookups</h2>
-<p>When you look up a domain, only the domain name is sent to our lookup function, which runs on Vercel. It reads public information about that domain from Cloudflare’s public DNS service, the official domain registries (through IANA’s list) and the domain’s own web server. The function does not store the domain name or the results. Vercel, which hosts the site, keeps short-lived technical logs of requests, which can include the domain name looked up.</p>
+<p>Lookups run in your browser. Spare Key has no server that receives them. Your browser sends only the domain name, and only to public lookup services: Cloudflare’s public DNS, IANA’s list of registries, the registry for the domain’s ending (such as Nominet or Verisign), and Cert Spotter’s public log of security certificates. Those services have their own privacy policies. Spare Key never connects to the website itself. The page’s security policy stops your browser sending anything to any other address. <a href="check.html">See how to check this yourself</a>.</p>
 
 <h2>Usage counts</h2>
 <p>We use PostHog, hosted in the EU, to count how features are used, for example how many handover documents are downloaded. It is set up so that it:</p>
@@ -320,6 +354,26 @@ const PAGES = {
 `],
 };
 
+// The only addresses a page may send anything to. Anything else is blocked by
+// the browser itself, which is what makes "nothing leaves" checkable.
+export const CONNECT = ["'self'", 'https://cloudflare-dns.com', 'https://data.iana.org', 'https://api.certspotter.com',
+  ...RDAP_HOSTS.map((h) => `https://${h}`), 'https://eu.i.posthog.com', 'https://eu-assets.i.posthog.com'];
+export const CSP = ["default-src 'self'", "script-src 'self' https://eu-assets.i.posthog.com", "style-src 'self'", "img-src 'self' data:",
+  "font-src 'self'", `connect-src ${CONNECT.join(' ')}`, "object-src 'none'", "base-uri 'none'", "form-action 'none'", "frame-ancestors 'none'"].join('; ');
+function securityTxt() {
+  return ['# Spare Key. Please report security problems and fake copies of this site privately.',
+    'Contact: https://github.com/JHarbourne/sparekey/security/advisories/new',
+    'Expires: 2027-09-30T00:00:00.000Z',
+    'Preferred-Languages: en',
+    'Canonical: https://sparekey.dev/.well-known/security.txt',
+    'Policy: https://sparekey.dev/check', ''].join('\n');
+}
+function vercelConfig() {
+  const cfg = JSON.parse(readFileSync(join(root, 'vercel.json'), 'utf8'));
+  cfg.headers[0].headers.find((h) => h.key === 'Content-Security-Policy').value = CSP;
+  return JSON.stringify(cfg, null, 2) + '\n';
+}
+
 export function build() {
   const out = {};
   for (const [file, [title, desc, body, script]] of Object.entries(PAGES)) out[file] = page(file, title, desc, body, script);
@@ -328,10 +382,13 @@ export function build() {
   idx = idx.replace(/<header class="topbar">[\s\S]*?<\/header>/, header('index.html'))
     .replace(/<footer class="footer">[\s\S]*?<\/footer>/, footer);
   out['index.html'] = idx;
+  out['vercel.json'] = vercelConfig();
+  out['.well-known/security.txt'] = securityTxt();
   return out;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  mkdirSync(join(root, '.well-known'), { recursive: true });
   for (const [file, html] of Object.entries(build())) writeFileSync(join(root, file), html);
   console.log('Pages written.');
 }

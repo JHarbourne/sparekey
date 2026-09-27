@@ -1,10 +1,15 @@
 {
   "name": "sparekey",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "Map a client's websites, domains and email, flag single points of failure, and produce a handover document they keep.",
   "license": "MIT",
-  "scripts": { "test": "node --test" },
-  "engines": { "node": ">=20" }
+  "scripts": {
+    "test": "node --test",
+    "templates": "NODE_PATH=$(npm root -g) node scripts/word-template.cjs && python3 scripts/excel_template.py"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }

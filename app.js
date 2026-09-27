@@ -3,7 +3,8 @@ import { assessRisks, groupRisks } from './lib/risks.js';
 import { stepStatus } from './lib/progress.js';
 import { buildHandover } from './lib/docgen.js';
 import { track, incomingRequest } from './lib/site.js';
-import { mailtoUrl } from './lib/request.js';
+import { mailtoUrl, recipient } from './lib/request.js';
+import { lookup } from './lib/lookup.js';
 
 const DRAFT_KEY = 'sparekey:draft';
 
@@ -87,7 +88,7 @@ function renderDomains(animateIndex = -1) {
   $('#domains').innerHTML = inv.domains.map((d, i) => {
     const lk = d.lookup;
     const c = lk?.certificate;
-    const cert = c ? `${c.issuer || 'Unknown issuer'} · valid until ${fmtDate(c.validTo)}${c.matchesName === false ? ' · wrong name, visitors see a warning' : ''}` : 'Not found';
+    const cert = c?.validTo ? `${c.issuer || 'Unknown issuer'} · valid until ${fmtDate(c.validTo)}${c.matchesName === false ? ' · wrong name, visitors see a warning' : ''}` : (c?.missing ? 'None found in the public logs' : 'Not checked');
     const renews = lk?.registration?.expires ? fmtDate(lk.registration.expires) : 'Unknown';
     return `<article class="record" aria-labelledby="dom-${i}">
       <div class="record-head"><h3 id="dom-${i}">${esc(d.name)}</h3>
@@ -115,9 +116,7 @@ async function runLookup(name) {
   const btn = $('#lookup-form button');
   btn.disabled = true;
   try {
-    const res = await fetch(`/api/lookup?domain=${encodeURIComponent(name)}`);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Lookup failed');
+    const data = await lookup(name);
     let index = inv.domains.findIndex((d) => d.name === data.domain);
     if (index >= 0) inv.domains[index].lookup = data; else { inv.domains.push({ name: data.domain, lookup: data }); index = inv.domains.length - 1; }
     const before = inv.services.length;
@@ -333,14 +332,15 @@ function requestBanner() {
   if (!r) { banner.hidden = true; $('#reply-row').hidden = true; return; }
   const who = r.organisation ? `${r.name} at ${r.organisation}` : r.name;
   banner.hidden = false;
-  banner.innerHTML = `<p><strong>${esc(who || 'A website owner')}</strong> asked you for a handover${r.domains?.length ? ` of ${esc(r.domains.join(', '))}` : ''}.</p>
+  banner.innerHTML = `<p><strong>${esc(who || 'A website owner')}</strong> asked you for a website continuity plan${r.domains?.length ? ` for ${esc(r.domains.join(', '))}` : ''}.${r.sendTo?.email ? ` They’d like it sent to ${esc(recipient(r.sendTo))}.` : ''}</p>
     ${r.message ? `<blockquote>${esc(r.message)}</blockquote>` : ''}
     <p class="sub">Their details are filled in and the domains are looked up. Complete the services, then download the handover and send it back.</p>`;
-  if (r.email) {
-    const first = (r.name || '').split(' ')[0] || 'there';
-    const body = `Hi ${first},\n\nHere is the handover for ${r.domains?.join(', ') || 'your website'}. It explains what the website and email depend on, who pays for what, and what to do if I'm ever unavailable. Anything highlighted in yellow is still to be confirmed.\n\nI've also attached the inventory file. Keep it safe: anyone can open it at sparekey.dev to update the handover later.\n\n${inv.builder.name || ''}`;
-    $('#reply-link').href = mailtoUrl(r.email, `Handover for ${r.organisation || r.domains?.[0] || 'your website'}`, body);
-    $('#reply-link').textContent = `Email the handover to ${first === 'there' ? 'the owner' : first}`;
+  const to = r.sendTo?.email ? r.sendTo : { name: r.name, email: r.email };
+  if (to.email) {
+    const first = (to.name || '').split(' ')[0];
+    const body = `${first ? `Dear ${first},` : 'Hello,'}\n\nHere is the continuity plan for ${r.domains?.join(', ') || 'your website'}. It's our continuity plan: what the website and email depend on, who pays for what, and what to do if I were ever unable to work for a long time. Anything highlighted in yellow is still to be confirmed.\n\nI've also attached the inventory file. Keep it safe: anyone can open it at sparekey.dev to update the plan later.\n\n${inv.builder.name || ''}`;
+    $('#reply-link').href = mailtoUrl(to.email, `Website continuity plan for ${r.organisation || r.domains?.[0] || 'your website'}`, body);
+    $('#reply-link').textContent = `Email the plan to ${first || (to.role ? `the ${to.role.replace(/^(our|the)\s+/i, '')}` : 'the owner')}`;
     $('#reply-row').hidden = false;
   }
 }
@@ -349,7 +349,7 @@ async function applyRequest(req) {
   inv = emptyInventory();
   Object.assign(inv.client, { name: req.name, organisation: req.organisation, contact: req.email });
   inv.builder.name = req.builderName || '';
-  inv.requestedBy = { name: req.name, organisation: req.organisation, email: req.email, domains: req.domains, message: req.message, at: new Date().toISOString() };
+  inv.requestedBy = { name: req.name, organisation: req.organisation, email: req.email, sendTo: req.sendTo || null, domains: req.domains, message: req.message, at: new Date().toISOString() };
   lastHigh = null;
   saveDraft(); fillBound(); renderAll(); requestBanner();
   track('request_opened', { domains: req.domains.length });

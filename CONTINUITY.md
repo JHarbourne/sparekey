@@ -11,7 +11,7 @@ Nothing important. Every handover document is a Word file the client already hol
 | Part | Where | In whose name | Paid by | Second admin |
 | --- | --- | --- | --- | --- |
 | Code | GitHub repository [to create] | Jonathan Harbourne | Free | [add a co-maintainer] |
-| Hosting and lookup function | Vercel, team “jharbourne” | Jonathan Harbourne | Vercel Pro | [add a second member] |
+| Hosting (static files only) | Vercel, team “jharbourne” | Jonathan Harbourne | Vercel Pro | [add a second member] |
 | Domain | sparekey.dev (GoDaddy, bought 27 Sep 2026) | Jonathan Harbourne | Jonathan Harbourne, about £12 a year | [add a GoDaddy delegate] |
 
 | Usage counts | PostHog (EU) | Jonathan Harbourne | Free tier | [add a second member] |

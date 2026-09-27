@@ -6,11 +6,11 @@ export const LOOKUP = {
   certificate: { issuer: "Let's Encrypt", validTo: '2026-12-01T00:00:00Z', matchesName: true }, raw: {}, errors: [],
 };
 
+// Most tests replace the lookup module with a stub that returns LOOKUP.
 export async function mockLookup(page) {
-  await page.route('**/api/lookup**', (route) => {
-    const d = new URL(route.request().url()).searchParams.get('domain');
-    return route.fulfill({ json: { ...LOOKUP, domain: d } });
-  });
+  const body = `export const RDAP_HOSTS = []; export const LOOKUP_SERVICES = [];
+    export async function lookup(d) { return { ...${JSON.stringify(LOOKUP)}, domain: String(d).trim().toLowerCase() }; }`;
+  await page.route('**/lib/lookup.js', (route) => route.fulfill({ contentType: 'text/javascript', body }));
 }
 
 export async function fillExample(page) {

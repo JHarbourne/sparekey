@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0 – 2026-09-27
+
+- No server at all. Lookups now run in the browser and send only the domain name, straight to public services (Cloudflare DNS, IANA, the registry, Cert Spotter). The Content-Security-Policy blocks every other address, and a test keeps it in step with the code. The Vercel function has gone.
+- Certificates come from public Certificate Transparency logs. Spare Key never connects to the website itself.
+- New “Check it yourself” page: exactly what is sent where, four ways to verify it, how to recognise the real site and how to report a fake.
+- “Spare Key never asks for a password” on every page, and the request email tells the builder to check the link’s address.
+- security.txt, pointing to GitHub’s private security reporting.
+- The owner’s request is now for a website continuity plan, worded as routine contingency planning. The generated document is titled “website continuity plan”.
+- The owner can have the plan sent to someone else, such as their IT or security lead.
+- Emails start “Dear”.
+- Matrix green replaces brass as the accent. The wordmark is 20% larger and reads “sparekey”.
+- Blank Word and Excel templates to download from the guide.
+- The local server sends the same security headers as Vercel, so the browser tests run under the real CSP.
+
 ## 0.3.2 – 2026-09-27
 
 - A touch of brass, the colour of a real key: main buttons, the logo, “key” in the name at the top and in the footer, and the step numbers in the guide.

@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://eu-assets.i.posthog.com; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://eu.i.posthog.com https://eu-assets.i.posthog.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' https://eu-assets.i.posthog.com; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cloudflare-dns.com https://data.iana.org https://api.certspotter.com https://pubapi.registry.google https://rdap.blog.fury.ca https://rdap.ca.fury.ca https://rdap.cctld.au https://rdap.centralnic.com https://rdap.dns.pl https://rdap.eco.fury.ca https://rdap.fi https://rdap.gmoregistry.net https://rdap.identitydigital.services https://rdap.isnic.is https://rdap.nic.biz https://rdap.nic.club https://rdap.nic.design https://rdap.nic.earth https://rdap.nic.fr https://rdap.nic.garden https://rdap.nic.health https://rdap.nic.law https://rdap.nic.ly https://rdap.nic.one https://rdap.nic.scot https://rdap.nic.tv https://rdap.nic.yoga https://rdap.nixiregistry.in https://rdap.nominet.uk https://rdap.norid.no https://rdap.publicinterestregistry.org https://rdap.radix.host https://rdap.registry.bar https://rdap.registry.cloud https://rdap.registry.love https://rdap.registryservices.music https://rdap.sidn.nl https://rdap.tonicregistry.to https://rdap.verisign.com https://tld-rdap.verisign.com https://eu.i.posthog.com https://eu-assets.i.posthog.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
         },
         {
           "key": "Referrer-Policy",

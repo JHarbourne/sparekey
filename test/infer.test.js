@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { dnsProvider, webHost, emailHost, parseTxt, parseDmarc, parseRdap, isValidDomain } from '../api/_lib/infer.js';
+import { dnsProvider, webHost, emailHost, parseTxt, parseDmarc, parseRdap, isValidDomain } from '../lib/infer.js';
 
 test('DNS providers from real nameservers', () => {
   assert.equal(dnsProvider(['ns47.domaincontrol.com.', 'ns48.domaincontrol.com.']), 'GoDaddy');
