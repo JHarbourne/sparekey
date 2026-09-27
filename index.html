@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spare Key: handover documents for the websites you look after</title>
+<meta name="description" content="Map what a client's website and email depend on, find the single points of failure, and produce a handover document they keep. No accounts, no cookies, nothing stored.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<script src="vendor/docx.iife.js" defer></script>
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<header class="site">
+  <div class="wrap">
+    <p class="brand"><span aria-hidden="true">🔑</span> Spare Key</p>
+    <p class="tag">If you build or look after websites for other people, this helps you make sure they are not stuck if you are.</p>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+  <section class="intro" aria-labelledby="intro-h">
+    <h1 id="intro-h">Make a handover for a client</h1>
+    <p>Add the client’s domains and Spare Key looks up where their website, email and domain settings live and when things renew. Fill in who owns and pays for each part. It then shows what would break if you were unavailable, and writes a handover document for the client to keep.</p>
+    <ul class="promises">
+      <li><strong>No passwords.</strong> Never type one in. Record where they are kept instead.</li>
+      <li><strong>Nothing stored on a server.</strong> Only domain names are sent, to look up public records. Your draft stays in this browser until you save the file.</li>
+      <li><strong>No account, cookies or tracking.</strong></li>
+    </ul>
+    <p id="draft-note" class="note" hidden></p>
+  </section>
+
+  <section aria-labelledby="people-h">
+    <h2 id="people-h"><span class="num" aria-hidden="true">1</span> People</h2>
+    <div class="grid">
+      <fieldset>
+        <legend>The client</legend>
+        <label>Name <input data-bind="client.name" autocomplete="off"></label>
+        <label>Organisation <input data-bind="client.organisation" autocomplete="off"></label>
+        <label>Contact details <input data-bind="client.contact" autocomplete="off"></label>
+      </fieldset>
+      <fieldset>
+        <legend>You, the builder</legend>
+        <label>Name <input data-bind="builder.name" autocomplete="name"></label>
+        <label>Contact details <input data-bind="builder.contact" autocomplete="off"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Emergency contact</legend>
+        <p class="hint" id="emergency-hint">Someone who can reach your accounts and passwords if you cannot, such as your executor.</p>
+        <label>Name <input data-bind="emergency.name" aria-describedby="emergency-hint" autocomplete="off"></label>
+        <label>Relationship to you <input data-bind="emergency.relationship" autocomplete="off"></label>
+        <label>Contact details <input data-bind="emergency.contact" autocomplete="off"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Technical helper (optional)</legend>
+        <p class="hint" id="helper-hint">Someone you would trust to take the work over.</p>
+        <label>Name <input data-bind="helper.name" aria-describedby="helper-hint" autocomplete="off"></label>
+        <label>Contact details <input data-bind="helper.contact" autocomplete="off"></label>
+      </fieldset>
+    </div>
+  </section>
+
+  <section aria-labelledby="domains-h">
+    <h2 id="domains-h"><span class="num" aria-hidden="true">2</span> Domains</h2>
+    <form id="lookup-form" class="inline" novalidate>
+      <label for="domain-input">Domain name</label>
+      <input id="domain-input" name="domain" placeholder="example.org" autocomplete="off" spellcheck="false" aria-describedby="lookup-status">
+      <button type="submit">Look up</button>
+    </form>
+    <p id="lookup-status" class="status" role="status" aria-live="polite"></p>
+    <div id="domains"></div>
+  </section>
+
+  <section aria-labelledby="services-h">
+    <h2 id="services-h"><span class="num" aria-hidden="true">3</span> Services</h2>
+    <p>Everything the client’s website and email depend on. Looked-up services appear here automatically. Complete who owns and pays for each one, and add anything the lookup cannot see, such as a database, a mailing list or a booking system.</p>
+    <div id="services"></div>
+    <button type="button" id="add-service" class="secondary">Add a service</button>
+  </section>
+
+  <section aria-labelledby="access-h">
+    <h2 id="access-h"><span class="num" aria-hidden="true">4</span> Access and backups</h2>
+    <label class="block">Where are the passwords kept?
+      <span class="hint">For example “Shared 1Password vault, Trail collection” or “Sealed envelope with my executor”. Not the passwords themselves.</span>
+      <textarea data-bind="passwordsLocation" rows="2"></textarea>
+    </label>
+    <label class="block">Where are the backups kept?
+      <span class="hint">At least one copy should be outside the hosting account.</span>
+      <textarea data-bind="backupsLocation" rows="2"></textarea>
+    </label>
+    <label class="block">Anything else the client should know
+      <textarea data-bind="notes" rows="3"></textarea>
+    </label>
+  </section>
+
+  <section aria-labelledby="risks-h" id="risks-section">
+    <h2 id="risks-h"><span class="num" aria-hidden="true">5</span> What would break without you</h2>
+    <p id="risk-summary" class="risk-summary" role="status" aria-live="polite"></p>
+    <ul id="risks" class="risks"></ul>
+  </section>
+
+  <section aria-labelledby="save-h">
+    <h2 id="save-h"><span class="num" aria-hidden="true">6</span> Save and hand over</h2>
+    <p>Save the inventory file for your records and give the client a copy with the handover document. Next time, open the file here to update it.</p>
+    <div class="actions">
+      <button type="button" id="download-doc">Download handover document (Word)</button>
+      <button type="button" id="save-file" class="secondary">Save inventory file</button>
+      <label class="button secondary" for="open-file">Open inventory file</label>
+      <input type="file" id="open-file" accept=".json,application/json" class="visually-hidden">
+      <button type="button" id="clear" class="danger">Start again</button>
+    </div>
+    <p id="save-status" class="status" role="status" aria-live="polite"></p>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Spare Key is free and open source. It does not use cookies or analytics. Domain names you look up are sent to a lookup function that checks public DNS, registration and certificate records and keeps nothing.</p>
+    <p><a id="feedback-link" href="#">Send feedback or report a problem</a> · <a id="source-link" href="#">Source code</a></p>
+  </div>
+</footer>
+</body>
+</html>
