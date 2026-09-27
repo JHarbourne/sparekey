@@ -14,7 +14,11 @@ const TYPE = { A: 1, NS: 2, CNAME: 5, MX: 15, TXT: 16, PTR: 12 };
 function mockFetch() {
   globalThis.fetch = async (url) => {
     const u = new URL(url);
-    if (u.hostname === 'rdap.org') {
+    if (u.hostname === 'data.iana.org') {
+      return new Response(JSON.stringify({ services: [[['com', 'net'], ['https://rdap.verisign.com/com/v1/']]] }), { status: 200 });
+    }
+    if (u.hostname === 'rdap.verisign.com') {
+      assert.equal(u.pathname, '/com/v1/domain/simon-edge.com');
       return new Response(JSON.stringify({ events: [{ eventAction: 'expiration', eventDate: '2027-05-01T00:00:00Z' }],
         entities: [{ roles: ['registrar'], vcardArray: ['vcard', [['fn', {}, 'text', 'Wix.com Ltd.']]] }] }), { status: 200 });
     }

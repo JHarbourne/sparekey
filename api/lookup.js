@@ -26,9 +26,31 @@ async function ptr(ip) {
   try { return (await dns(reverseName(ip), 'PTR'))[0] || null; } catch { return null; }
 }
 
+// Registration data comes straight from each registry's RDAP server, found
+// through IANA's official bootstrap list (cached while the function is warm).
+const UA = 'SpareKey/0.1 (+https://github.com/JHarbourne/sparekey)';
+let bootstrap = null;
+let bootstrapAt = 0;
+async function rdapBase(tld) {
+  if (!bootstrap || Date.now() - bootstrapAt > 864e5) {
+    const r = await fetch('https://data.iana.org/rdap/dns.json', { headers: { 'user-agent': UA }, signal: AbortSignal.timeout(6000) });
+    if (!r.ok) throw new Error(`RDAP list ${r.status}`);
+    bootstrap = new Map();
+    for (const [tlds, urls] of (await r.json()).services) for (const t of tlds) bootstrap.set(t.toLowerCase(), urls.find((u) => u.startsWith('https')) || urls[0]);
+    bootstrapAt = Date.now();
+  }
+  return bootstrap.get(tld) || null;
+}
+
 async function rdap(domain) {
-  const res = await fetch(`https://rdap.org/domain/${domain}`, {
-    headers: { accept: 'application/rdap+json' }, redirect: 'follow', signal: AbortSignal.timeout(8000),
+  const labels = domain.split('.');
+  // Try the full suffix first for names like example.org.uk, then the last label.
+  let base = null;
+  for (let i = 1; i < labels.length && !base; i++) base = await rdapBase(labels.slice(i).join('.'));
+  if (!base) throw new Error('no registry lookup service for this ending');
+  const res = await fetch(`${base.replace(/\/?$/, '/')}domain/${domain}`, {
+    headers: { accept: 'application/rdap+json, application/json', 'user-agent': UA },
+    redirect: 'follow', signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) throw new Error(`RDAP ${res.status}`);
   return parseRdap(await res.json());
