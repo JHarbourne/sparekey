@@ -476,3 +476,7 @@ form > .actions, .field + .actions { margin-top: 24px; }
 /* Footer: two lines on desktop */
 .footer-inner p.foot-line { max-width: none; margin-bottom: 12px; }
 .footer-inner p.footer-links { max-width: none; margin: 0; column-gap: 18px; }
+@media (max-width: 520px) { .topnav a[href="faq.html"] { display: none; } }
+.toc-more { margin: 14px 0 0; font-size: .8125rem; }
+.toc-more a { color: var(--signal-text); text-decoration: none; }
+.toc-more a:hover { text-decoration: underline; }

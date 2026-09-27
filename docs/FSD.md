@@ -39,7 +39,8 @@ Spare Key helps that person, or the organisation itself, write a **website conti
 | Cover | `/` | What it does, two calls to action by persona, how it works, what it flags, principles |
 | The tool | `/#start` | Six steps (section 5) |
 | For website owners | `/ask` | Owner request form (section 6) |
-| Guide | `/guide` | Six-step timeline, risk explanations, jargon buster, templates, filterable FAQ |
+| Guide | `/guide` | Six-step timeline, risk explanations, jargon buster, templates |
+| Questions and answers | `/faq` | Filterable FAQs |
 | Domain name policy | `/domain-policy` | Old-address checker, questions, policy to copy, how to report misuse (section 8) |
 | Check it yourself | `/check` | What is sent where, and how to verify it (section 9) |
 | Privacy, Terms, Feedback | `/privacy`, `/terms`, `/feedback` | Legal pages, and feedback to the Nearmark board or GitHub |

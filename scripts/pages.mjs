@@ -11,7 +11,7 @@ import { policyPage } from './policy-page.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 export function header(current) {
-  const nav = [['./#start', '<span class="nav-long">For website builders</span><span class="nav-short">Builders</span>'], ['ask.html', '<span class="nav-long">For website owners</span><span class="nav-short">Owners</span>'], ['guide.html', 'Guide'], ['feedback.html', 'Feedback']]
+  const nav = [['./#start', '<span class="nav-long">For website builders</span><span class="nav-short">Builders</span>'], ['ask.html', '<span class="nav-long">For website owners</span><span class="nav-short">Owners</span>'], ['guide.html', 'Guide'], ['faq.html', 'FAQs'], ['feedback.html', 'Feedback']]
     .map(([href, label]) => `<a href="${href}"${current === href ? ' aria-current="page"' : ''}>${label}</a>`).join('\n      ');
   return `<header class="topbar">
   <div class="shell topbar-inner">
@@ -39,7 +39,7 @@ export function header(current) {
 export const footer = `<footer class="footer">
   <div class="shell footer-inner">
     <p class="foot-line"><strong>Spare Key never asks for a password.</strong> If a site calling itself Spare Key does, it isn’t us. Free and open source, no cookies, and nothing you type is sent to us. <a href="check.html">Check it yourself</a></p>
-    <p class="footer-links"><span class="foot-brand"><svg class="foot-key" viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg><span>spare<b>key</b></span></span><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="domain-policy.html">Domain policy</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
+    <p class="footer-links"><span class="foot-brand"><svg class="foot-key" viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg><span>spare<b>key</b></span></span><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="faq.html">FAQs</a><a href="domain-policy.html">Domain policy</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
   </div>
 </footer>`;
 
@@ -153,10 +153,10 @@ const PAGES = {
   <div id="qc-results"></div>
 </section>
 `, 'lib/ask.js'],
-  'guide.html': ['Guide and FAQs', 'How to use Spare Key, what the risks mean, a jargon buster, and answers to common questions.', `
+  'guide.html': ['Guide', 'How to use Spare Key: six steps, what the risks mean, a jargon buster and templates.', `
 <div class="guide-hero">
   <p class="eyebrow">guide</p>
-  <h1>Make your first handover in fifteen minutes</h1>
+  <h1>Write your first continuity plan in fifteen minutes</h1>
   <p class="lede">Everything you need to know to use Spare Key, whether you build websites or someone builds yours.</p>
   <div class="cta"><a class="btn primary" href="./#start">I build websites</a><a class="btn" href="ask.html">I own a website</a></div>
   <p class="cta-note">Builders map a client’s setup and write the handover. Owners send a request to the person who looks after their website.</p>
@@ -170,8 +170,8 @@ const PAGES = {
       <li><a href="#risks">What the risks mean</a></li>
       <li><a href="#jargon">Jargon buster</a></li>
       <li><a href="#templates">Templates</a></li>
-      <li><a href="#faq">Questions</a></li>
     </ol>
+    <p class="toc-more"><a href="faq.html">Questions and answers →</a></p>
   </nav>
 
   <div class="guide-body">
@@ -252,27 +252,32 @@ const PAGES = {
       </div>
     </section>
 
-    <section id="faq" aria-labelledby="faq-h">
-      <h2 id="faq-h" class="section-title"><span class="eyebrow">questions</span>Frequently asked</h2>
-      <label class="faq-filter"><span class="vh">Filter questions</span><input id="faq-filter" type="search" placeholder="Filter questions…" autocomplete="off" aria-describedby="faq-count"></label>
-      <p id="faq-count" class="status" role="status" aria-live="polite"></p>
-      <div id="faqs">
-      <details class="faq"><summary>I don’t build websites. Someone looks after mine. Can I use this?</summary><p>Yes. Go to <a href="ask.html">For website owners</a>, fill in a few details, and we write an email for you to send to your web person. They complete the handover and send it back to you.</p></details>
-      <details class="faq"><summary>Can I fill it in without the tool?</summary><p>Yes. Download the <a href="#templates">Word or Excel template</a> and fill it in by hand.</p></details>
+  </div>
+</div>
+`, 'lib/guide.js'],
+  'faq.html': ['Questions and answers', 'Answers to common questions about Spare Key, continuity plans, old addresses and privacy.', `
+<p class="eyebrow">questions</p>
+<h1>Questions and answers</h1>
+<p class="lede">Short answers to what people ask most. For how the tool works, step by step, see the <a href="guide.html">guide</a>.</p>
+<label class="faq-filter"><span class="vh">Filter questions</span><input id="faq-filter" type="search" placeholder="Filter questions…" autocomplete="off" aria-describedby="faq-count"></label>
+<p id="faq-count" class="status" role="status" aria-live="polite"></p>
+<div id="faqs">
+      <details class="faq"><summary>I don’t build websites. Someone looks after mine. Can I use this?</summary><p>Yes. Go to <a href="ask.html">For website owners</a>, fill in a few details, and we write an email for you to send to your web person. They write the continuity plan and send it back to you, or to whoever you choose, such as your IT or security lead.</p></details>
+      <details class="faq"><summary>Can I fill it in without the tool?</summary><p>Yes. Download the <a href="guide.html#templates">Word or Excel template</a> and fill it in by hand.</p></details>
       <details class="faq"><summary>Is anything I type stored on your server?</summary><p>No. There is no Spare Key server. Lookups run in your browser and send only the domain name, to public lookup services. Everything else stays in your browser until you save the inventory file. <a href="check.html">Check it yourself</a>.</p></details>
       <details class="faq"><summary>Why doesn’t it store passwords?</summary><p>A service holding the keys to other people’s accounts would be a target, and would itself become a single point of failure. Record where passwords are kept instead, for example a password manager your client can reach.</p></details>
       <details class="faq"><summary>What does my client get?</summary><p>A plain-English Word document explaining what their website and email depend on, who pays for what, what to do in the first week if you were unable to work for a long time, and what still needs fixing. Give them the inventory file too, so anyone can update it later.</p></details>
       <details class="faq"><summary>The lookup says “Unrecognised”. What does that mean?</summary><p>Spare Key recognises the common registrars, hosts and email providers. If it cannot tell who a provider is, it says so rather than guessing. Edit the service and type the provider’s name.</p></details>
       <details class="faq"><summary>Why is the renewal date missing?</summary><p>Some registries do not publish registration data in a form Spare Key can read. Look the date up in the registrar’s account and add it to the registration service.</p></details>
-      <details class="faq"><summary>How do I update a handover next year?</summary><p>Open the inventory file with “Open inventory”, press “Check again” on each domain, update anything that has changed, and download a fresh document.</p></details>
+      <details class="faq"><summary>How do I update a plan next year?</summary><p>Open the inventory file with “Open inventory”, press “Check again” on each domain, update anything that has changed, and download a fresh document.</p></details>
       <details class="faq"><summary>Can I use it for my own websites?</summary><p>Yes. Put yourself in as the client and a family member or friend as the emergency contact.</p></details>
       <details class="faq"><summary>What if this website disappears?</summary><p>Nothing breaks. The documents and inventory files work without it, the file format is published, and the code is open source, so anyone can run their own copy.</p></details>
+      <details class="faq"><summary>What is an “old address”, and why does it matter?</summary><p>An address your organisation used before a rename, a merger or a new website. If it lapses, anyone can buy it along with its old links and search listings, and use your name to sell things. Add old addresses in step 02 and Spare Key checks who holds them now. See the <a href="domain-policy.html">domain name policy</a>.</p></details>
+      <details class="faq"><summary>Can the finished plan go to our IT or security lead instead of me?</summary><p>Yes. On <a href="ask.html">For website owners</a>, choose “Someone else” and add their name, role and email. Your web person’s email to send the plan goes to them.</p></details>
+      <details class="faq"><summary>Does it work for addresses outside the UK?</summary><p>Yes. Lookups work for most endings, including .com, .org, .net, .dev and many country endings. Where a registry doesn’t publish its records in a form Spare Key can read, the renewal date is left for you to add.</p></details>
       <details class="faq"><summary>Does it cost anything?</summary><p>No. It is free and open source.</p></details>
       </div>
-      <p class="sub">Something missing? <a href="feedback.html">Suggest it</a>.</p>
-    </section>
-  </div>
-</div>
+<p class="sub">Something missing? <a href="feedback.html">Suggest it</a>, or email <a href="mailto:hello@jharbourne.com">hello@jharbourne.com</a>.</p>
 `, 'lib/guide.js'],
   'privacy.html': ['Privacy', 'What Spare Key does and does not do with data.', `
 <p class="eyebrow">privacy</p>

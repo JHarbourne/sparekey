@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.3 – 2026-09-27
+
+- The FAQs have their own page, /faq, with the filter, linked from the menu, the footer and the guide. The guide keeps the six steps, the risks, the jargon buster and the templates.
+- Three new questions: old addresses, sending the plan to an IT or security lead, and addresses outside the UK.
+- The guide now talks about continuity plans rather than handovers.
+
 ## 0.5.2 – 2026-09-27
 
 - The menu has **For website builders** alongside **For website owners** ("Builders" and "Owners" on phones). It opens the tool.

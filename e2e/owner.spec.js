@@ -56,8 +56,8 @@ test('a request does not silently replace another client’s draft', async ({ pa
   await expect(page.locator('[data-bind="client.organisation"]')).toHaveValue('Other Client');
 });
 
-test('guide FAQ filter narrows the questions', async ({ page }) => {
-  await page.goto('/guide');
+test('the FAQ filter narrows the questions', async ({ page }) => {
+  await page.goto('/faq');
   await page.fill('#faq-filter', 'password');
   await expect(page.locator('#faq-count')).toContainText('of');
   const visible = await page.locator('#faqs .faq:visible').count();

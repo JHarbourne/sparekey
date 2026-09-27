@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Guide and FAQs · Spare Key</title>
-<meta name="description" content="How to use Spare Key, what the risks mean, a jargon buster, and answers to common questions.">
+<title>Guide · Spare Key</title>
+<meta name="description" content="How to use Spare Key: six steps, what the risks mean, a jargon buster and templates.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -27,6 +27,7 @@
       <a href="./#start"><span class="nav-long">For website builders</span><span class="nav-short">Builders</span></a>
       <a href="ask.html"><span class="nav-long">For website owners</span><span class="nav-short">Owners</span></a>
       <a href="guide.html" aria-current="page">Guide</a>
+      <a href="faq.html">FAQs</a>
       <a href="feedback.html">Feedback</a>
       <a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a>
       <button class="theme-switch" type="button" role="switch" aria-checked="false" data-theme-toggle>
@@ -43,7 +44,7 @@
 <main id="main" class="shell prose" tabindex="-1">
 <div class="guide-hero">
   <p class="eyebrow">guide</p>
-  <h1>Make your first handover in fifteen minutes</h1>
+  <h1>Write your first continuity plan in fifteen minutes</h1>
   <p class="lede">Everything you need to know to use Spare Key, whether you build websites or someone builds yours.</p>
   <div class="cta"><a class="btn primary" href="./#start">I build websites</a><a class="btn" href="ask.html">I own a website</a></div>
   <p class="cta-note">Builders map a client’s setup and write the handover. Owners send a request to the person who looks after their website.</p>
@@ -57,8 +58,8 @@
       <li><a href="#risks">What the risks mean</a></li>
       <li><a href="#jargon">Jargon buster</a></li>
       <li><a href="#templates">Templates</a></li>
-      <li><a href="#faq">Questions</a></li>
     </ol>
+    <p class="toc-more"><a href="faq.html">Questions and answers →</a></p>
   </nav>
 
   <div class="guide-body">
@@ -139,25 +140,6 @@
       </div>
     </section>
 
-    <section id="faq" aria-labelledby="faq-h">
-      <h2 id="faq-h" class="section-title"><span class="eyebrow">questions</span>Frequently asked</h2>
-      <label class="faq-filter"><span class="vh">Filter questions</span><input id="faq-filter" type="search" placeholder="Filter questions…" autocomplete="off" aria-describedby="faq-count"></label>
-      <p id="faq-count" class="status" role="status" aria-live="polite"></p>
-      <div id="faqs">
-      <details class="faq"><summary>I don’t build websites. Someone looks after mine. Can I use this?</summary><p>Yes. Go to <a href="ask.html">For website owners</a>, fill in a few details, and we write an email for you to send to your web person. They complete the handover and send it back to you.</p></details>
-      <details class="faq"><summary>Can I fill it in without the tool?</summary><p>Yes. Download the <a href="#templates">Word or Excel template</a> and fill it in by hand.</p></details>
-      <details class="faq"><summary>Is anything I type stored on your server?</summary><p>No. There is no Spare Key server. Lookups run in your browser and send only the domain name, to public lookup services. Everything else stays in your browser until you save the inventory file. <a href="check.html">Check it yourself</a>.</p></details>
-      <details class="faq"><summary>Why doesn’t it store passwords?</summary><p>A service holding the keys to other people’s accounts would be a target, and would itself become a single point of failure. Record where passwords are kept instead, for example a password manager your client can reach.</p></details>
-      <details class="faq"><summary>What does my client get?</summary><p>A plain-English Word document explaining what their website and email depend on, who pays for what, what to do in the first week if you were unable to work for a long time, and what still needs fixing. Give them the inventory file too, so anyone can update it later.</p></details>
-      <details class="faq"><summary>The lookup says “Unrecognised”. What does that mean?</summary><p>Spare Key recognises the common registrars, hosts and email providers. If it cannot tell who a provider is, it says so rather than guessing. Edit the service and type the provider’s name.</p></details>
-      <details class="faq"><summary>Why is the renewal date missing?</summary><p>Some registries do not publish registration data in a form Spare Key can read. Look the date up in the registrar’s account and add it to the registration service.</p></details>
-      <details class="faq"><summary>How do I update a handover next year?</summary><p>Open the inventory file with “Open inventory”, press “Check again” on each domain, update anything that has changed, and download a fresh document.</p></details>
-      <details class="faq"><summary>Can I use it for my own websites?</summary><p>Yes. Put yourself in as the client and a family member or friend as the emergency contact.</p></details>
-      <details class="faq"><summary>What if this website disappears?</summary><p>Nothing breaks. The documents and inventory files work without it, the file format is published, and the code is open source, so anyone can run their own copy.</p></details>
-      <details class="faq"><summary>Does it cost anything?</summary><p>No. It is free and open source.</p></details>
-      </div>
-      <p class="sub">Something missing? <a href="feedback.html">Suggest it</a>.</p>
-    </section>
   </div>
 </div>
 </main>
@@ -165,7 +147,7 @@
 <footer class="footer">
   <div class="shell footer-inner">
     <p class="foot-line"><strong>Spare Key never asks for a password.</strong> If a site calling itself Spare Key does, it isn’t us. Free and open source, no cookies, and nothing you type is sent to us. <a href="check.html">Check it yourself</a></p>
-    <p class="footer-links"><span class="foot-brand"><svg class="foot-key" viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg><span>spare<b>key</b></span></span><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="domain-policy.html">Domain policy</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
+    <p class="footer-links"><span class="foot-brand"><svg class="foot-key" viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="16" r="5.5"/><path d="M16.5 16H28M24 16v4.5M28 16v3"/></g></svg><span>spare<b>key</b></span></span><span>© JHarbourne.com 2026</span><a href="guide.html">Guide</a><a href="faq.html">FAQs</a><a href="domain-policy.html">Domain policy</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="feedback.html">Feedback</a><a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a><span class="version" data-version></span></p>
   </div>
 </footer>
 </body>
