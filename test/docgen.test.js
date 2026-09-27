@@ -2,6 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { execSync } from 'node:child_process';
 import { emptyInventory, servicesFromLookup } from '../lib/model.js';
 import { assessRisks } from '../lib/risks.js';
@@ -24,5 +26,5 @@ test('builds a valid Word document for the Tollesbury example', async () => {
   inv.services = servicesFromLookup(lk).map((s) => ({ ...s, accountOwner: 'builder', paidBy: 'builder' }));
   const buf = await buildHandover(inv, assessRisks(inv), docx, true);
   assert.ok(buf.length > 5000);
-  writeFileSync('/tmp/claude-0/example-handover.docx', buf);
+  writeFileSync(join(tmpdir(), 'sparekey-example-handover.docx'), buf);
 });
