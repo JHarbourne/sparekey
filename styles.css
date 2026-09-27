@@ -328,3 +328,48 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 .prose .how-steps h2, .prose .panel h2 { margin-top: 6px; }
 .prose .panel h2 { margin-top: 0; }
 .how-steps.compact li { padding: 16px 18px; }
+
+/* ---------- Guide ---------- */
+.prose:has(.guide-layout) { max-width: 1120px; }
+.guide-hero { max-width: 760px; padding-bottom: 24px; }
+.guide-hero h1 { font-size: clamp(2rem, 4.5vw, 2.8rem); letter-spacing: -0.04em; }
+.guide-layout { display: grid; gap: 40px; }
+@media (min-width: 960px) { .guide-layout { grid-template-columns: 180px minmax(0, 1fr); gap: 56px; } }
+.toc { display: none; }
+@media (min-width: 960px) { .toc { display: block; position: sticky; top: 88px; align-self: start; } }
+.toc-title { font: 500 .75rem var(--mono); color: var(--muted); margin: 0 0 8px; text-transform: lowercase; }
+.toc ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line); }
+.prose .toc li { margin: 0; }
+.toc a { display: block; padding: 6px 12px; margin-left: -1px; border-left: 1px solid transparent; color: var(--muted); text-decoration: none; font-size: .875rem; }
+.toc a:hover, .toc a[aria-current] { color: var(--ink); border-left-color: var(--ink); }
+.guide-body section { padding: 8px 0 40px; }
+.guide-body .section-title { margin-bottom: 20px; }
+.timeline { list-style: none; margin: 0; padding: 0; counter-reset: step; position: relative; }
+.timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
+.prose .timeline li { counter-increment: step; position: relative; display: grid; gap: 12px 24px; padding: 0 0 22px 48px; margin: 0; }
+@media (min-width: 720px) { .prose .timeline li { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+.timeline li::before { content: counter(step, decimal-leading-zero); position: absolute; left: 0; top: 0; width: 31px; height: 31px; border-radius: 50%; background: var(--surface); border: 1px solid var(--field); display: grid; place-items: center; font: 500 .7rem var(--mono); color: var(--ink); }
+.tl-text h3 { margin: 4px 0 4px; font-size: 1rem; }
+.prose .tl-text p { margin: 0; color: var(--muted); font-size: .9375rem; line-height: 1.6; }
+.tl-demo { font: 400 .78rem/1.8 var(--mono); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; color: var(--ink); overflow-wrap: anywhere; }
+.tl-demo .k { color: var(--accent); margin-right: 8px; }
+.tl-demo .c { color: var(--muted); }
+.tl-demo .w { color: var(--high); }
+.tl-demo .tag { font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; padding: 1px 6px; border-radius: 4px; margin-right: 6px; }
+.tl-demo .tag.high { color: var(--high); background: var(--high-bg); }
+.tl-demo .tag.med { color: var(--med); background: var(--med-bg); }
+.risk-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.rc { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 6px; align-content: start; transition: transform .15s, border-color .15s; }
+.rc:hover { transform: translateY(-2px); border-color: var(--field); }
+.rc .tag { justify-self: start; font: 500 .68rem var(--mono); text-transform: uppercase; letter-spacing: .04em; padding: 2px 7px; border-radius: 4px; }
+.rc.high .tag { color: var(--high); background: var(--high-bg); }
+.rc.med .tag { color: var(--med); background: var(--med-bg); }
+.rc.low .tag { color: var(--low); background: var(--low-bg); }
+.rc h3 { margin: 2px 0 0; font-size: .975rem; }
+.prose .rc p { margin: 0; font-size: .875rem; color: var(--muted); line-height: 1.55; }
+.prose .rc .fix { color: var(--ink); padding-top: 8px; border-top: 1px dashed var(--line); margin-top: 4px; }
+.jargon { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 0; }
+.jargon > div { background: var(--surface); padding: 14px 16px; }
+.jargon dt { font: 500 .8125rem var(--mono); color: var(--accent); margin-bottom: 4px; }
+.prose .jargon dd { margin: 0; font-size: .875rem; color: var(--muted); line-height: 1.55; }
+.faq-filter input { max-width: 420px; }

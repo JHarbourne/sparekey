@@ -135,45 +135,104 @@ const PAGES = {
   <div id="qc-results"></div>
 </section>
 `, 'lib/ask.js'],
-  'guide.html': ['Guide and FAQs', 'How to use Spare Key, and answers to common questions.', `
-<p class="eyebrow">guide</p>
-<h1>Guide and FAQs</h1>
-<p class="lede">Spare Key helps anyone who builds or looks after websites for other people make sure their clients are not stuck if the builder is unavailable.</p>
+  'guide.html': ['Guide and FAQs', 'How to use Spare Key, what the risks mean, a jargon buster, and answers to common questions.', `
+<div class="guide-hero">
+  <p class="eyebrow">guide</p>
+  <h1>Make your first handover in fifteen minutes</h1>
+  <p class="lede">Everything you need to know to use Spare Key, whether you build websites or someone builds yours.</p>
+  <div class="cta"><a class="btn primary" href="./#start">Open the tool</a><a class="btn" href="ask.html">I own a website</a></div>
+</div>
 
-<h2 id="using">Using it</h2>
-<ol>
-  <li><strong>People.</strong> Add the client, yourself, and an emergency contact: someone who could reach your accounts and passwords if you could not, such as your executor.</li>
-  <li><strong>Domains.</strong> Type each of the client’s domain names. Spare Key reads public records to find the registrar and renewal date, where the domain settings (DNS) live, who hosts the website, who handles the email, which services may send mail as the domain, and whether the security certificate is valid.</li>
-  <li><strong>Services.</strong> Each finding becomes a service. For each one, record whose name the account is in, who pays, and whether a second person can manage it. Add anything the lookup cannot see, such as a database, a mailing list or a booking system.</li>
-  <li><strong>Access and backups.</strong> Say where the passwords are kept, and where backups are kept. Never type the passwords themselves.</li>
-  <li><strong>Risks.</strong> Spare Key lists what would break without you, most serious first. Fix what you can, then check again.</li>
-  <li><strong>Hand over.</strong> Download the Word document for the client, and save the inventory file. Anything highlighted in yellow in the document still needs filling in.</li>
-</ol>
+<div class="guide-layout">
+  <nav class="toc" aria-label="On this page">
+    <p class="toc-title">On this page</p>
+    <ol>
+      <li><a href="#steps">Six steps</a></li>
+      <li><a href="#risks">What the risks mean</a></li>
+      <li><a href="#jargon">Jargon buster</a></li>
+      <li><a href="#faq">Questions</a></li>
+    </ol>
+  </nav>
 
-<h2 id="risks">What the risks mean</h2>
-<dl class="defs">
-  <dt>Only you can manage a service</dt><dd>The account is in your name and no one else has admin access. Add the client or a trusted helper as an admin, or move the account into the client’s name.</dd>
-  <dt>Paid by you</dt><dd>If your payments stop, the service will eventually stop too. Consider moving the bill to the client.</dd>
-  <dt>Domain renewal</dt><dd>A lapsed domain takes the website and email down, and after a short grace period anyone can buy the name. Turn on auto-renew and keep the card up to date.</dd>
-  <dt>Email on a privately managed server</dt><dd>Email that runs on a server one person looks after stops if they stop. A mail service in the client’s own name is safer.</dd>
-  <dt>No SPF or DMARC</dt><dd>These records tell other mail servers which services may send email for the domain. Without them, mail is more likely to land in spam or to be spoofed.</dd>
-  <dt>Wrong or expired certificate</dt><dd>Visitors see a security warning, and many will leave.</dd>
-</dl>
+  <div class="guide-body">
+    <section id="steps" aria-labelledby="steps-h">
+      <h2 id="steps-h" class="section-title"><span class="eyebrow">six steps</span>From domain name to handover</h2>
+      <ol class="timeline">
+        <li>
+          <div class="tl-text"><h3>People</h3><p>Add the client, yourself, and an emergency contact: someone who could reach your accounts if you couldn’t, such as your executor.</p></div>
+          <div class="tl-demo" aria-hidden="true"><span class="k">emergency</span> Pat Harbourne · executor</div>
+        </li>
+        <li>
+          <div class="tl-text"><h3>Domains</h3><p>Type each domain. Spare Key reads the public records: registrar and renewal date, DNS host, website host, email provider, who can send as the domain, and the certificate.</p></div>
+          <div class="tl-demo" aria-hidden="true"><span class="c">$ lookup example.org</span><br><span class="k">registrar</span> GoDaddy · renews in 43 days<br><span class="k">email</span> Google Workspace</div>
+        </li>
+        <li>
+          <div class="tl-text"><h3>Services</h3><p>Each finding becomes a service. Record whose name it’s in, who pays, and whether a second person can manage it. Add what the lookup can’t see.</p></div>
+          <div class="tl-demo" aria-hidden="true"><span class="k">registration</span> in the builder’s name<br><span class="k">second admin</span> <span class="w">no</span></div>
+        </li>
+        <li>
+          <div class="tl-text"><h3>Access and backups</h3><p>Say where the passwords and backups are kept. Never type the passwords themselves.</p></div>
+          <div class="tl-demo" aria-hidden="true"><span class="k">passwords</span> shared 1Password vault<br><span class="k">backups</span> weekly, client’s Google Drive</div>
+        </li>
+        <li>
+          <div class="tl-text"><h3>Risks</h3><p>See what would break without you, most serious first. Fix what you can and watch the list shrink.</p></div>
+          <div class="tl-demo" aria-hidden="true"><span class="tag high">serious</span> email on a privately run server<br><span class="tag med">fix soon</span> auto-renew not confirmed</div>
+        </li>
+        <li>
+          <div class="tl-text"><h3>Hand over</h3><p>Download the Word document for the client and save the inventory file. Yellow highlights are gaps still to fill.</p></div>
+          <div class="tl-demo" aria-hidden="true"><span class="k">↓</span> village-arts-trail-handover.docx<br><span class="k">↓</span> village-arts-trail-inventory.json</div>
+        </li>
+      </ol>
+    </section>
 
-<h2 id="faq">Frequently asked questions</h2>
-<details class="faq"><summary>I don’t build websites. Someone looks after mine. Can I use this?</summary><p>Yes. Go to <a href="ask.html">For website owners</a>, fill in a few details, and we write an email for you to send to your web person. They complete the handover and send it back to you.</p></details>
-<details class="faq"><summary>Is anything I type stored on your server?</summary><p>No. Only the domain names you look up are sent, to a function that reads public records and keeps nothing. Everything else stays in your browser until you save the inventory file. See the <a href="privacy.html">privacy notice</a>.</p></details>
-<details class="faq"><summary>Why doesn’t it store passwords?</summary><p>A service holding the keys to other people’s accounts would be a target, and would itself become a single point of failure. Record where passwords are kept instead, for example a password manager your client can reach.</p></details>
-<details class="faq"><summary>What does my client get?</summary><p>A plain-English Word document explaining what their website and email depend on, who pays for what, what to do in the first week if you are unavailable, and what still needs fixing. Give them the inventory file too, so anyone can update it later.</p></details>
-<details class="faq"><summary>The lookup says “Unrecognised”. What does that mean?</summary><p>Spare Key recognises the common registrars, hosts and email providers. If it cannot tell who a provider is, it says so rather than guessing. Edit the service and type the provider’s name.</p></details>
-<details class="faq"><summary>Why is the renewal date missing?</summary><p>Some registries do not publish registration data in a form Spare Key can read. Look the date up in the registrar’s account and add it to the registration service.</p></details>
-<details class="faq"><summary>How do I update a handover next year?</summary><p>Open the inventory file with “Open inventory”, press “Check again” on each domain, update anything that has changed, and download a fresh document.</p></details>
-<details class="faq"><summary>Can I use it for my own websites?</summary><p>Yes. Put yourself in as the client and a family member or friend as the emergency contact.</p></details>
-<details class="faq"><summary>What if this website disappears?</summary><p>Nothing breaks. The documents and inventory files work without it, the file format is published, and the code is open source, so anyone can run their own copy.</p></details>
-<details class="faq"><summary>Does it cost anything?</summary><p>No. It is free and open source.</p></details>
-<p class="sub">Something missing? <a href="feedback.html">Suggest it</a>.</p>
-`],
+    <section id="risks" aria-labelledby="risks-h">
+      <h2 id="risks-h" class="section-title"><span class="eyebrow">what the risks mean</span>Each one, and how to fix it</h2>
+      <div class="risk-cards">
+        <article class="rc high"><span class="tag">Serious</span><h3>Only you can manage a service</h3><p>The account is in your name and no one else can get in.</p><p class="fix"><strong>Fix:</strong> add the client or a trusted helper as an admin, or move the account into the client’s name.</p></article>
+        <article class="rc high"><span class="tag">Serious</span><h3>Email on a privately run server</h3><p>If whoever runs that server stops, email stops, often without warning.</p><p class="fix"><strong>Fix:</strong> move email to a service in the client’s own name.</p></article>
+        <article class="rc high"><span class="tag">Serious</span><h3>Wrong or expired certificate</h3><p>Visitors see a security warning, and many leave.</p><p class="fix"><strong>Fix:</strong> ask the host to reissue it for the right name.</p></article>
+        <article class="rc med"><span class="tag">Fix soon</span><h3>Domain renewal</h3><p>A lapsed domain takes the website and email down, and anyone can then buy the name.</p><p class="fix"><strong>Fix:</strong> turn on auto-renew and keep the card current.</p></article>
+        <article class="rc med"><span class="tag">Fix soon</span><h3>Paid by you</h3><p>When your payments stop, the service stops too.</p><p class="fix"><strong>Fix:</strong> move the bill to the client.</p></article>
+        <article class="rc low"><span class="tag">Check</span><h3>No SPF or DMARC</h3><p>Mail is more likely to land in spam, or be spoofed.</p><p class="fix"><strong>Fix:</strong> add the records your mail provider gives you.</p></article>
+      </div>
+    </section>
 
+    <section id="jargon" aria-labelledby="jargon-h">
+      <h2 id="jargon-h" class="section-title"><span class="eyebrow">jargon buster</span>The words you’ll see, in plain English</h2>
+      <dl class="jargon">
+        <div><dt>Domain name</dt><dd>Your address on the internet, like example.org. You rent it yearly from a registrar.</dd></div>
+        <div><dt>Registrar</dt><dd>The company you rent the domain from, such as GoDaddy or Namecheap.</dd></div>
+        <div><dt>DNS</dt><dd>The settings that point your domain at your website and email.</dd></div>
+        <div><dt>Hosting</dt><dd>The service that stores your website and shows it to visitors.</dd></div>
+        <div><dt>MX record</dt><dd>The DNS setting that says where your email is delivered.</dd></div>
+        <div><dt>SPF and DMARC</dt><dd>DNS settings that tell other mail servers who may send email as you.</dd></div>
+        <div><dt>Certificate</dt><dd>What makes the padlock appear. It must match your domain and be renewed.</dd></div>
+        <div><dt>RDAP</dt><dd>The public registry record that shows who a domain is registered with and when it renews.</dd></div>
+        <div><dt>Inventory file</dt><dd>The .json file Spare Key saves. It holds no passwords, so you can keep it anywhere and open it again next year.</dd></div>
+      </dl>
+    </section>
+
+    <section id="faq" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="section-title"><span class="eyebrow">questions</span>Frequently asked</h2>
+      <label class="faq-filter"><span class="vh">Filter questions</span><input id="faq-filter" type="search" placeholder="Filter questions…" autocomplete="off" aria-describedby="faq-count"></label>
+      <p id="faq-count" class="status" role="status" aria-live="polite"></p>
+      <div id="faqs">
+      <details class="faq"><summary>I don’t build websites. Someone looks after mine. Can I use this?</summary><p>Yes. Go to <a href="ask.html">For website owners</a>, fill in a few details, and we write an email for you to send to your web person. They complete the handover and send it back to you.</p></details>
+      <details class="faq"><summary>Is anything I type stored on your server?</summary><p>No. Only the domain names you look up are sent, to a function that reads public records and keeps nothing. Everything else stays in your browser until you save the inventory file. See the <a href="privacy.html">privacy notice</a>.</p></details>
+      <details class="faq"><summary>Why doesn’t it store passwords?</summary><p>A service holding the keys to other people’s accounts would be a target, and would itself become a single point of failure. Record where passwords are kept instead, for example a password manager your client can reach.</p></details>
+      <details class="faq"><summary>What does my client get?</summary><p>A plain-English Word document explaining what their website and email depend on, who pays for what, what to do in the first week if you are unavailable, and what still needs fixing. Give them the inventory file too, so anyone can update it later.</p></details>
+      <details class="faq"><summary>The lookup says “Unrecognised”. What does that mean?</summary><p>Spare Key recognises the common registrars, hosts and email providers. If it cannot tell who a provider is, it says so rather than guessing. Edit the service and type the provider’s name.</p></details>
+      <details class="faq"><summary>Why is the renewal date missing?</summary><p>Some registries do not publish registration data in a form Spare Key can read. Look the date up in the registrar’s account and add it to the registration service.</p></details>
+      <details class="faq"><summary>How do I update a handover next year?</summary><p>Open the inventory file with “Open inventory”, press “Check again” on each domain, update anything that has changed, and download a fresh document.</p></details>
+      <details class="faq"><summary>Can I use it for my own websites?</summary><p>Yes. Put yourself in as the client and a family member or friend as the emergency contact.</p></details>
+      <details class="faq"><summary>What if this website disappears?</summary><p>Nothing breaks. The documents and inventory files work without it, the file format is published, and the code is open source, so anyone can run their own copy.</p></details>
+      <details class="faq"><summary>Does it cost anything?</summary><p>No. It is free and open source.</p></details>
+      </div>
+      <p class="sub">Something missing? <a href="feedback.html">Suggest it</a>.</p>
+    </section>
+  </div>
+</div>
+`, 'lib/guide.js'],
   'privacy.html': ['Privacy', 'What Spare Key does and does not do with data.', `
 <p class="eyebrow">privacy</p>
 <h1>Privacy notice</h1>

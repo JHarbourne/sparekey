@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 – 2026-09-27
+
+- Guide redesigned: six-step timeline with previews, risk cards with fixes, a jargon buster, a filter for the questions and an "On this page" menu that follows you.
+
 ## 0.3.0 (27 September 2026)
 - For website owners: a plain-English page where an owner fills in a few details and gets an email to send their web person, with a link that opens Spare Key already filled in.
 - Owners see a plain-English check of what is publicly visible about their website.

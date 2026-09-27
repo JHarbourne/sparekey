@@ -55,3 +55,12 @@ test('a request does not silently replace another client’s draft', async ({ pa
   await page.getByRole('button', { name: 'Keep my draft' }).click();
   await expect(page.locator('[data-bind="client.organisation"]')).toHaveValue('Other Client');
 });
+
+test('guide FAQ filter narrows the questions', async ({ page }) => {
+  await page.goto('/guide');
+  await page.fill('#faq-filter', 'password');
+  await expect(page.locator('#faq-count')).toContainText('of');
+  const visible = await page.locator('#faqs .faq:visible').count();
+  expect(visible).toBeGreaterThan(0);
+  expect(visible).toBeLessThan(await page.locator('#faqs .faq').count());
+});
