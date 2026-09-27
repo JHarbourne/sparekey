@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0 (27 September 2026)
+- For website owners: a plain-English page where an owner fills in a few details and gets an email to send their web person, with a link that opens Spare Key already filled in.
+- Owners see a plain-English check of what is publicly visible about their website.
+- The request travels only in the link's #fragment, is removed from the address bar on arrival, and analytics strips all fragments and query strings.
+- Builders see who asked, and get a ready-made reply email; a request never silently replaces another client's draft.
+
 ## 0.2.0 (27 September 2026)
 - Cover page explaining what Spare Key does, with Get started.
 - New design: Geist and Geist Mono, a progress rail and a risk meter.

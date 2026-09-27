@@ -27,6 +27,7 @@
       <span class="brand-name">spare key</span>
     </a>
     <nav class="topnav" aria-label="Site">
+      <a href="ask.html">For website owners</a>
       <a href="guide.html">Guide</a>
       <a href="feedback.html">Feedback</a>
       <a data-link="source" href="https://github.com/JHarbourne/sparekey">Source</a>
@@ -52,7 +53,7 @@
         <p class="lede">When one person builds and runs the website for a charity, a club or a friend, everything tends to sit in that person’s accounts and on their card. Spare Key maps what a site depends on, shows what would break if you were unavailable, and writes a handover document your client keeps.</p>
         <div class="cta">
           <a class="btn primary lg" href="#start" id="cta-start">Get started</a>
-          <a class="btn lg" href="#how">How it works</a>
+          <a class="btn lg" href="ask.html">I own a website</a>
         </div>
       </div>
       <figure class="term" aria-label="Example lookup">
@@ -76,6 +77,16 @@
         <li><span class="eyebrow">02</span><h3>Record</h3><p>For each service, note whose name the account is in, who pays, and whether a second person can get in. Add what the lookup can’t see, such as a database or a mailing list.</p></li>
         <li><span class="eyebrow">03</span><h3>Hand over</h3><p>Download a plain-English Word document for the client, and an inventory file you both keep. Next year, open the file and check again.</p></li>
       </ol>
+    </section>
+
+    <section class="owners" aria-labelledby="owners-h">
+      <div class="owners-card">
+        <div>
+          <h2 id="owners-h" class="section-title"><span class="eyebrow">for website owners</span>Does one person look after your website?</h2>
+          <p class="sub">Ask them for a spare key. Fill in a few details, and we write the email for you. They do the technical part, and you get a plain-English handover to keep.</p>
+        </div>
+        <a class="btn primary lg" href="ask.html">Ask for a handover</a>
+      </div>
     </section>
 
     <section class="checks" aria-labelledby="checks-h">
@@ -123,6 +134,7 @@
 
   <main id="main" tabindex="-1">
     <section class="hero" aria-labelledby="intro-h">
+      <div id="request-banner" class="banner" hidden></div>
       <h1 id="intro-h" class="app-title">New handover</h1>
       <p class="lede">Work through the six steps. Everything stays in this browser until you save the file.</p>
       <p id="draft-note" class="note" hidden></p>
@@ -208,6 +220,7 @@
         <input type="file" id="open-file" accept=".json,application/json" class="vh">
         <button type="button" id="clear" class="btn danger">Start again</button>
       </div>
+      <p id="reply-row" class="reply" hidden><a id="reply-link" class="btn primary" href="#">Email the handover to the owner</a><span class="hint">Your email app opens with a message ready. Attach the document you downloaded.</span></p>
       <p id="save-status" class="status" role="status" aria-live="polite"></p>
     </section>
   </main>

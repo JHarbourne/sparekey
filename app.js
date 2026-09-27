@@ -2,7 +2,8 @@ import { emptyInventory, newService, servicesFromLookup, mergeServices, validate
 import { assessRisks, groupRisks } from './lib/risks.js';
 import { stepStatus } from './lib/progress.js';
 import { buildHandover } from './lib/docgen.js';
-import { track } from './lib/site.js';
+import { track, incomingRequest } from './lib/site.js';
+import { mailtoUrl } from './lib/request.js';
 
 const DRAFT_KEY = 'sparekey:draft';
 
@@ -293,7 +294,7 @@ $('#open-file').addEventListener('change', async (e) => {
   try {
     inv = validateInventory(JSON.parse(await f.text()));
     lastHigh = null;
-    saveDraft(); fillBound(); renderAll();
+    saveDraft(); fillBound(); renderAll(); requestBanner();
     $('#save-status').textContent = `Opened ${f.name}.`;
     track('inventory_opened', { services: inv.services.length });
   } catch (err) {
@@ -320,9 +321,55 @@ $('#clear').addEventListener('click', (e) => {
   inv = emptyInventory();
   lastHigh = null;
   try { localStorage.removeItem(DRAFT_KEY); } catch { /* fine */ }
-  fillBound(); renderAll();
+  fillBound(); renderAll(); requestBanner();
   $('#save-status').textContent = 'Cleared. Nothing is left in this browser.';
 });
+
+
+// ---------- a request from a website owner ----------
+function requestBanner() {
+  const r = inv.requestedBy;
+  const banner = $('#request-banner');
+  if (!r) { banner.hidden = true; $('#reply-row').hidden = true; return; }
+  const who = r.organisation ? `${r.name} at ${r.organisation}` : r.name;
+  banner.hidden = false;
+  banner.innerHTML = `<p><strong>${esc(who || 'A website owner')}</strong> asked you for a handover${r.domains?.length ? ` of ${esc(r.domains.join(', '))}` : ''}.</p>
+    ${r.message ? `<blockquote>${esc(r.message)}</blockquote>` : ''}
+    <p class="sub">Their details are filled in and the domains are looked up. Complete the services, then download the handover and send it back.</p>`;
+  if (r.email) {
+    const first = (r.name || '').split(' ')[0] || 'there';
+    const body = `Hi ${first},\n\nHere is the handover for ${r.domains?.join(', ') || 'your website'}. It explains what the website and email depend on, who pays for what, and what to do if I'm ever unavailable. Anything highlighted in yellow is still to be confirmed.\n\nI've also attached the inventory file. Keep it safe: anyone can open it at sparekey.dev to update the handover later.\n\n${inv.builder.name || ''}`;
+    $('#reply-link').href = mailtoUrl(r.email, `Handover for ${r.organisation || r.domains?.[0] || 'your website'}`, body);
+    $('#reply-link').textContent = `Email the handover to ${first === 'there' ? 'the owner' : first}`;
+    $('#reply-row').hidden = false;
+  }
+}
+
+async function applyRequest(req) {
+  inv = emptyInventory();
+  Object.assign(inv.client, { name: req.name, organisation: req.organisation, contact: req.email });
+  inv.builder.name = req.builderName || '';
+  inv.requestedBy = { name: req.name, organisation: req.organisation, email: req.email, domains: req.domains, message: req.message, at: new Date().toISOString() };
+  lastHigh = null;
+  saveDraft(); fillBound(); renderAll(); requestBanner();
+  track('request_opened', { domains: req.domains.length });
+  for (const d of req.domains) await runLookup(d);
+}
+
+function offerRequest(req) {
+  const who = req.organisation || req.name || 'a website owner';
+  const current = inv.client.organisation || inv.client.name || 'another client';
+  const banner = $('#request-banner');
+  banner.hidden = false;
+  banner.innerHTML = `<p><strong>New request from ${esc(who)}.</strong> You have a draft for ${esc(current)} in this browser. Save it first if you need it, because starting the request replaces it.</p>
+    <div class="actions"><button type="button" class="btn primary" id="req-start">Start the request</button>
+    <button type="button" class="btn" id="req-save">Save my draft first</button>
+    <button type="button" class="btn" id="req-keep">Keep my draft</button></div>`;
+  $('#req-start').addEventListener('click', () => applyRequest(req));
+  $('#req-save').addEventListener('click', () => { $('#save-file').click(); $('#req-save').textContent = 'Saved to your downloads'; });
+  $('#req-keep').addEventListener('click', () => { banner.hidden = true; requestBanner(); });
+  $('#req-start').focus();
+}
 
 // ---------- cover page: the example lookup types itself in ----------
 function animateTerminal() {
@@ -348,3 +395,10 @@ fillBound();
 renderAll();
 showView();
 animateTerminal();
+requestBanner();
+if (incomingRequest) {
+  const sameClient = inv.requestedBy && inv.requestedBy.email === incomingRequest.email && inv.client.organisation === incomingRequest.organisation;
+  if (sameClient) requestBanner();
+  else if (hasDraft()) offerRequest(incomingRequest);
+  else applyRequest(incomingRequest);
+}

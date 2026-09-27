@@ -8,7 +8,7 @@ import { dirname, join } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 export function header(current) {
-  const nav = [['guide.html', 'Guide'], ['feedback.html', 'Feedback']]
+  const nav = [['ask.html', 'For website owners'], ['guide.html', 'Guide'], ['feedback.html', 'Feedback']]
     .map(([href, label]) => `<a href="${href}"${current === href ? ' aria-current="page"' : ''}>${label}</a>`).join('\n      ');
   return `<header class="topbar">
   <div class="shell topbar-inner">
@@ -40,7 +40,7 @@ export const footer = `<footer class="footer">
   </div>
 </footer>`;
 
-function page(file, title, description, body) {
+function page(file, title, description, body, script = 'lib/site.js') {
   return `<!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -53,7 +53,7 @@ function page(file, title, description, body) {
 <link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <script src="theme-init.js"></script>
 <link rel="stylesheet" href="styles.css">
-<script type="module" src="lib/site.js"></script>
+<script type="module" src="${script}"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
@@ -73,6 +73,68 @@ ${footer}
 const updated = '27 September 2026';
 
 const PAGES = {
+
+  'ask.html': ['For website owners', 'Someone else looks after your website? Ask them for a handover, so you are never stuck without them.', `
+<p class="eyebrow">for website owners</p>
+<h1>Someone else looks after your website? Make sure you’re never stuck without them.</h1>
+<p class="lede">If one person built your website or runs it for you, the keys to it are probably in their accounts, and often paid on their card. That’s fine until they’re ill, busy or move on. Spare Key helps them write down everything you would need, in plain English.</p>
+
+<ol class="how-steps compact">
+  <li><span class="eyebrow">01</span><h2 class="h3">You fill in a few details</h2><p>Your name, your website address and who looks after it. About two minutes.</p></li>
+  <li><span class="eyebrow">02</span><h2 class="h3">We write the email</h2><p>You send it to your web person. The link in it opens Spare Key with your details already filled in.</p></li>
+  <li><span class="eyebrow">03</span><h2 class="h3">You get a handover</h2><p>They add the technical details and send you a document to keep: what your website depends on, who pays for what, and what to do if they’re unavailable.</p></li>
+</ol>
+
+<form id="ask-form" class="panel ask-form" novalidate>
+  <h2>Your request</h2>
+  <p class="sub">Nothing you type here is stored. It goes into the email you send, and nowhere else.</p>
+  <div class="grid">
+    <fieldset>
+      <legend>You</legend>
+      <label>Your name <input name="name" autocomplete="name" required aria-describedby="err-name"></label>
+      <p class="field-error" id="err-name" hidden>Please add your name.</p>
+      <label>Organisation <span class="opt">optional</span><input name="organisation" autocomplete="organization"></label>
+      <label>Your email <input name="email" type="email" autocomplete="email" required aria-describedby="email-hint err-email"></label>
+      <p class="hint" id="email-hint">So they can send you the finished document.</p>
+      <p class="field-error" id="err-email" hidden>Please add an email address, like name@example.org.</p>
+    </fieldset>
+    <fieldset>
+      <legend>Your web person</legend>
+      <label>Their name <input name="builderName" autocomplete="off"></label>
+      <label>Their email <input name="builderEmail" type="email" autocomplete="off" aria-describedby="builder-hint"></label>
+      <p class="hint" id="builder-hint">Only used to address the email on your device. It isn’t put in the link.</p>
+    </fieldset>
+  </div>
+  <label class="block">Your website addresses
+    <span class="hint" id="domains-hint">One per line, for example villageartstrail.org. Include any other addresses you use for email.</span>
+    <textarea name="domains" rows="2" required aria-describedby="domains-hint err-domains" spellcheck="false" autocapitalize="off"></textarea>
+  </label>
+  <p class="field-error" id="err-domains" hidden>Please add at least one website address, like example.org.</p>
+  <label class="block">A note to them <span class="opt">optional</span>
+    <textarea name="message" rows="3"></textarea>
+  </label>
+  <div class="actions"><button type="submit" class="btn primary lg">Create my request</button></div>
+</form>
+
+<section id="ask-result" class="panel" hidden tabindex="-1" aria-labelledby="result-h">
+  <h2 id="result-h">Your request is ready</h2>
+  <p class="sub">Send it by email, or copy the message and send it however you usually talk to them.</p>
+  <div class="actions">
+    <a id="send-email" class="btn primary lg" href="#">Open in my email</a>
+    <button type="button" id="copy-message" class="btn lg">Copy the message</button>
+    <button type="button" id="copy-link" class="btn lg">Copy just the link</button>
+  </div>
+  <p id="ask-status" class="status" role="status" aria-live="polite"></p>
+  <div class="email-preview" id="email-preview" aria-label="Email preview"></div>
+</section>
+
+<section id="quick-check" class="panel" hidden aria-labelledby="qc-h">
+  <h2 id="qc-h">While you wait: what anyone can see</h2>
+  <p class="sub">We checked the public records for your website. Nothing is stored. Your web person will fill in the rest.</p>
+  <p id="qc-status" class="status" role="status" aria-live="polite"></p>
+  <div id="qc-results"></div>
+</section>
+`, 'lib/ask.js'],
   'guide.html': ['Guide and FAQs', 'How to use Spare Key, and answers to common questions.', `
 <p class="eyebrow">guide</p>
 <h1>Guide and FAQs</h1>
@@ -99,6 +161,7 @@ const PAGES = {
 </dl>
 
 <h2 id="faq">Frequently asked questions</h2>
+<details class="faq"><summary>I don’t build websites. Someone looks after mine. Can I use this?</summary><p>Yes. Go to <a href="ask.html">For website owners</a>, fill in a few details, and we write an email for you to send to your web person. They complete the handover and send it back to you.</p></details>
 <details class="faq"><summary>Is anything I type stored on your server?</summary><p>No. Only the domain names you look up are sent, to a function that reads public records and keeps nothing. Everything else stays in your browser until you save the inventory file. See the <a href="privacy.html">privacy notice</a>.</p></details>
 <details class="faq"><summary>Why doesn’t it store passwords?</summary><p>A service holding the keys to other people’s accounts would be a target, and would itself become a single point of failure. Record where passwords are kept instead, for example a password manager your client can reach.</p></details>
 <details class="faq"><summary>What does my client get?</summary><p>A plain-English Word document explaining what their website and email depend on, who pays for what, what to do in the first week if you are unavailable, and what still needs fixing. Give them the inventory file too, so anyone can update it later.</p></details>
@@ -199,7 +262,7 @@ const PAGES = {
 
 export function build() {
   const out = {};
-  for (const [file, [title, desc, body]] of Object.entries(PAGES)) out[file] = page(file, title, desc, body);
+  for (const [file, [title, desc, body, script]] of Object.entries(PAGES)) out[file] = page(file, title, desc, body, script);
   // index.html: replace its header and footer with the shared ones
   let idx = readFileSync(join(root, 'index.html'), 'utf8');
   idx = idx.replace(/<header class="topbar">[\s\S]*?<\/header>/, header('index.html'))
