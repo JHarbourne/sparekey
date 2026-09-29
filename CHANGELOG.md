@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.6 – 2026-09-29
+
+- The light/dark switch now lives in its own small script that loads first. It keeps working even if the rest of the site's JavaScript is blocked or fails to load, and in older browsers (including Safari 13). Reported as stuck in light mode for one viewer and dark mode for another. A new test blocks every other script and checks the switch still works.
+
 ## 0.5.5 – 2026-09-27
 
 - A **beta** flag next to the wordmark and beside the version in the footer. Both link to the feedback page, which now says Spare Key is in beta. The header flag is hidden on the smallest phones.

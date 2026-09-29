@@ -68,3 +68,19 @@ test('an old address registered by someone else is flagged as serious', async ({
   await page.getByLabel('Stopped using it in').fill('2021');
   await expect(page.locator('#risks')).toContainText('old-name.org.uk was registered again in March 2026, probably by someone else');
 });
+
+test('the theme switch still works if the rest of the JavaScript fails to load', async ({ page }) => {
+  await page.route(/\/(app\.js|lib\/.*\.js)$/, (route) => route.fulfill({ status: 404, body: '' }));
+  for (const url of ['/', '/guide']) {
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.goto(url);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+    const sw = page.locator('[data-theme-toggle]').first();
+    await sw.click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect(sw).toHaveAttribute('aria-checked', 'true');
+    await sw.click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  }
+});
