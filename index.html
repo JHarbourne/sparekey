@@ -57,7 +57,7 @@
         <div class="cta">
           <a class="btn primary lg" href="#start" id="cta-start">I build websites</a>
           <a class="btn lg" href="ask.html">I own a website</a>
-          <button type="button" class="btn lg ghost" id="start-fresh" hidden>Start fresh</button>
+          <button type="button" class="btn lg ghost" id="start-fresh" hidden>New plan</button>
         </div>
         <p id="fresh-status" class="status" role="status" aria-live="polite"></p>
         <p class="cta-note">Builders map a client’s setup and write the continuity plan. Owners send a request to the person who looks after their website.</p>
@@ -146,7 +146,17 @@
       <div id="request-banner" class="banner" hidden></div>
       <h1 id="intro-h" class="app-title">New continuity plan</h1>
       <p class="lede">Work through the six steps. Everything stays in this browser until you save the file.</p>
-      <p id="draft-note" class="note" hidden><span id="draft-text"></span> <button type="button" class="link" id="start-fresh-2">Clear it and start fresh</button></p>
+      <p id="draft-note" class="note" hidden><span id="draft-text"></span> <button type="button" class="link" id="start-fresh-2">Start a new plan</button></p>
+      <details id="plans" class="plans" hidden>
+        <summary>Plans in this browser <span id="plans-count"></span></summary>
+        <ul id="plans-list" class="plans-list"></ul>
+        <div class="actions">
+          <button type="button" id="new-plan" class="btn">+ New plan</button>
+          <button type="button" id="clear-all" class="btn danger">Clear everything</button>
+        </div>
+        <p class="hint">Kept only in this browser, on this device. Nothing is sent to us. Anyone who uses this browser can see them, so on a shared or work computer save each plan’s file in step 06 and clear everything when you finish.</p>
+        <p id="plans-status" class="status" role="status" aria-live="polite"></p>
+      </details>
     </section>
 
     <section class="panel" id="people" aria-labelledby="people-h">
@@ -244,7 +254,7 @@
         <button type="button" id="save-file" class="btn">Save inventory (.json)</button>
         <label class="btn" for="open-file">Open inventory</label>
         <input type="file" id="open-file" accept=".json,application/json" class="vh">
-        <button type="button" id="clear" class="btn danger">Start again</button>
+        <button type="button" id="clear" class="btn danger">Delete this plan</button>
       </div>
       <p id="reply-row" class="reply" hidden><a id="reply-link" class="btn primary" href="#">Email the plan to the owner</a><span class="hint">Your email app opens with a message ready. Attach the document you downloaded.</span></p>
       <p id="save-status" class="status" role="status" aria-live="polite"></p>

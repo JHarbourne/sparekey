@@ -21,7 +21,7 @@ export const checkPage = ['Check it yourself', 'How to check for yourself that S
   </tbody>
 </table>
 <details class="more"><summary>The ${RDAP_HOSTS.length} registry addresses on the list</summary><p class="mono-list">${RDAP_HOSTS.join(' · ')}</p></details>
-<p>Everything else, the people, services, notes and risks, stays in your browser on this device until you download it. Your draft is kept in this browser’s storage so a reload doesn’t lose it, and “Clear” removes it.</p>
+<p>Everything else, the people, services, notes and risks, stays in your browser on this device until you download it. Your plans are kept in this browser’s storage so a reload doesn’t lose them, and “Clear everything” removes them.</p>
 
 <h2>Four ways to check</h2>
 <ol class="timeline checks">

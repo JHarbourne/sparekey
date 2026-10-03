@@ -69,10 +69,18 @@ Recalculated on every change. Levels: **Serious**, **Fix soon**, **Check**. Repe
 ### 5.6 Step 06 – Save and hand over
 - **Download the plan** (Word). Gaps are highlighted in yellow.
 - **Save the inventory** (JSON), and **open** a saved one.
-- **Start again** (two-press confirm) clears the browser draft.
+- **Delete this plan** (two-press confirm) removes the open plan from the browser.
 - If the work came from an owner's request, **Email the plan** opens a pre-written reply to the owner or their nominated recipient.
 
-The draft is saved in the browser's local storage on every change, and flushed on page hide.
+### 5.7 Plans in this browser
+Several plans can be kept at once, in the browser's local storage on this device only (`sparekey:plans`, with the open plan in `sparekey:current`). They are saved on every change and flushed on page hide. A plan with nothing in it is not kept.
+
+- **Plans in this browser** (top of the tool): each plan with its domain count and last change; **Open**, **Remove** (two-press), **+ New plan** and **Clear everything** (two-press). A note says anyone using the browser can see them.
+- **New plan** on the cover and **Start a new plan** at the top of the tool start an empty plan and keep the others.
+- **Open inventory** opens a file as a new plan.
+- A single draft saved by version 0.5 or earlier becomes the first plan.
+- A lookup always lands in the plan it was started from, even if another plan is opened meanwhile.
+- A domain that returns nothing at all (misspelt or unregistered) is reported in the lookup message and not added.
 
 ## 6. Owner request flow (/ask)
 
@@ -80,7 +88,7 @@ The draft is saved in the browser's local storage on every change, and flushed o
 2. Spare Key writes an email headed "Website continuity plan for …", worded as routine contingency planning. It tells the builder to check the link starts with the real address.
 3. The request is encoded in the link's `#fragment`, which browsers never send to a server. The web person's email address is never put in the link.
 4. A plain-English quick check of each address is shown to the owner.
-5. When the builder opens the link, the request is read, removed from the address bar, and the tool is pre-filled and the domains looked up. If the builder already has a draft for another client, they are offered Start / Save my draft first / Keep my draft.
+5. When the builder opens the link, the request is read, removed from the address bar, and the tool is pre-filled and the domains looked up. The request always opens as its own plan, so no other plan is replaced. Opening the same request again returns to its plan.
 
 ## 7. Risk rules
 

@@ -2,7 +2,7 @@
 
 ## What Spare Key holds
 
-Nothing, on any server. Everything a user types stays in their browser (local storage, for the draft) until they download it. The only data that leaves the browser is a domain name, sent to public lookup services to read public records.
+Nothing, on any server. Everything a user types stays in their browser (local storage, for the plans in progress) until they download it. The only data that leaves the browser is a domain name, sent to public lookup services to read public records.
 
 ## What leaves the browser
 

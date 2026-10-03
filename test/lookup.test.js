@@ -81,3 +81,7 @@ test('the page may only contact the lookup services (CSP matches the code)', () 
   assert.deepEqual(connect.sort(), expected.sort());
   assert.ok(!connect.some((c) => c === 'https:' || c.includes('*')), 'no wildcards');
 });
+
+test('a misspelt domain is reported, not added as an empty record', async () => {
+  await assert.rejects(lookup('tollebury-misspelt.com'), /nothing was found for tollebury-misspelt\.com\. Check the spelling/);
+});

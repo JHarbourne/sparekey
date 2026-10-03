@@ -6,14 +6,20 @@ import { track, incomingRequest } from './lib/site.js';
 import { mailtoUrl, recipient } from './lib/request.js';
 import { lookup, checkOldAddress } from './lib/lookup.js';
 
-const DRAFT_KEY = 'sparekey:draft';
+// Plans are kept only in this browser's storage, on this device.
+const PLANS_KEY = 'sparekey:plans';     // { [planId]: inventory }
+const CURRENT_KEY = 'sparekey:current'; // the plan open now
+const DRAFT_KEY = 'sparekey:draft';     // the single draft of 0.5.x, moved into PLANS_KEY on first load
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Unknown');
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-let inv = loadDraft() || emptyInventory();
+const newPlanId = () => `p${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+let plans = readPlans();
+let currentId = pickCurrent();
+let inv = plans[currentId] || emptyInventory();
 const hasDraft = () => Boolean(inv.services.length || inv.domains.length || (inv.oldDomains || []).length || inv.client.name || inv.client.organisation
   || inv.builder.name || inv.emergency.name || inv.passwordsLocation || inv.backupsLocation || inv.notes);
 
@@ -36,17 +42,38 @@ document.addEventListener('click', (e) => {
 });
 
 // ---------- persistence (this browser only) ----------
-function loadDraft() {
+function readPlans() {
+  const out = {};
   try {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    return raw ? validateInventory(JSON.parse(raw)) : null;
-  } catch { return null; }
+    const raw = localStorage.getItem(PLANS_KEY);
+    for (const [id, v] of Object.entries(raw ? JSON.parse(raw) : {})) {
+      try { out[id] = validateInventory(v); } catch { /* skip a damaged plan */ }
+    }
+    const old = localStorage.getItem(DRAFT_KEY);
+    if (old) {
+      try { const id = newPlanId(); out[id] = validateInventory(JSON.parse(old)); localStorage.setItem(CURRENT_KEY, id); } catch { /* ignore */ }
+      localStorage.removeItem(DRAFT_KEY);
+      localStorage.setItem(PLANS_KEY, JSON.stringify(out));
+    }
+  } catch { /* storage unavailable */ }
+  return out;
+}
+function byRecent() { return Object.keys(plans).sort((a, b) => String(plans[b].updated || '').localeCompare(String(plans[a].updated || ''))); }
+function pickCurrent() {
+  try { const c = localStorage.getItem(CURRENT_KEY); if (c && plans[c]) return c; } catch { /* fine */ }
+  return byRecent()[0] || newPlanId();
 }
 let saveTimer;
+// Save the open plan. A plan with nothing in it is not kept.
 function writeDraft() {
   clearTimeout(saveTimer);
   saveTimer = null;
-  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(inv)); } catch { /* storage unavailable: fine */ }
+  if (hasDraft()) plans[currentId] = inv; else delete plans[currentId];
+  try {
+    localStorage.setItem(PLANS_KEY, JSON.stringify(plans));
+    localStorage.setItem(CURRENT_KEY, currentId);
+  } catch { /* storage unavailable: fine */ }
+  if (typeof renderPlans === 'function') renderPlans();
 }
 function saveDraft() {
   inv.updated = new Date().toISOString();
@@ -112,7 +139,8 @@ function renderDomains(animateIndex = -1) {
         ${row('sends as', (lk.senders || []).join(', ') || 'None listed')}
         ${row('certificate', cert, c?.matchesName === false)}
         ${row('checked', fmtDate(lk.checkedAt))}
-      </dl>` : '<p class="sub">Not looked up yet.</p>'}
+      </dl>${!lk.registration?.registrar && !lk.registration?.expires && !lk.dnsHost && !lk.webHost && !lk.emailHost
+        ? `<p class="record-warn">Nothing was found for ${esc(d.name)}. Check the spelling, or remove it.</p>` : ''}` : '<p class="sub">Not looked up yet.</p>'}
       <label class="dstatus" for="dstatus-${i}">What’s the plan for this address?
         <select id="dstatus-${i}" data-dstatus="${i}">${options(DOMAIN_STATUS, d.status || 'active')}</select></label>
     </article>`;
@@ -127,12 +155,14 @@ async function runLookup(name) {
   const btn = $('#lookup-form button');
   btn.disabled = true;
   try {
+    const plan = inv; // the plan this lookup belongs to, even if another is opened meanwhile
     const data = await lookup(name);
-    let index = inv.domains.findIndex((d) => d.name === data.domain);
-    if (index >= 0) inv.domains[index].lookup = data; else { inv.domains.push({ name: data.domain, status: 'active', lookup: data }); index = inv.domains.length - 1; }
-    const before = inv.services.length;
-    inv.services = mergeServices(inv.services, servicesFromLookup(data));
-    const added = inv.services.length - before;
+    let index = plan.domains.findIndex((d) => d.name === data.domain);
+    if (index >= 0) plan.domains[index].lookup = data; else { plan.domains.push({ name: data.domain, status: 'active', lookup: data }); index = plan.domains.length - 1; }
+    const before = plan.services.length;
+    plan.services = mergeServices(plan.services, servicesFromLookup(data));
+    const added = plan.services.length - before;
+    if (plan !== inv) { plans[Object.keys(plans).find((k) => plans[k] === plan) || newPlanId()] = plan; writeDraft(); return; }
     status.textContent = `Found ${data.domain}. ${added ? `${added} service${added === 1 ? '' : 's'} added for you to complete.` : 'Services updated.'}`;
     track('lookup_completed', { services_added: added, has_registration: Boolean(data.registration) });
     saveDraft();
@@ -194,10 +224,12 @@ async function runOldCheck(name) {
   const status = $('#old-status');
   status.textContent = `Checking ${name}…`;
   try {
+    const plan = inv;
     const data = await checkOldAddress(name);
-    let od = inv.oldDomains.find((d) => d.name === data.domain);
-    if (!od) { od = newOldDomain(data.domain); inv.oldDomains.push(od); }
+    let od = plan.oldDomains.find((d) => d.name === data.domain);
+    if (!od) { od = newOldDomain(data.domain); plan.oldDomains.push(od); }
     od.lookup = data;
+    if (plan !== inv) { writeDraft(); return; }
     status.textContent = `${data.domain}: ${oldSummary(data)}`;
     saveDraft(); renderOldDomains(); renderRisks();
   } catch (err) {
@@ -360,10 +392,8 @@ $('#open-file').addEventListener('change', async (e) => {
   const f = e.target.files[0];
   if (!f) return;
   try {
-    inv = validateInventory(JSON.parse(await f.text()));
-    lastHigh = null;
-    saveDraft(); fillBound(); renderAll(); requestBanner();
-    $('#save-status').textContent = `Opened ${f.name}.`;
+    newPlan(validateInventory(JSON.parse(await f.text())));
+    $('#save-status').textContent = `Opened ${f.name} as a plan in this browser.`;
     track('inventory_opened', { services: inv.services.length });
   } catch (err) {
     $('#save-status').textContent = `Could not open that file: ${err.message}`;
@@ -384,36 +414,94 @@ $('#download-doc').addEventListener('click', async () => {
     $('#save-status').textContent = `Could not write the document: ${err.message}`;
   } finally { btn.disabled = false; }
 });
-// Clear everything in this browser and begin a new plan.
-function startFresh() {
-  inv = emptyInventory();
+// ---------- plans in this browser ----------
+function resetView() {
   lastHigh = null;
-  try { localStorage.removeItem(DRAFT_KEY); } catch { /* fine */ }
-  clearTimeout(saveTimer); saveTimer = null;
-  ['#domain-input', '#old-input'].forEach((s) => { const el = $(s); if (el) el.value = ''; });
-  ['#lookup-status', '#old-status', '#save-status'].forEach((s) => { const el = $(s); if (el) el.textContent = ''; });
-  fillBound(); renderAll(); requestBanner(); showDraftState();
+  ['#domain-input', '#old-input'].forEach((sel) => { const el = $(sel); if (el) el.value = ''; });
+  ['#lookup-status', '#old-status', '#save-status'].forEach((sel) => { const el = $(sel); if (el) el.textContent = ''; });
+  $('#public-accounts').innerHTML = options(PUBLIC_ACCOUNTS, inv.publicAccounts);
+  fillBound(); renderAll(); requestBanner(); showDraftState(); renderPlans();
 }
-$('#clear').addEventListener('click', (e) => {
-  if (!confirmInline(e.target.closest('button'), 'Press “Start again” once more to clear this browser’s draft. Save the file first if you need it.', '#save-status')) return;
-  startFresh();
-  $('#save-status').textContent = 'Cleared. Nothing is left in this browser.';
+function switchTo(id) {
+  if (saveTimer) writeDraft();
+  currentId = id; inv = plans[id];
+  try { localStorage.setItem(CURRENT_KEY, id); } catch { /* fine */ }
+  resetView();
+}
+function newPlan(seed) {
+  if (saveTimer) writeDraft();
+  currentId = newPlanId(); inv = seed || emptyInventory();
+  resetView();
+  if (seed) writeDraft();
+}
+function removePlan(id) {
+  delete plans[id];
+  if (id === currentId) {
+    const next = byRecent()[0];
+    if (next) { currentId = next; inv = plans[next]; } else { currentId = newPlanId(); inv = emptyInventory(); }
+  }
+  writeDraft(); resetView();
+}
+function clearEverything() {
+  plans = {};
+  try { localStorage.removeItem(PLANS_KEY); localStorage.removeItem(CURRENT_KEY); localStorage.removeItem(DRAFT_KEY); } catch { /* fine */ }
+  clearTimeout(saveTimer); saveTimer = null;
+  currentId = newPlanId(); inv = emptyInventory();
+  resetView();
+}
+const planName = (p) => p.client.organisation || p.client.name || (p.domains[0] && p.domains[0].name) || 'Untitled plan';
+function renderPlans() {
+  const ids = byRecent();
+  const box = $('#plans');
+  box.hidden = ids.length === 0;
+  $('#plans-count').textContent = `(${ids.length})`;
+  $('#plans-list').innerHTML = ids.map((id) => {
+    const p = plans[id]; const open = id === currentId;
+    return `<li${open ? ' class="open"' : ''}><span class="pl-name">${esc(planName(p))}</span>
+      <span class="pl-meta">${p.domains.length} domain${p.domains.length === 1 ? '' : 's'} · changed ${esc(fmtDate(p.updated))}</span>
+      <span class="pl-actions">${open ? '<span class="pl-open">Open now</span>' : `<button type="button" class="link" data-plan-open="${id}">Open<span class="vh"> ${esc(planName(p))}</span></button>`}
+      <button type="button" class="link" data-plan-remove="${id}">Remove<span class="vh"> ${esc(planName(p))}</span></button></span></li>`;
+  }).join('');
+}
+$('#plans-list').addEventListener('click', (e) => {
+  const t = e.target.closest('button');
+  if (!t) return;
+  if (t.dataset.planOpen) { switchTo(t.dataset.planOpen); $('#plans-status').textContent = `Opened ${planName(inv)}.`; }
+  if (t.dataset.planRemove) {
+    const name = planName(plans[t.dataset.planRemove]);
+    if (!confirmInline(t, `Press again to remove ${name} from this browser. Save its file first in step 06 if you need it.`, '#plans-status')) return;
+    removePlan(t.dataset.planRemove);
+    $('#plans-status').textContent = `Removed ${name}.`;
+  }
 });
-// On the cover, and at the top of the tool, when a draft has been restored.
-$('#start-fresh').addEventListener('click', (e) => {
-  if (!confirmInline(e.target.closest('button'), `Press again to clear your draft for ${draftName()} and start a new plan. Save it first from step 06 if you need it.`, '#fresh-status')) return;
-  startFresh();
-  $('#fresh-status').textContent = '';
-  location.hash = '#start';
-  $('#lookup-status').textContent = 'Started fresh. Your old draft has been cleared from this browser.';
-});
-$('#start-fresh-2').addEventListener('click', (e) => {
-  if (!confirmInline(e.target.closest('button'), `Press again to clear your draft for ${draftName()} and start a new plan. Save it first from step 06 if you need it.`, '#lookup-status')) return;
-  startFresh();
-  $('#lookup-status').textContent = 'Started fresh. Your old draft has been cleared from this browser.';
+$('#new-plan').addEventListener('click', () => {
+  newPlan();
+  $('#plans-status').textContent = 'New plan started. Your other plans are still in the list.';
   $('[data-bind="client.name"]')?.focus();
 });
-
+$('#clear-all').addEventListener('click', (e) => {
+  if (!confirmInline(e.target.closest('button'), 'Press again to remove every plan from this browser. Save the files first in step 06 if you need them.', '#plans-status')) return;
+  clearEverything();
+  $('#plans-status').textContent = 'Cleared. Nothing is left in this browser.';
+});
+// Step 06: delete the plan that is open.
+$('#clear').addEventListener('click', (e) => {
+  if (!confirmInline(e.target.closest('button'), `Press again to delete ${planName(inv)} from this browser. Save the file first if you need it.`, '#save-status')) return;
+  const name = planName(inv);
+  removePlan(currentId);
+  $('#save-status').textContent = `Deleted ${name} from this browser.`;
+});
+// On the cover, and at the top of the tool: start a new, empty plan.
+$('#start-fresh').addEventListener('click', () => {
+  newPlan();
+  location.hash = '#start';
+  $('#lookup-status').textContent = 'New plan started. Your other plans are under “Plans in this browser”.';
+});
+$('#start-fresh-2').addEventListener('click', () => {
+  newPlan();
+  $('#lookup-status').textContent = 'New plan started. Your other plans are under “Plans in this browser”.';
+  $('[data-bind="client.name"]')?.focus();
+});
 
 // ---------- a request from a website owner ----------
 function requestBanner() {
@@ -436,29 +524,13 @@ function requestBanner() {
 }
 
 async function applyRequest(req) {
-  inv = emptyInventory();
-  Object.assign(inv.client, { name: req.name, organisation: req.organisation, contact: req.email });
-  inv.builder.name = req.builderName || '';
-  inv.requestedBy = { name: req.name, organisation: req.organisation, email: req.email, sendTo: req.sendTo || null, domains: req.domains, message: req.message, at: new Date().toISOString() };
-  lastHigh = null;
-  saveDraft(); fillBound(); renderAll(); requestBanner();
+  const seed = emptyInventory();
+  Object.assign(seed.client, { name: req.name, organisation: req.organisation, contact: req.email });
+  seed.builder.name = req.builderName || '';
+  seed.requestedBy = { name: req.name, organisation: req.organisation, email: req.email, sendTo: req.sendTo || null, domains: req.domains, message: req.message, at: new Date().toISOString() };
+  newPlan(seed); // a request always gets its own plan, so no other plan is replaced
   track('request_opened', { domains: req.domains.length });
   for (const d of req.domains) await runLookup(d);
-}
-
-function offerRequest(req) {
-  const who = req.organisation || req.name || 'a website owner';
-  const current = inv.client.organisation || inv.client.name || 'another client';
-  const banner = $('#request-banner');
-  banner.hidden = false;
-  banner.innerHTML = `<p><strong>New request from ${esc(who)}.</strong> You have a draft for ${esc(current)} in this browser. Save it first if you need it, because starting the request replaces it.</p>
-    <div class="actions"><button type="button" class="btn primary" id="req-start">Start the request</button>
-    <button type="button" class="btn" id="req-save">Save my draft first</button>
-    <button type="button" class="btn" id="req-keep">Keep my draft</button></div>`;
-  $('#req-start').addEventListener('click', () => applyRequest(req));
-  $('#req-save').addEventListener('click', () => { $('#save-file').click(); $('#req-save').textContent = 'Saved to your downloads'; });
-  $('#req-keep').addEventListener('click', () => { banner.hidden = true; requestBanner(); });
-  $('#req-start').focus();
 }
 
 // ---------- cover page: the example lookup types itself in ----------
@@ -479,7 +551,7 @@ function draftName() { return inv.client.organisation || inv.client.name || 'thi
 function showDraftState() {
   const has = hasDraft();
   $('#draft-note').hidden = !has;
-  if (has) $('#draft-text').textContent = `Your draft for ${draftName()} has been restored from this browser.`;
+  if (has) $('#draft-text').textContent = `You’re working on ${draftName()}. It’s kept in this browser.`;
   $('#cta-start').textContent = has ? 'Continue your draft' : 'I build websites';
   $('#start-fresh').hidden = !has;
 }
@@ -490,9 +562,10 @@ renderAll();
 showView();
 animateTerminal();
 requestBanner();
+renderPlans();
 if (incomingRequest) {
-  const sameClient = inv.requestedBy && inv.requestedBy.email === incomingRequest.email && inv.client.organisation === incomingRequest.organisation;
-  if (sameClient) requestBanner();
-  else if (hasDraft()) offerRequest(incomingRequest);
-  else applyRequest(incomingRequest);
+  // The same request opened twice goes back to its plan rather than starting another.
+  const same = byRecent().find((id) => plans[id].requestedBy && plans[id].requestedBy.email === incomingRequest.email
+    && plans[id].client.organisation === incomingRequest.organisation);
+  if (same) switchTo(same); else applyRequest(incomingRequest);
 }

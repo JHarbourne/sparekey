@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0 – 2026-10-03
+
+- **Plans in this browser.** Keep several plans at once and switch between them. A list at the top of the tool shows each plan with its domains and when it last changed, with Open, Remove, New plan and Clear everything. Plans stay in this browser on this device only, and the list says so.
+- **New plan** on the cover and **Start a new plan** in the tool now start an empty plan and keep the others. Step 06's **Start again** is now **Delete this plan**.
+- An owner's request always opens as its own plan, so it can't replace another client's work. The "Keep my draft" choice is no longer needed.
+- Opening an inventory file adds it as a plan.
+- A draft from an earlier version becomes the first plan.
+- A misspelt or unregistered domain is reported ("nothing was found… check the spelling") instead of being added as an empty record. An existing empty record now says so.
+
 ## 0.5.7 – 2026-10-03
 
 - **Start fresh.** When there is a half-finished draft in the browser, the cover shows a **Start fresh** button next to "Continue your draft", and the top of the tool offers "Clear it and start fresh". Both ask you to press twice, then clear everything in the browser (including lookups, old addresses and messages) and open a new, empty plan.

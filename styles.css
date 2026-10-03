@@ -490,3 +490,17 @@ form > .actions, .field + .actions { margin-top: 24px; }
 .footer-links .foot-beta { font: 500 .6875rem var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--signal-text); text-decoration: none; margin-left: -8px; }
 #fresh-status:empty { display: none; }
 #draft-note .link { margin-left: 4px; }
+
+/* ---------- Plans in this browser ---------- */
+.plans { margin-top: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 10px 14px; }
+.plans summary { cursor: pointer; font-weight: 500; }
+.plans summary span { color: var(--muted); font-weight: 400; }
+.plans-list { list-style: none; margin: 10px 0; padding: 0; }
+.plans-list li { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.plans-list li.open .pl-name { color: var(--signal-text); }
+.pl-name { font-weight: 500; }
+.pl-meta { grid-column: 1; color: var(--muted); font-size: .8125rem; }
+.pl-actions { grid-column: 2; grid-row: 1 / span 2; align-self: center; display: flex; gap: 12px; align-items: center; }
+.pl-open { font: 500 .75rem var(--mono); color: var(--signal-text); }
+.plans .hint { margin: 8px 0 0; }
+.record-warn { margin: 10px 0 0; padding: 8px 12px; border-radius: 6px; background: var(--med-bg); color: var(--med); font-size: .875rem; }

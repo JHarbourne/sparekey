@@ -42,7 +42,7 @@ test('owner asks for a handover, builder opens the link pre-filled', async ({ pa
   await expect(builder.locator('#reply-link')).toHaveAttribute('href', /^mailto:anita%40example\.org/);
 });
 
-test('a request does not silently replace another client’s draft', async ({ page, context }) => {
+test('a request opens as its own plan and keeps the other client’s plan', async ({ page }) => {
   await page.goto('/#start');
   await page.locator('[data-bind="client.organisation"]').fill('Other Client');
   await page.locator('[data-bind="client.organisation"]').blur();
@@ -51,8 +51,10 @@ test('a request does not silently replace another client’s draft', async ({ pa
   const r = encodeRequest({ name: 'Anita', organisation: 'Village Arts Trail', email: 'a@example.org', domains: ['village-arts-trail.org'] });
   await page.goto(`/#start/r=${r}`);
   await page.reload();
-  await expect(page.locator('#request-banner')).toContainText('You have a draft for Other Client');
-  await page.getByRole('button', { name: 'Keep my draft' }).click();
+  await expect(page.locator('[data-bind="client.organisation"]')).toHaveValue('Village Arts Trail');
+  await page.locator('#plans summary').click();
+  await expect(page.locator('#plans-list')).toContainText('Other Client');
+  await page.getByRole('button', { name: 'Open Other Client' }).click();
   await expect(page.locator('[data-bind="client.organisation"]')).toHaveValue('Other Client');
 });
 

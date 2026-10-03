@@ -23,7 +23,7 @@ test('draft survives a reload and can be cleared', async ({ page }) => {
   await fillExample(page);
   await page.reload();
   await expect(page.locator('#draft-note')).toContainText('Village Arts Trail');
-  await page.getByRole('button', { name: 'Start again' }).click();
+  await page.getByRole('button', { name: 'Delete this plan' }).click();
   await page.getByRole('button', { name: 'Press again to confirm' }).click();
   await expect(page.locator('details.service')).toHaveCount(0);
 });
@@ -85,33 +85,39 @@ test('the theme switch still works if the rest of the JavaScript fails to load',
   }
 });
 
-test('start fresh from the cover clears a half-finished draft', async ({ page }) => {
+test('several plans in one browser: new, switch, remove, clear everything', async ({ page }) => {
   await mockLookup(page);
-  await fillExample(page);
+  await fillExample(page);            // plan 1: Village Arts Trail
   await page.goto('/');
   await page.reload();
-  const fresh = page.getByRole('button', { name: 'Start fresh' });
   await expect(page.locator('#cta-start')).toHaveText('Continue your draft');
-  await fresh.click();
-  await expect(page.locator('#fresh-status')).toContainText('Press again');
-  await page.getByRole('button', { name: 'Press again to confirm' }).click();
+  await page.getByRole('button', { name: 'New plan' }).click();
   await expect(page).toHaveURL(/#start$/);
-  await expect(page.locator('#lookup-status')).toContainText('Started fresh');
-  await expect(page.locator('.record')).toHaveCount(0);
   await expect(page.locator('[data-bind="client.organisation"]')).toHaveValue('');
-  expect(await page.evaluate(() => localStorage.getItem('sparekey:draft'))).toBeNull();
-  await page.goto('/');
-  await expect(page.locator('#cta-start')).toHaveText('I build websites');
-  await expect(fresh).toBeHidden();
+  await expect(page.locator('.record')).toHaveCount(0);
+  await page.locator('[data-bind="client.organisation"]').fill('Second Client');
+  await page.locator('[data-bind="client.organisation"]').blur();
+  await page.waitForTimeout(400);
+  await page.reload();
+  await page.locator('#plans summary').click();
+  await expect(page.locator('#plans-count')).toHaveText('(2)');
+  await page.getByRole('button', { name: 'Open Village Arts Trail' }).click();
+  await expect(page.locator('.record h3')).toHaveText('village-arts-trail.org');
+  await page.getByRole('button', { name: 'Remove Second Client' }).click();
+  await page.getByRole('button', { name: 'Press again to confirm' }).click();
+  await expect(page.locator('#plans-count')).toHaveText('(1)');
+  await page.getByRole('button', { name: 'Clear everything' }).click();
+  await page.getByRole('button', { name: 'Press again to confirm' }).click();
+  await expect(page.locator('#plans')).toBeHidden();
+  await expect(page.locator('.record')).toHaveCount(0);
+  expect(await page.evaluate(() => localStorage.getItem('sparekey:plans'))).toBeNull();
 });
 
-test('start fresh from the top of the tool', async ({ page }) => {
-  await mockLookup(page);
-  await fillExample(page);
+test('a draft saved by an earlier version is kept as a plan', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('sparekey:draft', JSON.stringify({ format: 'sparekey-inventory', version: 1, client: { organisation: 'Old Draft Ltd' }, domains: [], services: [] })));
+  await page.goto('/#start');
   await page.reload();
-  await expect(page.locator('#draft-note')).toContainText('Village Arts Trail');
-  await page.getByRole('button', { name: 'Clear it and start fresh' }).click();
-  await page.getByRole('button', { name: 'Press again to confirm' }).click();
-  await expect(page.locator('#draft-note')).toBeHidden();
-  await expect(page.locator('.record')).toHaveCount(0);
+  await expect(page.locator('[data-bind="client.organisation"]')).toHaveValue('Old Draft Ltd');
+  expect(await page.evaluate(() => localStorage.getItem('sparekey:draft'))).toBeNull();
 });
