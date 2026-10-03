@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.7 – 2026-10-03
+
+- **Start fresh.** When there is a half-finished draft in the browser, the cover shows a **Start fresh** button next to "Continue your draft", and the top of the tool offers "Clear it and start fresh". Both ask you to press twice, then clear everything in the browser (including lookups, old addresses and messages) and open a new, empty plan.
+- The cover now counts any typed detail, not just a client name or domain, as a draft.
+
 ## 0.5.6 – 2026-09-29
 
 - The light/dark switch now lives in its own small script that loads first. It keeps working even if the rest of the site's JavaScript is blocked or fails to load, and in older browsers (including Safari 13). Reported as stuck in light mode for one viewer and dark mode for another. A new test blocks every other script and checks the switch still works.

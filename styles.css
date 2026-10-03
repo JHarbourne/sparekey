@@ -488,3 +488,5 @@ form > .actions, .field + .actions { margin-top: 24px; }
 .beta:hover { background: color-mix(in srgb, var(--signal) 14%, transparent); }
 @media (max-width: 420px) { .beta { display: none; } }
 .footer-links .foot-beta { font: 500 .6875rem var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--signal-text); text-decoration: none; margin-left: -8px; }
+#fresh-status:empty { display: none; }
+#draft-note .link { margin-left: 4px; }

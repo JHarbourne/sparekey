@@ -14,7 +14,8 @@ const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString('en-GB', { day:
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let inv = loadDraft() || emptyInventory();
-const hasDraft = () => Boolean(inv.services.length || inv.domains.length || inv.client.name || inv.client.organisation);
+const hasDraft = () => Boolean(inv.services.length || inv.domains.length || (inv.oldDomains || []).length || inv.client.name || inv.client.organisation
+  || inv.builder.name || inv.emergency.name || inv.passwordsLocation || inv.backupsLocation || inv.notes);
 
 // ---------- views: cover page and the tool ----------
 function showView() {
@@ -27,7 +28,7 @@ function showView() {
 window.addEventListener('hashchange', () => {
   const app = showView();
   if (app) { window.scrollTo(0, 0); $('#main').focus({ preventScroll: true }); }
-  else if (location.hash === '' || location.hash === '#') { window.scrollTo(0, 0); }
+  else if (location.hash === '' || location.hash === '#') { window.scrollTo(0, 0); showDraftState(); }
 });
 document.addEventListener('click', (e) => {
   const a = e.target.closest('#cta-start, #cta-start-2');
@@ -383,13 +384,34 @@ $('#download-doc').addEventListener('click', async () => {
     $('#save-status').textContent = `Could not write the document: ${err.message}`;
   } finally { btn.disabled = false; }
 });
-$('#clear').addEventListener('click', (e) => {
-  if (!confirmInline(e.target.closest('button'), 'Press “Start again” once more to clear this browser’s draft. Save the file first if you need it.', '#save-status')) return;
+// Clear everything in this browser and begin a new plan.
+function startFresh() {
   inv = emptyInventory();
   lastHigh = null;
   try { localStorage.removeItem(DRAFT_KEY); } catch { /* fine */ }
-  fillBound(); renderAll(); requestBanner();
+  clearTimeout(saveTimer); saveTimer = null;
+  ['#domain-input', '#old-input'].forEach((s) => { const el = $(s); if (el) el.value = ''; });
+  ['#lookup-status', '#old-status', '#save-status'].forEach((s) => { const el = $(s); if (el) el.textContent = ''; });
+  fillBound(); renderAll(); requestBanner(); showDraftState();
+}
+$('#clear').addEventListener('click', (e) => {
+  if (!confirmInline(e.target.closest('button'), 'Press “Start again” once more to clear this browser’s draft. Save the file first if you need it.', '#save-status')) return;
+  startFresh();
   $('#save-status').textContent = 'Cleared. Nothing is left in this browser.';
+});
+// On the cover, and at the top of the tool, when a draft has been restored.
+$('#start-fresh').addEventListener('click', (e) => {
+  if (!confirmInline(e.target.closest('button'), `Press again to clear your draft for ${draftName()} and start a new plan. Save it first from step 06 if you need it.`, '#fresh-status')) return;
+  startFresh();
+  $('#fresh-status').textContent = '';
+  location.hash = '#start';
+  $('#lookup-status').textContent = 'Started fresh. Your old draft has been cleared from this browser.';
+});
+$('#start-fresh-2').addEventListener('click', (e) => {
+  if (!confirmInline(e.target.closest('button'), `Press again to clear your draft for ${draftName()} and start a new plan. Save it first from step 06 if you need it.`, '#lookup-status')) return;
+  startFresh();
+  $('#lookup-status').textContent = 'Started fresh. Your old draft has been cleared from this browser.';
+  $('[data-bind="client.name"]')?.focus();
 });
 
 
@@ -453,12 +475,15 @@ function animateTerminal() {
 
 // ---------- start ----------
 function renderAll() { renderDomains(); renderOldDomains(); renderServices(); renderRisks(); }
-if (hasDraft()) {
-  const note = $('#draft-note');
-  note.hidden = false;
-  note.textContent = `Your draft for ${inv.client.organisation || inv.client.name || 'this client'} has been restored from this browser.`;
-  $('#cta-start').textContent = 'Continue your draft';
+function draftName() { return inv.client.organisation || inv.client.name || 'this client'; }
+function showDraftState() {
+  const has = hasDraft();
+  $('#draft-note').hidden = !has;
+  if (has) $('#draft-text').textContent = `Your draft for ${draftName()} has been restored from this browser.`;
+  $('#cta-start').textContent = has ? 'Continue your draft' : 'I build websites';
+  $('#start-fresh').hidden = !has;
 }
+showDraftState();
 $('#public-accounts').innerHTML = options(PUBLIC_ACCOUNTS, inv.publicAccounts);
 fillBound();
 renderAll();

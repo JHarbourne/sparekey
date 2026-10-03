@@ -84,3 +84,34 @@ test('the theme switch still works if the rest of the JavaScript fails to load',
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   }
 });
+
+test('start fresh from the cover clears a half-finished draft', async ({ page }) => {
+  await mockLookup(page);
+  await fillExample(page);
+  await page.goto('/');
+  await page.reload();
+  const fresh = page.getByRole('button', { name: 'Start fresh' });
+  await expect(page.locator('#cta-start')).toHaveText('Continue your draft');
+  await fresh.click();
+  await expect(page.locator('#fresh-status')).toContainText('Press again');
+  await page.getByRole('button', { name: 'Press again to confirm' }).click();
+  await expect(page).toHaveURL(/#start$/);
+  await expect(page.locator('#lookup-status')).toContainText('Started fresh');
+  await expect(page.locator('.record')).toHaveCount(0);
+  await expect(page.locator('[data-bind="client.organisation"]')).toHaveValue('');
+  expect(await page.evaluate(() => localStorage.getItem('sparekey:draft'))).toBeNull();
+  await page.goto('/');
+  await expect(page.locator('#cta-start')).toHaveText('I build websites');
+  await expect(fresh).toBeHidden();
+});
+
+test('start fresh from the top of the tool', async ({ page }) => {
+  await mockLookup(page);
+  await fillExample(page);
+  await page.reload();
+  await expect(page.locator('#draft-note')).toContainText('Village Arts Trail');
+  await page.getByRole('button', { name: 'Clear it and start fresh' }).click();
+  await page.getByRole('button', { name: 'Press again to confirm' }).click();
+  await expect(page.locator('#draft-note')).toBeHidden();
+  await expect(page.locator('.record')).toHaveCount(0);
+});
