@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.2 – 2026-10-04
+
+- **Set up your own vault:** the passwords page has a section for website owners on setting up a password vault in their own name and inviting their builder, with which one to choose (Apple Passwords shared group, a free Bitwarden organisation, or 1Password or Bitwarden Teams).
+- The handover document gives the client those steps whenever the logins aren’t yet in a vault they own.
+- The login risks now say to ask the client to set up the vault, rather than the builder creating one.
+
 ## 0.7.1 – 2026-10-04
 
 - Drop-downs draw their own chevron, 14px in from the right edge, in every browser and both themes. A test now checks every drop-down, so it can’t slip again.
