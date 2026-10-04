@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.1 – 2026-10-04
+
+- **One step at a time.** The tool was about seven screens long. Now it shows one of its six steps at a time, with Back and Next at the bottom of each. The list of steps down the left is how you move around, with the current step marked; on a phone it becomes a bar across the top. Spare Key remembers which step you were on, and “Go to service” on a risk takes you to the right step. Printed, every step shows.
+- **The survey is switched on**, with the Google Form’s link. It appears after the first plan and as a third option on the feedback page.
+- The form script (docs/survey/create-form.gs) is fixed, and has showLinks to print the links again without making a second form.
+
 ## 0.8.0 – 2026-10-04
 
 - **How is the website made?** Step 03 now starts with this question, and asks only what fits. A site builder (Wix, Squarespace, Shopify) gets no code questions. WordPress gets its own route. A site built from code gets the project files and the repository questions, as before. Spare Key fills in the answer from the lookup when the host makes it obvious, such as Wix or WP Engine, and says so.

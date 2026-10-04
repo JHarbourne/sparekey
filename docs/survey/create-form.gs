@@ -88,8 +88,21 @@ function createForm() {
   });
   ScriptApp.newTrigger('onAnswer').forForm(form).onFormSubmit().create();
 
+  logLinks(form, version, ss);
+}
+
+// Prints the links. Run this on its own to see them again, without making a new form.
+function showLinks() {
+  var t = ScriptApp.getProjectTriggers()[0];
+  if (!t) { Logger.log('No form yet: run createForm first.'); return; }
+  var form = FormApp.openById(t.getTriggerSourceId());
+  var p = PropertiesService.getScriptProperties().getProperties();
+  logLinks(form, form.getItemById(Number(p.versionId)).asTextItem(), SpreadsheetApp.openById(p.sheetId));
+}
+
+function logLinks(form, version, ss) {
   var prefilled = form.createResponse()
-    .withItemResponse(version.asTextItem().createResponse('VERSION'))
+    .withItemResponse(version.createResponse('VERSION'))
     .toPrefilledUrl();
   Logger.log('Form to share: ' + form.getPublishedUrl());
   Logger.log('Prefilled link: ' + prefilled);

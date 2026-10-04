@@ -396,9 +396,58 @@ function celebrate() {
 $('#risks').addEventListener('click', (e) => {
   const a = e.target.closest('[data-open]');
   if (!a) return;
+  e.preventDefault();
   const d = document.getElementById(`svc-${a.dataset.open}`);
-  if (d) { d.open = true; d.querySelector('summary').focus(); }
+  if (d) { showStep(stepOf(d), { focus: false }); d.open = true; d.querySelector('summary').focus(); }
 });
+
+// ---------- six steps, one at a time ----------
+// The rail down the left (a bar across the top on a phone) is the list of steps.
+// Printed, every step shows.
+// Function declarations, not constants, so they work even when called during start-up.
+function stepIds() { return ['people', 'domains-sec', 'services-sec', 'access', 'risks-sec', 'handover']; }
+function stepPanelsAll() { return stepIds().map((id) => document.getElementById(id)); }
+function stepLinksAll() { return [...document.querySelectorAll('#steps a')]; }
+function stepOf(el) { return stepPanelsAll().findIndex((p) => p.contains(el)); }
+function showStep(i, { focus = true } = {}) {
+  if (i < 0) return;
+  const stepPanels = stepPanelsAll();
+  const stepLinks = stepLinksAll();
+  i = Math.min(i, stepPanels.length - 1);
+  stepPanels.forEach((p, j) => { p.hidden = j !== i; });
+  stepLinks.forEach((a, j) => { if (j === i) a.setAttribute('aria-current', 'step'); else a.removeAttribute('aria-current'); });
+  // On a phone the steps are a bar across the top: keep the current one in view.
+  const bar = document.getElementById('steps');
+  if (bar.scrollWidth > bar.clientWidth) bar.scrollLeft = stepLinks[i].offsetLeft - (bar.clientWidth - stepLinks[i].offsetWidth) / 2;
+  try { localStorage.setItem('sparekey:step', stepIds()[i]); } catch { /* fine */ }
+  if (focus) {
+    stepPanels[i].scrollIntoView({ block: 'start' });
+    stepPanels[i].querySelector('h2').focus({ preventScroll: true });
+  }
+}
+const stepNames = stepLinksAll().map((a) => a.querySelector('.label').textContent);
+const STEP_COUNT = stepNames.length;
+stepPanelsAll().forEach((p, i) => {
+  p.querySelector('h2').tabIndex = -1;
+  const nav = document.createElement('nav');
+  nav.className = 'step-nav';
+  nav.setAttribute('aria-label', `Step ${i + 1} of ${STEP_COUNT}`);
+  nav.innerHTML = `${i > 0 ? `<button type="button" class="btn ghost" data-step-go="${i - 1}"><span aria-hidden="true">←</span> Back<span class="vh">: ${stepNames[i - 1]}</span></button>` : '<span></span>'}`
+    + `${i < STEP_COUNT - 1 ? `<button type="button" class="btn primary" data-step-go="${i + 1}">Next: ${stepNames[i + 1]} <span aria-hidden="true">→</span></button>` : ''}`;
+  p.appendChild(nav);
+});
+document.addEventListener('click', (e) => {
+  const go = e.target.closest('[data-step-go]');
+  if (go) { showStep(Number(go.dataset.stepGo)); track('step_moved', { to: Number(go.dataset.stepGo) + 1, by: 'button' }); return; }
+  const link = e.target.closest('#steps a');
+  if (link) { e.preventDefault(); const i = stepLinksAll().indexOf(link); showStep(i); track('step_moved', { to: i + 1, by: 'list' }); }
+});
+function firstStep() {
+  let saved = null;
+  try { saved = localStorage.getItem('sparekey:step'); } catch { /* fine */ }
+  return Math.max(0, stepIds().indexOf(saved));
+}
+showStep(firstStep(), { focus: false });
 
 // ---------- save, open, export ----------
 function download(blob, filename) {
@@ -479,6 +528,7 @@ function newPlan(seed) {
   if (saveTimer) writeDraft();
   currentId = newPlanId(); inv = seed || emptyInventory();
   resetView();
+  showStep(0, { focus: false });
   if (seed) writeDraft();
 }
 function removePlan(id) {
@@ -495,6 +545,7 @@ function clearEverything() {
   clearTimeout(saveTimer); saveTimer = null;
   currentId = newPlanId(); inv = emptyInventory();
   resetView();
+  showStep(0, { focus: false });
 }
 const planName = (p) => p.client.organisation || p.client.name || (p.domains[0] && p.domains[0].name) || 'Untitled plan';
 function renderPlans() {

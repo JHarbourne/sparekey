@@ -1,6 +1,6 @@
 // Regression: every drop-down keeps its chevron clear of the right edge, in both themes.
 import { test, expect } from '@playwright/test';
-import { mockLookup, fillExample } from './fixtures.js';
+import { mockLookup, fillExample, step } from './fixtures.js';
 
 for (const colorScheme of ['light', 'dark']) {
   test(`select chevrons have right padding (${colorScheme})`, async ({ browser }) => {
@@ -24,6 +24,8 @@ for (const colorScheme of ['light', 'dark']) {
 test('fields in a row are the same height and line up', async ({ page }) => {
   await mockLookup(page);
   await fillExample(page);
+  // Measure every step's fields at once.
+  await page.evaluate(() => document.querySelectorAll('#app-view .panel').forEach((p) => { p.hidden = false; }));
   await page.evaluate(() => document.querySelectorAll('details.service').forEach((d) => { d.open = true; }));
   const rows = await page.evaluate(() => [...document.querySelectorAll('.grid.two, .old-fields, details.service .body')].map((g) => {
     const boxes = [...g.querySelectorAll(':scope > label > input, :scope > label > select')].map((f) => f.getBoundingClientRect()).filter((r) => r.height);
@@ -40,6 +42,7 @@ test('fields in a row are the same height and line up', async ({ page }) => {
 
 test('pressing → in the empty code address starts it with https://github.com/', async ({ page }) => {
   await page.goto('/#start');
+  await step(page, 'Services');
   const repo = page.locator('[data-bind="project.repo"]');
   await repo.focus();
   await page.keyboard.press('ArrowRight');

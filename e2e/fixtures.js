@@ -19,7 +19,13 @@ export async function fillExample(page) {
   await page.goto('/#start');
   await page.getByLabel('Name').first().fill('Anita');
   await page.locator('[data-bind="client.organisation"]').fill('Village Arts Trail');
+  await step(page, 'Domains');
   await page.locator('#domain-input').fill('village-arts-trail.org');
   await page.getByRole('button', { name: 'Look up' }).click();
   await page.locator('.record').first().waitFor();
+}
+
+// The tool shows one step at a time: go to a step by its name in the list.
+export async function step(page, name) {
+  await page.locator('#steps a', { hasText: name }).click();
 }

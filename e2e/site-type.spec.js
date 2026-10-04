@@ -1,5 +1,6 @@
 // Step 03 asks how the site is made, and asks only what fits.
 import { test, expect } from '@playwright/test';
+import { step } from './fixtures.js';
 
 const REPORT = `### wp-core ###
 
@@ -22,6 +23,7 @@ php_version: 8.3.4 64bit
 
 test('the questions change with how the site is made', async ({ page }) => {
   await page.goto('/#start');
+  await step(page, 'Services');
   const drop = page.locator('#drop');
   const repo = page.locator('[data-bind="project.repo"]');
   const wp = page.locator('#wp-paste');
@@ -45,6 +47,7 @@ test('the questions change with how the site is made', async ({ page }) => {
 
 test('pasting WordPress site information reads plugins and adds services', async ({ page }) => {
   await page.goto('/#start');
+  await step(page, 'Services');
   await page.locator('#site-type').selectOption('wordpress');
   await page.locator('#wp-paste').fill(REPORT);
   await page.getByRole('button', { name: 'Read it' }).click();
@@ -58,6 +61,7 @@ test('pasting WordPress site information reads plugins and adds services', async
 
 test('pasting something else explains what to copy', async ({ page }) => {
   await page.goto('/#start');
+  await step(page, 'Services');
   await page.locator('#site-type').selectOption('wordpress');
   await page.locator('#wp-paste').fill('not a report');
   await page.getByRole('button', { name: 'Read it' }).click();

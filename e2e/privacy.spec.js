@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { step } from './fixtures.js';
 
 // The real lookup, with the public services answered locally. Checks the
 // promise on the "Check it yourself" page: a lookup only contacts public
@@ -20,6 +21,7 @@ test('a lookup only contacts public lookup services', async ({ page }) => {
   await page.route('https://api.certspotter.com/**', (route) => route.fulfill({ json: [], headers: { 'access-control-allow-origin': '*' } }));
 
   await page.goto('/#start');
+  await step(page, 'Domains');
   await page.locator('#domain-input').fill('village-arts-trail.org');
   await page.getByRole('button', { name: 'Look up' }).click();
   await expect(page.locator('.record h3')).toHaveText('village-arts-trail.org');

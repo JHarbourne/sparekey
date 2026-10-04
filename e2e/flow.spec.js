@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { mockLookup, fillExample } from './fixtures.js';
+import { mockLookup, fillExample, step } from './fixtures.js';
 
 test.beforeEach(async ({ page }) => { await mockLookup(page); });
 
@@ -14,6 +14,7 @@ test('lookup, complete services, and download the handover', async ({ page }) =>
   await fillExample(page);
   await expect(page.locator('details.service')).toHaveCount(6);
   await expect(page.locator('#risk-summary')).toContainText('serious');
+  await step(page, 'Hand over');
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: /Download the plan/ }).click();
   expect((await download).suggestedFilename()).toBe('village-arts-trail-continuity-plan.docx');
@@ -23,6 +24,7 @@ test('draft survives a reload and can be cleared', async ({ page }) => {
   await fillExample(page);
   await page.reload();
   await expect(page.locator('#draft-note')).toContainText('Village Arts Trail');
+  await step(page, 'Hand over');
   await page.getByRole('button', { name: 'Delete this plan' }).click();
   await page.getByRole('button', { name: 'Press again to confirm' }).click();
   await expect(page.locator('details.service')).toHaveCount(0);
@@ -51,7 +53,9 @@ test('footer shows the version and legal links on every page', async ({ page }) 
 
 test('clearing the last serious risk turns the key and says so', async ({ page }) => {
   await fillExample(page);
+  await step(page, 'People');
   await page.getByLabel('Name').nth(2).fill('Pat'); // emergency contact
+  await step(page, 'Services');
   const email = page.locator('details.service').filter({ hasText: 'Email at' });
   await email.locator('summary').click();
   await email.getByLabel('Provider').fill('Google (Gmail / Workspace)');
@@ -62,6 +66,7 @@ test('clearing the last serious risk turns the key and says so', async ({ page }
 test('an old address registered by someone else is flagged as serious', async ({ page }) => {
   await mockLookup(page);
   await page.goto('/#start');
+  await step(page, 'Domains');
   await page.locator('#old-input').fill('https://www.old-name.org.uk/');
   await page.getByRole('button', { name: 'Check', exact: true }).click();
   await expect(page.locator('#old-domains')).toContainText('registered on 14 March 2026');
@@ -149,10 +154,12 @@ test('drop project files: stack, services and an API key, values never kept', as
 test('choose how logins are kept, and download the dates as a calendar', async ({ page }) => {
   await mockLookup(page);
   await fillExample(page);
+  await step(page, 'Access');
   await page.locator('#pw-method').selectOption('browser');
   await expect(page.locator('#risks')).toContainText('The logins are only saved in a browser or Apple Keychain');
   await page.locator('#pw-method').selectOption('shared-client');
   await expect(page.locator('#risks')).not.toContainText('Apple Keychain');
+  await step(page, 'Hand over');
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: /Add the dates to a calendar/ }).click();
   const file = await download;

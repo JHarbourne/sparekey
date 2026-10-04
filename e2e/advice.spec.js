@@ -1,8 +1,10 @@
 // A risky answer in steps 03 and 04 shows what to do next; a safe one doesn't.
 import { test, expect } from '@playwright/test';
+import { step } from './fixtures.js';
 
 test('risky answers show what to do next', async ({ page }) => {
   await page.goto('/#start');
+  await step(page, 'Services');
   const repo = page.locator('[data-advice-for="project.repoAccess"]');
   await expect(repo).toBeHidden();
   await page.locator('#repo-access').selectOption('builder-only');
@@ -11,6 +13,7 @@ test('risky answers show what to do next', async ({ page }) => {
   await page.locator('#repo-access').selectOption('org');
   await expect(repo).toBeHidden();
 
+  await step(page, 'Access');
   const pw = page.locator('[data-advice-for="passwordsMethod"]');
   await page.locator('#pw-method').selectOption('paper');
   await expect(pw).toBeVisible();
@@ -29,6 +32,7 @@ test('risky answers show what to do next', async ({ page }) => {
 test('advice survives a reload', async ({ page }) => {
   await page.goto('/#start');
   await page.locator('[data-bind="client.organisation"]').fill('Village Arts Trail');
+  await step(page, 'Access');
   await page.locator('#pw-method').selectOption('browser');
   await page.waitForTimeout(600);
   await page.reload();
@@ -37,6 +41,7 @@ test('advice survives a reload', async ({ page }) => {
 
 test('backups ask where, how often and how far back, with advice', async ({ page }) => {
   await page.goto('/#start');
+  await step(page, 'Access');
   const detail = page.locator('#backup-detail');
   await page.locator('#backup-method').selectOption('none');
   await expect(detail).toBeHidden();
