@@ -348,6 +348,7 @@ const PAGES = {
 
 <h2>Feedback</h2>
 <p>The feedback board is run on the Nearmark website, which is also run by Jonathan Harbourne. Posting an idea needs an email address for a sign-in link, and is covered by that site’s privacy notice.</p>
+<p>After your first continuity plan, Spare Key offers an optional survey once. It is a Google Form: your answers go to Google and to us, and are covered by Google’s privacy policy as well as this notice. It doesn’t ask for your name or email, doesn’t need a Google account, and nothing you typed into Spare Key is sent with it, only the version number. Your browser remembers that you’ve answered or said no thanks, so it isn’t offered again; that note stays on your device.</p>
 
 <h2>Your rights</h2>
 <p>Because we hold no personal data about you, there is usually nothing to access or delete. If you think we do hold something, contact us at the address above. You can also complain to the Information Commissioner’s Office (ico.org.uk).</p>
@@ -400,6 +401,11 @@ const PAGES = {
     <strong>Report a problem</strong>
     <span>Something broken or wrong? Open an issue on GitHub. Please do not include client details or anything private.</span>
     <span class="go" aria-hidden="true">Report on GitHub →</span>
+  </a>
+  <a class="choice-card" data-link="survey" data-needs-link href="#" hidden>
+    <strong>Tell us how it went</strong>
+    <span>Two minutes, optional and anonymous: how likely you are to recommend Spare Key, and how easy it was to use.</span>
+    <span class="go" aria-hidden="true">Answer the questions →</span>
   </a>
 </div>
 <p class="sub">The feedback board is shared with Nearmark and our other projects. Ideas you post from here are tagged “Spare Key” with the version you’re using, so we know which release they’re about.</p>

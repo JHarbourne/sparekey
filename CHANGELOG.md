@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.9 – 2026-10-04
+
+- **An optional survey after the first plan.** Once someone downloads their first continuity plan, Spare Key offers a two-minute survey, once: how likely they are to recommend it (Net Promoter Score) and the ten System Usability Scale statements. It also appears on the feedback page. It stays switched off until the form’s link is added in lib/site.js.
+- docs/survey/create-form.gs builds the Google Form, its answers spreadsheet and a Scores sheet that works out NPS and SUS automatically.
+- The privacy notice explains the survey.
+
 ## 0.7.8 – 2026-10-04
 
 - **Where the code lives**, a new section of the guide written for people who build websites on their own and may never have used GitHub: what to do for site builders, WordPress and coded sites; what GitHub and an organisation are; how to give each client their own organisation, move the code into it and keep the site publishing; what to do if the files are only on your computer; and your own sites. Linked from step 03 and from the advice under “Who can reach the code?”.

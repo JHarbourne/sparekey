@@ -434,11 +434,31 @@ $('#download-doc').addEventListener('click', async () => {
     const blob = await buildHandover(inv, risks);
     download(blob, `${slug()}-continuity-plan.docx`);
     $('#save-status').textContent = 'Continuity plan downloaded. Anything highlighted in yellow still needs filling in.';
+    offerSurvey();
     track('handover_downloaded', { services: inv.services.length, domains: inv.domains.length, serious: risks.filter((r) => r.level === 'high').length });
   } catch (err) {
     $('#save-status').textContent = `Could not write the document: ${err.message}`;
   } finally { btn.disabled = false; }
 });
+// ---------- the optional survey, offered once, after the first plan ----------
+const SURVEY_KEY = 'sparekey:survey';
+function offerSurvey() {
+  const box = $('#survey');
+  const link = $('#survey-go');
+  if (!box || !link || !link.getAttribute('href') || link.getAttribute('href') === '#') return;
+  let seen = null;
+  try { seen = localStorage.getItem(SURVEY_KEY); } catch { /* storage unavailable */ }
+  if (seen) return;
+  box.hidden = false;
+  track('survey_offered');
+}
+function closeSurvey(answer) {
+  try { localStorage.setItem(SURVEY_KEY, answer); } catch { /* fine */ }
+  $('#survey').hidden = true;
+  track(answer === 'opened' ? 'survey_opened' : 'survey_declined');
+}
+$('#survey-go')?.addEventListener('click', () => closeSurvey('opened'));
+$('#survey-no')?.addEventListener('click', () => closeSurvey('declined'));
 // ---------- plans in this browser ----------
 function resetView() {
   lastHigh = null;
