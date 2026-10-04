@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.2 – 2026-10-04
+
+- **Usage counts are switched on**, with PostHog’s EU cloud, set up as the privacy notice describes: no cookies, no profiles, no recordings, named events with numbers only. Moving between steps, the survey and reading WordPress are now counted too. Automated browsers, including our own tests, are never counted.
+- The accessibility test checks every step of the tool, and the CI no longer fails when Microsoft’s package server is unavailable.
+
 ## 0.8.1 – 2026-10-04
 
 - **One step at a time.** The tool was about seven screens long. Now it shows one of its six steps at a time, with Back and Next at the bottom of each. The list of steps down the left is how you move around, with the current step marked; on a phone it becomes a bar across the top. Spare Key remembers which step you were on, and “Go to service” on a risk takes you to the right step. Printed, every step shows.
