@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.5 – 2026-10-04
+
+- The template download icons are square tiles, like app icons, with a plain document or spreadsheet symbol instead of a W or X, so they don’t imitate Microsoft’s own icons.
+
 ## 0.8.4 – 2026-10-04
 
 - **Email and phone, not “Contact”.** Each person in step 01 now has an Email box and an optional Phone box, so it’s clear what to put where. Phones get the number keypad and emails the email keyboard on a phone, and your own details can fill in from the browser.
