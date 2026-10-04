@@ -30,7 +30,12 @@ A handover inventory is a UTF-8 JSON file. Anyone can read it with a text editor
     }
   ],
   "publicAccounts": "unknown | none | approved | open",
-  "project": { "stack": ["Astro", "Vite"], "hosting": "Vercel", "repo": "https://github.com/…", "repoAccess": "unknown | client-owner | org | builder-only | none | na" },
+  "project": {
+    "type": "unknown | builder | wordpress | code | other",
+    "stack": ["Astro", "Vite"], "hosting": "Vercel", "repo": "https://github.com/…", "repoAccess": "unknown | client-owner | org | builder-only | none | na",
+    "wordpress": { "version": "6.6.2", "php": "8.3.4", "multisite": false, "theme": { "name": "Astra", "version": "4.8.1", "parent": "optional" },
+      "plugins": [{ "name": "Akismet", "version": "5.3.3", "autoUpdate": "on | off | unknown", "latest": "optional" }], "mustUse": ["…"], "inactive": 0 }
+  },
   "passwordsMethod": "unknown | shared-client | emergency | sealed | paper | own-only | browser",
   "twoFactor": "unknown | shared | builder-phone | none",
   "backupMethod": "unknown | client-storage | git | host-only | builder-storage | none",
@@ -72,6 +77,6 @@ A handover inventory is a UTF-8 JSON file. Anyone can read it with a text editor
 | `certificate` | Issuer and expiry of the newest current certificate in the public Certificate Transparency logs, or `{ "missing": true }` |
 | `checkedAt` | When the lookup ran |
 
-`backupWhere`, `backupFrequency` and `backupKeep` were added in 0.7.5. `project`, `passwordsMethod`, `twoFactor`, `backupMethod`, `backupTested` and the kinds `code`, `cms`, `analytics` and `api` were added in 0.7.0, and lookups gained `subdomains` and `linked`. `status`, `oldDomains` and `publicAccounts` were added in Spare Key 0.5.0. They are optional, and older files open with `active`, `[]` and `unknown`.
+`project.type` and `project.wordpress` were added in 0.8.0. `backupWhere`, `backupFrequency` and `backupKeep` were added in 0.7.5. `project`, `passwordsMethod`, `twoFactor`, `backupMethod`, `backupTested` and the kinds `code`, `cms`, `analytics` and `api` were added in 0.7.0, and lookups gained `subdomains` and `linked`. `status`, `oldDomains` and `publicAccounts` were added in Spare Key 0.5.0. They are optional, and older files open with `active`, `[]` and `unknown`.
 
 Unknown fields are ignored when a file is opened, so later versions can add to the format without breaking older files.

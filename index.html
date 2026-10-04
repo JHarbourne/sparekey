@@ -222,17 +222,42 @@
 
       <div class="project" id="project">
         <h3 id="project-h">How the website is built</h3>
-        <p class="sub">Drop the project’s <code>package.json</code> here, and its <code>.env.example</code> or <code>.env</code> if it has one. Not every site does. On a Mac, files starting with a dot are hidden: press Command + Shift + . (full stop) in Finder or the file chooser to show them. Spare Key recognises the framework, content editor, analytics, maps and API keys, and adds them below. The files are read in your browser and never sent anywhere. From a real <code>.env</code> only the names are kept.</p>
-        <label class="drop" id="drop" for="project-files"><span class="drop-text">Drop files here, or <span class="drop-link">choose files</span></span>
-          <input type="file" id="project-files" multiple class="file-input" aria-describedby="project-status"></label>
-        <p id="project-status" class="status" role="status" aria-live="polite"></p>
-        <p id="project-stack" class="stack" hidden></p>
-        <div class="grid two">
-          <label>Where is the code? <span class="opt">optional</span><input data-bind="project.repo" placeholder="https://github.com/…" data-suggest="https://github.com/" aria-describedby="repo-tip" autocomplete="off" spellcheck="false"></label>
-          <label>Who can reach the code?<select data-bind="project.repoAccess" id="repo-access"></select></label>
+        <label class="block">How is the website made?
+          <span class="hint">The questions below change to suit.</span>
+          <select data-bind="project.type" id="site-type"></select>
+        </label>
+        <p id="site-type-guess" class="hint" hidden></p>
+
+        <div data-for-type="builder" hidden>
+          <p class="sub">There’s no code to keep. What matters is that the site builder account is in the client’s name, with you added as a contributor, and that someone exports the pages, images and form entries now and then, where the builder allows it. Complete the website service below.</p>
         </div>
-        <p class="hint" id="repo-tip">In the code address, press → to start with https://github.com/. New to GitHub? <a href="guide.html#code">Where the code lives</a>.</p>
-        <div class="advice" data-advice-for="project.repoAccess" role="status" hidden></div>
+
+        <div data-for-type="wordpress" hidden>
+          <p class="sub">Spare Key can read WordPress’s own site information. In the WordPress dashboard, go to <strong>Tools</strong>, <strong>Site Health</strong>, <strong>Info</strong>, and choose <strong>Copy site info to clipboard</strong>. Paste it here. It’s read in your browser and never sent anywhere. Only the WordPress and PHP versions, the theme and the plugins are kept.</p>
+          <label class="vh" for="wp-paste">WordPress site information</label>
+          <textarea id="wp-paste" rows="4" placeholder="Paste the site information here" spellcheck="false" aria-describedby="wp-status"></textarea>
+          <p class="wp-actions"><button type="button" class="btn" id="wp-read">Read it</button></p>
+          <p id="wp-status" class="status" role="status" aria-live="polite"></p>
+          <div id="wp-summary" hidden></div>
+        </div>
+
+        <div data-for-type="code unknown other" hidden>
+          <p class="sub">Drop the project’s <code>package.json</code> here, and its <code>.env.example</code> or <code>.env</code> if it has one. Not every site does. On a Mac, files starting with a dot are hidden: press Command + Shift + . (full stop) in Finder or the file chooser to show them. Spare Key recognises the framework, content editor, analytics, maps and API keys, and adds them below. The files are read in your browser and never sent anywhere. From a real <code>.env</code> only the names are kept.</p>
+          <label class="drop" id="drop" for="project-files"><span class="drop-text">Drop files here, or <span class="drop-link">choose files</span></span>
+            <input type="file" id="project-files" multiple class="file-input" aria-describedby="project-status"></label>
+          <p id="project-status" class="status" role="status" aria-live="polite"></p>
+        </div>
+        <p id="project-stack" class="stack" hidden></p>
+
+        <div data-for-type="code unknown other wordpress" hidden>
+          <p class="sub" data-for-type="wordpress" hidden>Only if you wrote a custom theme or plugin: where is its code?</p>
+          <div class="grid two">
+            <label>Where is the code? <span class="opt">optional</span><input data-bind="project.repo" placeholder="https://github.com/…" data-suggest="https://github.com/" aria-describedby="repo-tip" autocomplete="off" spellcheck="false"></label>
+            <label>Who can reach the code?<select data-bind="project.repoAccess" id="repo-access"></select></label>
+          </div>
+          <p class="hint" id="repo-tip">In the code address, press → to start with https://github.com/. New to GitHub? <a href="guide.html#code">Where the code lives</a>.</p>
+          <div class="advice" data-advice-for="project.repoAccess" role="status" hidden></div>
+        </div>
       </div>
 
       <div id="services"></div>

@@ -1,6 +1,7 @@
 import { emptyInventory, newService, servicesFromLookup, mergeServices, validateInventory, newOldDomain, KINDS, WHO, YESNO, DOMAIN_STATUS, PUBLIC_ACCOUNTS,
   REPO_ACCESS, PASSWORD_METHODS, TWO_FACTOR, BACKUP_METHODS, BACKUP_TESTED,
-  BACKUP_WHERE, BACKUP_FREQUENCY, BACKUP_KEEP } from './lib/model.js';
+  BACKUP_WHERE, BACKUP_FREQUENCY, BACKUP_KEEP, SITE_TYPES, guessSiteType } from './lib/model.js';
+import { readSiteHealth, servicesFromWordPress, wordpressStack } from './lib/wordpress.js';
 import { readProject, servicesFromProject } from './lib/project.js';
 import { buildCalendar, datesInPlan } from './lib/calendar.js';
 import { assessRisks, groupRisks } from './lib/risks.js';
@@ -120,6 +121,7 @@ document.addEventListener('input', (e) => {
   const el = e.target;
   if (el.dataset.bind) {
     setPath(inv, el.dataset.bind, el.value);
+    if (el.dataset.bind === 'project.type') { delete inv.project.typeFrom; renderProject(); renderRisks(); }
     if (el.tagName === 'SELECT') renderAdvice();
   } else if (el.dataset.ofield) {
     const od = inv.oldDomains[Number(el.dataset.old)];
@@ -191,7 +193,7 @@ async function runLookup(name) {
     status.textContent = `Found ${data.domain}. ${added ? `${added} service${added === 1 ? '' : 's'} added for you to complete.` : 'Services updated.'}`;
     track('lookup_completed', { services_added: added, has_registration: Boolean(data.registration) });
     saveDraft();
-    renderDomains(index); renderServices(); renderRisks();
+    renderDomains(index); renderProject(); renderServices(); renderRisks();
   } catch (err) {
     status.textContent = `Could not look up ${name}: ${err.message}`;
     track('lookup_failed');
@@ -594,7 +596,7 @@ function animateTerminal() {
 function renderAll() { renderDomains(); renderOldDomains(); renderProject(); renderServices(); renderRisks(); }
 // The choice lists, filled from the model so the words live in one place.
 function fillSelects() {
-  for (const [sel, map, path] of [['#public-accounts', PUBLIC_ACCOUNTS, 'publicAccounts'], ['#repo-access', REPO_ACCESS, 'project.repoAccess'],
+  for (const [sel, map, path] of [['#public-accounts', PUBLIC_ACCOUNTS, 'publicAccounts'], ['#repo-access', REPO_ACCESS, 'project.repoAccess'], ['#site-type', SITE_TYPES, 'project.type'],
     ['#pw-method', PASSWORD_METHODS, 'passwordsMethod'], ['#two-factor', TWO_FACTOR, 'twoFactor'],
     ['#backup-method', BACKUP_METHODS, 'backupMethod'], ['#backup-tested', BACKUP_TESTED, 'backupTested'],
     ['#backup-where', BACKUP_WHERE, 'backupWhere'], ['#backup-frequency', BACKUP_FREQUENCY, 'backupFrequency'], ['#backup-keep', BACKUP_KEEP, 'backupKeep']]) {
@@ -604,11 +606,53 @@ function fillSelects() {
 
 // ---------- how the website is built ----------
 function renderProject() {
-  const p = inv.project || {};
-  const bits = [...(p.stack || []), ...(p.hosting ? [`hosted on ${p.hosting}`] : [])];
+  inv.project = inv.project || { type: 'unknown', stack: [], hosting: '', repo: '', repoAccess: 'unknown', wordpress: null };
+  const p = inv.project;
+  // No answer yet: guess from where the lookup found the site, and say so.
+  if ((p.type || 'unknown') === 'unknown') {
+    const g = guessSiteType(inv);
+    if (g) { p.type = g.type; p.typeFrom = g.from; $('#site-type').value = g.type; }
+  }
+  const type = p.type || 'unknown';
+  document.querySelectorAll('[data-for-type]').forEach((el) => { el.hidden = !el.dataset.forType.split(' ').includes(type); });
+  const note = $('#site-type-guess');
+  note.hidden = !p.typeFrom;
+  note.textContent = p.typeFrom ? `Chosen because the lookup found the site on ${p.typeFrom}. Change it if that’s not right.` : '';
+  renderWordPress(p.wordpress);
+  const bits = [...(p.wordpress ? wordpressStack(p.wordpress) : []), ...(p.stack || []), ...(p.hosting ? [`hosted on ${p.hosting}`] : [])];
   $('#project-stack').hidden = !bits.length;
   $('#project-stack').innerHTML = bits.length ? `<span class="stack-label">Built with</span> ${bits.map((b) => `<span class="chip-s">${esc(b)}</span>`).join(' ')}` : '';
 }
+function renderWordPress(wp) {
+  const box = $('#wp-summary');
+  if (!wp) { box.hidden = true; box.innerHTML = ''; return; }
+  const off = wp.plugins.filter((x) => x.autoUpdate === 'off').length;
+  const behind = wp.plugins.filter((x) => x.latest).length;
+  const facts = [
+    wp.theme ? `Theme: ${esc(wp.theme.name)}${wp.theme.version ? ` ${esc(wp.theme.version)}` : ''}${wp.theme.parent ? `, a child of ${esc(wp.theme.parent)}` : ''}.` : '',
+    `${wp.plugins.length} active plugin${wp.plugins.length === 1 ? '' : 's'}${off ? `, ${off} not updating automatically` : ''}${behind ? `, ${behind} with an update waiting` : ''}.`,
+    wp.inactive ? `${wp.inactive} switched off.` : '',
+  ].filter(Boolean).join(' ');
+  box.hidden = false;
+  box.innerHTML = `<p>${facts}</p>${wp.plugins.length ? `<details class="more"><summary>The plugins</summary><ul class="wp-plugins">${wp.plugins.map((x) =>
+    `<li><span>${esc(x.name)}</span> <span class="meta">${esc(x.version)}${x.latest ? `, ${esc(x.latest)} available` : ''}${x.autoUpdate === 'off' ? ', updates by hand' : ''}</span></li>`).join('')}</ul></details>` : ''}`;
+}
+$('#wp-read').addEventListener('click', () => {
+  const area = $('#wp-paste');
+  let wp;
+  try { wp = readSiteHealth(area.value); } catch (err) { $('#wp-status').textContent = err.message; return; }
+  inv.project.wordpress = wp;
+  inv.project.type = 'wordpress';
+  delete inv.project.typeFrom;
+  $('#site-type').value = 'wordpress';
+  const before = inv.services.length;
+  inv.services = mergeServices(inv.services, servicesFromWordPress(wp, inv.domains[0]?.name || ''));
+  const added = inv.services.slice(before).map((s) => s.name);
+  area.value = '';
+  $('#wp-status').textContent = `Read WordPress ${wp.version || ''} with ${wp.plugins.length} active plugins. ${added.length ? `Added ${added.length} service${added.length === 1 ? '' : 's'} to complete: ${added.join(', ')}.` : 'No new services found.'} The pasted text has been cleared.`;
+  track('wordpress_read', { plugins: wp.plugins.length, services_added: added.length });
+  saveDraft(); renderProject(); renderServices(); renderRisks();
+});
 async function readFiles(fileList) {
   const files = [];
   for (const f of [...fileList]) {
@@ -617,7 +661,8 @@ async function readFiles(fileList) {
   }
   if (!files.length) { $('#project-status').textContent = 'Those files are too large to be project files. Choose package.json and .env.example.'; return; }
   const result = readProject(files);
-  inv.project = inv.project || { stack: [], hosting: '', repo: '', repoAccess: 'unknown' };
+  inv.project = inv.project || { type: 'unknown', stack: [], hosting: '', repo: '', repoAccess: 'unknown', wordpress: null };
+  if (result.stack.length && ['unknown', 'other'].includes(inv.project.type || 'unknown')) { inv.project.type = 'code'; delete inv.project.typeFrom; $('#site-type').value = 'code'; }
   for (const x of result.stack) if (!inv.project.stack.includes(x)) inv.project.stack.push(x);
   if (result.hosting) inv.project.hosting = result.hosting;
   const before = inv.services.length;

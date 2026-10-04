@@ -592,3 +592,12 @@ a.btn[data-ext]::after, a.vh[data-ext]::after { content: none; }
 .survey h3 { margin: 0 0 6px; font-size: 1rem; }
 .survey p { margin: 0 0 12px; color: var(--muted); font-size: .9375rem; }
 .survey .survey-actions { margin: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Step 03: WordPress site information. */
+#wp-paste { font-family: var(--mono); font-size: .8125rem; }
+.wp-actions { margin: 8px 0 0; }
+#wp-summary { margin: 10px 0 0; font-size: .9375rem; }
+#wp-summary p { margin: 0 0 6px; }
+.wp-plugins { margin: 8px 0 0; padding-left: 1.1rem; font-size: .875rem; }
+.wp-plugins li { margin: 0 0 4px; }
+#project [data-for-type] > .sub:first-child { margin-top: 12px; }

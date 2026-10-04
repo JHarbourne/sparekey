@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.0 – 2026-10-04
+
+- **How is the website made?** Step 03 now starts with this question, and asks only what fits. A site builder (Wix, Squarespace, Shopify) gets no code questions. WordPress gets its own route. A site built from code gets the project files and the repository questions, as before. Spare Key fills in the answer from the lookup when the host makes it obvious, such as Wix or WP Engine, and says so.
+- **WordPress, read automatically.** Paste WordPress’s own site information (Tools, Site Health, Info, Copy site info) and Spare Key reads the WordPress and PHP versions, the theme and every plugin, in the browser. Paid plugins and themes, such as Elementor Pro or Gravity Forms, become licences to record, and plugins linked to accounts, such as Akismet, Jetpack or WP Mail SMTP, become services. The pasted text is cleared, and paths and server details are never kept.
+- New WordPress risks: PHP that no longer gets security fixes, plugins with updates waiting, plugins that only update by hand, and switched-off plugins left installed.
+- The continuity plan says how the site is made and, for WordPress, lists the theme and plugins with their versions and how they update.
+
 ## 0.7.9 – 2026-10-04
 
 - **An optional survey after the first plan.** Once someone downloads their first continuity plan, Spare Key offers a two-minute survey, once: how likely they are to recommend it (Net Promoter Score) and the ten System Usability Scale statements. It also appears on the feedback page. It stays switched off until the form’s link is added in lib/site.js.
