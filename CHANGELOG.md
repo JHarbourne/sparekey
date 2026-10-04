@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.4 – 2026-10-04
+
+- Links that leave Spare Key, such as the feedback board, GitHub and the services on the passwords page, open in a new tab, so the tool and anything typed into it stay put. They show a small arrow, and screen readers hear “opens in a new tab”. Email links are unchanged.
+
 ## 0.7.3 – 2026-10-04
 
 - Fields and drop-downs are all the same height, and fields in a row line up along the bottom however long their labels are. A test checks every row.

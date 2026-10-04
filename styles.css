@@ -547,3 +547,7 @@ form > .actions, .field + .actions { margin-top: 24px; }
 .ladder .warn { border-left-color: var(--med); }
 .ladder .bad { border-left-color: var(--high); }
 .sources { font-size: .875rem; }
+
+/* Links that leave the site open in a new tab (links.js); the arrow says so. */
+a[data-ext]::after { content: "\2197" / ""; display: inline-block; margin-left: 2px; font-size: .8em; text-decoration: none; }
+a.btn[data-ext]::after, a.vh[data-ext]::after { content: none; }

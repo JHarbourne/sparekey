@@ -57,6 +57,7 @@ function page(file, title, description, body, script = 'lib/site.js') {
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <script src="theme-init.js"></script>
+<script src="links.js" defer></script>
 <link rel="stylesheet" href="styles.css">
 <script type="module" src="${script}"></script>
 </head>
