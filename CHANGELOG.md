@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.8 – 2026-10-04
+
+- **Where the code lives**, a new section of the guide written for people who build websites on their own and may never have used GitHub: what to do for site builders, WordPress and coded sites; what GitHub and an organisation are; how to give each client their own organisation, move the code into it and keep the site publishing; what to do if the files are only on your computer; and your own sites. Linked from step 03 and from the advice under “Who can reach the code?”.
+- “Repository” and “GitHub” are in the jargon buster.
+
 ## 0.7.7 – 2026-10-04
 
 - The domain policy page was over three screens long on a laptop and five on a phone. It is now in three tabs: check an address (with what to do if one is misused), the questions to answer, and the policy to copy. Each tab has its own address, works with the arrow keys, and ends with a link to the next. Printed, or without JavaScript, the whole page shows as before.

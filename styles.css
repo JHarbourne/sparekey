@@ -582,3 +582,7 @@ a.btn[data-ext]::after, a.vh[data-ext]::after { content: none; }
 @media (max-width: 480px) {
   .tablist [role="tab"] { flex: 1 1 auto; padding: 10px 8px; font-size: .875rem; }
 }
+
+/* Guide: where the code lives. */
+#code > h3 { margin: 32px 0 8px; font-size: 1.0625rem; }
+#code > .svc-table { margin: 16px 0 8px; }

@@ -58,6 +58,7 @@
     <ol>
       <li><a href="#steps">Six steps</a></li>
       <li><a href="#risks">What the risks mean</a></li>
+      <li><a href="#code">Where the code lives</a></li>
       <li><a href="#jargon">Jargon buster</a></li>
       <li><a href="#templates">Templates</a></li>
     </ol>
@@ -109,12 +110,46 @@
       </div>
     </section>
 
+    <section id="code" aria-labelledby="code-h">
+      <h2 id="code-h" class="section-title"><span class="eyebrow">where the code lives</span>If you work on your own</h2>
+      <p>If you build websites on your own, you may never have needed GitHub or anything like it. But the files that make up a website have to be somewhere the client can reach if you can’t, and on your laptop isn’t that place. What to do depends on how the site was made.</p>
+      <table class="svc-table">
+        <thead><tr><th scope="col">If the site is…</th><th scope="col">What to do</th></tr></thead>
+        <tbody>
+          <tr><td>Made with a site builder, such as Wix, Squarespace or Shopify</td><td>Nothing about code: there isn’t any to keep. Make sure the account is in the client’s name, with you added as a contributor.</td></tr>
+          <tr><td>WordPress, or another content editor, on hosting</td><td>The site lives on the hosting, with its content in a database. Put the hosting account in the client’s name and send backups to the client’s own storage (see <a href="passwords.html#backups">backups</a>). If you wrote a custom theme or plugin, keep a copy of that on GitHub too.</td></tr>
+          <tr><td>Built from code, such as HTML, Astro or Next.js</td><td>The code needs a home the client can reach: a free GitHub organisation in their name. The steps are below.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>What GitHub is</h3>
+      <p>A website that stores code and every earlier version of it, so nothing is lost and any change can be undone. It’s free for this. Hosts such as Vercel and Netlify read the code from GitHub and publish the site whenever it changes. An <strong>organisation</strong> is a shared space on GitHub that belongs to the client, not to you, with people invited in.</p>
+
+      <h3>Give each client their own organisation</h3>
+      <ol class="timeline checks">
+        <li><div class="tl-text"><h3>The client makes a free GitHub account</h3><p>At <a href="https://github.com/signup">github.com</a>, with an email address the organisation controls, such as office@. Their login goes in their password vault.</p></div></li>
+        <li><div class="tl-text"><h3>Create an organisation for them</h3><p>On GitHub, click <strong>+</strong> at the top of the page, choose <strong>New organization</strong> and pick the <strong>Free</strong> plan. Name it after the client. If you create it, invite the client and make them an <strong>Owner</strong>, so there are two of you.</p></div></li>
+        <li><div class="tl-text"><h3>Move the code into it</h3><p>In the repository, open <strong>Settings</strong>, scroll to the <strong>Danger Zone</strong> and choose <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository">Transfer ownership</a>. Pick the client’s organisation. Old links still work.</p></div></li>
+        <li><div class="tl-text"><h3>Check the site still publishes</h3><p>Reconnect the host to the new organisation. On Vercel’s free plan, a private repository owned by an organisation won’t publish directly: use a paid plan in the client’s name, or publish with GitHub Actions. Vercel’s free plan is also only for non-commercial sites, so a business should be on a paid plan anyway.</p></div></li>
+        <li><div class="tl-text"><h3>Turn on two-step sign-in</h3><p>In the organisation’s settings, require two-factor authentication for everyone, and save each person’s recovery codes in the client’s vault.</p></div></li>
+      </ol>
+      <p><strong>Not ready to move it yet?</strong> At least add the client as a collaborator: in the repository, open <strong>Settings</strong>, then <strong>Collaborators</strong>. They can then see and download the code, though only you can change its settings.</p>
+
+      <h3>If the files are only on your computer</h3>
+      <p>Install <a href="https://desktop.github.com/">GitHub Desktop</a>. It does all of this without the command line. Add the site’s folder, choose <strong>Publish repository</strong>, pick the client’s organisation and keep it private. Leave out any file that holds passwords or keys, such as <code>.env</code>: GitHub Desktop lets you ignore it.</p>
+
+      <h3>Your own sites</h3>
+      <p>Code for your own projects can stay in your account. Name a successor under <strong>Settings</strong>, <strong>Account</strong>, <strong>Successor settings</strong>, who can take over your public repositories. For private ones, make sure your GitHub login and recovery codes are in your password manager, with emergency access set up.</p>
+    </section>
+
     <section id="jargon" aria-labelledby="jargon-h">
       <h2 id="jargon-h" class="section-title"><span class="eyebrow">jargon buster</span>The words you’ll see, in plain English</h2>
       <dl class="jargon">
         <div><dt>Domain name</dt><dd>Your address on the internet, like example.org. You rent it yearly from a registrar.</dd></div>
         <div><dt>Registrar</dt><dd>The company you rent the domain from, such as GoDaddy or Namecheap.</dd></div>
         <div><dt>DNS</dt><dd>The settings that point your domain at your website and email.</dd></div>
+        <div><dt>Repository</dt><dd>A folder of a website’s code, with every earlier version kept. Often shortened to repo.</dd></div>
+        <div><dt>GitHub</dt><dd>The best-known place to keep repositories. Hosts such as Vercel publish from it.</dd></div>
         <div><dt>Hosting</dt><dd>The service that stores your website and shows it to visitors.</dd></div>
         <div><dt>MX record</dt><dd>The DNS setting that says where your email is delivered.</dd></div>
         <div><dt>SPF and DMARC</dt><dd>DNS settings that tell other mail servers who may send email as you.</dd></div>
