@@ -628,3 +628,7 @@ a.btn[data-ext]::after, a.vh[data-ext]::after { content: none; }
 
 /* Signposts: the small headings inside each step are green, so people can find their way. */
 #app-view legend, #app-view .panel h3 { color: var(--signal-text); }
+
+/* A warning under an email address or phone number that doesn't look right. */
+.field-error { display: block; margin: 4px 0 0; font-size: .8125rem; color: var(--high); }
+input[aria-invalid="true"] { border-color: var(--high); }

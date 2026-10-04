@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.4 – 2026-10-04
+
+- **Email and phone, not “Contact”.** Each person in step 01 now has an Email box and an optional Phone box, so it’s clear what to put where. Phones get the number keypad and emails the email keyboard on a phone, and your own details can fill in from the browser.
+- Both are checked when you leave the box: an email needs an @ and a full domain, and a phone number needs 7 to 15 digits. It’s a warning in red under the box, never a block, so a half-finished plan still saves.
+- Plans and files from earlier versions keep their details: anything with an @ moves to Email, anything else to Phone.
+
 ## 0.8.3 – 2026-10-04
 
 - The small headings inside each step, such as Client, You, the builder, Emergency contact, Old addresses and How the website is built, are green, so the page is easier to find your way around. The green passes the contrast checks in both themes.

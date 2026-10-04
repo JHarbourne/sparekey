@@ -58,7 +58,8 @@ test('loading a file validates format', () => {
   assert.throws(() => validateInventory({ hello: 1 }), /not a handover inventory/);
   const inv = validateInventory({ format: 'sparekey-inventory', version: 1, client: { name: 'A' }, services: [{ kind: 'dns' }] });
   assert.equal(inv.client.name, 'A');
-  assert.equal(inv.client.contact, '');
+  assert.equal(inv.client.email, '');
+  assert.equal(inv.client.phone, '');
   assert.ok(inv.services[0].id);
 });
 

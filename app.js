@@ -1,6 +1,6 @@
 import { emptyInventory, newService, servicesFromLookup, mergeServices, validateInventory, newOldDomain, KINDS, WHO, YESNO, DOMAIN_STATUS, PUBLIC_ACCOUNTS,
   REPO_ACCESS, PASSWORD_METHODS, TWO_FACTOR, BACKUP_METHODS, BACKUP_TESTED,
-  BACKUP_WHERE, BACKUP_FREQUENCY, BACKUP_KEEP, SITE_TYPES, guessSiteType } from './lib/model.js';
+  BACKUP_WHERE, BACKUP_FREQUENCY, BACKUP_KEEP, SITE_TYPES, guessSiteType, emailProblem, phoneProblem } from './lib/model.js';
 import { readSiteHealth, servicesFromWordPress, wordpressStack } from './lib/wordpress.js';
 import { readProject, servicesFromProject } from './lib/project.js';
 import { buildCalendar, datesInPlan } from './lib/calendar.js';
@@ -100,6 +100,26 @@ function setPath(obj, path, val) {
 function fillBound() {
   document.querySelectorAll('[data-bind]').forEach((el) => { el.value = getPath(inv, el.dataset.bind) ?? ''; });
   renderAdvice();
+  checkAllContacts();
+}
+// Check email addresses and phone numbers when you leave the box. A warning, never a block.
+function checkContact(el) {
+  const problem = el.type === 'email' ? emailProblem(el.value) : phoneProblem(el.value);
+  const msg = document.getElementById(el.getAttribute('aria-describedby'));
+  if (problem) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
+  if (msg) { msg.textContent = problem; msg.hidden = !problem; }
+}
+document.addEventListener('focusout', (e) => {
+  const el = e.target;
+  if (el instanceof HTMLInputElement && el.dataset.bind && (el.type === 'email' || el.type === 'tel')) checkContact(el);
+});
+// While fixing a flagged box, clear the warning as soon as it's right.
+document.addEventListener('input', (e) => {
+  const el = e.target;
+  if (el instanceof HTMLInputElement && el.getAttribute('aria-invalid') === 'true') checkContact(el);
+});
+function checkAllContacts() {
+  document.querySelectorAll('input[data-bind][type="email"], input[data-bind][type="tel"]').forEach(checkContact);
 }
 // What to do next, under an answer that leaves the client exposed.
 function renderAdvice() {
@@ -623,7 +643,7 @@ function requestBanner() {
 
 async function applyRequest(req) {
   const seed = emptyInventory();
-  Object.assign(seed.client, { name: req.name, organisation: req.organisation, contact: req.email });
+  Object.assign(seed.client, { name: req.name, organisation: req.organisation, email: req.email });
   seed.builder.name = req.builderName || '';
   seed.requestedBy = { name: req.name, organisation: req.organisation, email: req.email, sendTo: req.sendTo || null, domains: req.domains, message: req.message, at: new Date().toISOString() };
   newPlan(seed); // a request always gets its own plan, so no other plan is replaced

@@ -168,25 +168,37 @@
           <legend>Client</legend>
           <label>Name <input data-bind="client.name" autocomplete="off"></label>
           <label>Organisation <input data-bind="client.organisation" autocomplete="off"></label>
-          <label>Contact <input data-bind="client.contact" autocomplete="off"></label>
+          <label>Email <input type="email" data-bind="client.email" inputmode="email" autocomplete="off" spellcheck="false" aria-describedby="err-client-email"></label>
+          <span class="field-error" id="err-client-email" hidden></span>
+          <label>Phone <span class="opt">optional</span><input type="tel" data-bind="client.phone" inputmode="tel" autocomplete="off" aria-describedby="err-client-phone"></label>
+          <span class="field-error" id="err-client-phone" hidden></span>
         </fieldset>
         <fieldset>
           <legend>You, the builder</legend>
           <label>Name <input data-bind="builder.name" autocomplete="name"></label>
-          <label>Contact <input data-bind="builder.contact" autocomplete="off"></label>
+          <label>Email <input type="email" data-bind="builder.email" inputmode="email" autocomplete="email" spellcheck="false" aria-describedby="err-builder-email"></label>
+          <span class="field-error" id="err-builder-email" hidden></span>
+          <label>Phone <span class="opt">optional</span><input type="tel" data-bind="builder.phone" inputmode="tel" autocomplete="tel" aria-describedby="err-builder-phone"></label>
+          <span class="field-error" id="err-builder-phone" hidden></span>
         </fieldset>
         <fieldset>
           <legend>Emergency contact</legend>
           <p class="hint" id="emergency-hint">Someone who can reach your accounts if you can’t, such as your executor.</p>
           <label>Name <input data-bind="emergency.name" aria-describedby="emergency-hint" autocomplete="off"></label>
           <label>Relationship <input data-bind="emergency.relationship" autocomplete="off"></label>
-          <label>Contact <input data-bind="emergency.contact" autocomplete="off"></label>
+          <label>Email <input type="email" data-bind="emergency.email" inputmode="email" autocomplete="off" spellcheck="false" aria-describedby="err-emergency-email"></label>
+          <span class="field-error" id="err-emergency-email" hidden></span>
+          <label>Phone <span class="opt">optional</span><input type="tel" data-bind="emergency.phone" inputmode="tel" autocomplete="off" aria-describedby="err-emergency-phone"></label>
+          <span class="field-error" id="err-emergency-phone" hidden></span>
         </fieldset>
         <fieldset>
           <legend>Technical helper <span class="opt">optional</span></legend>
           <p class="hint" id="helper-hint">Someone you’d trust to take the work over.</p>
           <label>Name <input data-bind="helper.name" aria-describedby="helper-hint" autocomplete="off"></label>
-          <label>Contact <input data-bind="helper.contact" autocomplete="off"></label>
+          <label>Email <input type="email" data-bind="helper.email" inputmode="email" autocomplete="off" spellcheck="false" aria-describedby="err-helper-email"></label>
+          <span class="field-error" id="err-helper-email" hidden></span>
+          <label>Phone <span class="opt">optional</span><input type="tel" data-bind="helper.phone" inputmode="tel" autocomplete="off" aria-describedby="err-helper-phone"></label>
+          <span class="field-error" id="err-helper-phone" hidden></span>
         </fieldset>
       </div>
     </section>
