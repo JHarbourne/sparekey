@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.7 – 2026-10-04
+
+- The domain policy page was over three screens long on a laptop and five on a phone. It is now in three tabs: check an address (with what to do if one is misused), the questions to answer, and the policy to copy. Each tab has its own address, works with the arrow keys, and ends with a link to the next. Printed, or without JavaScript, the whole page shows as before.
+
 ## 0.7.6 – 2026-10-04
 
 - The domain policy page points organisations that already have a policy to the Domain Release Clause on jharbourne.com, to add to it rather than replace it.
