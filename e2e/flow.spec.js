@@ -128,3 +128,34 @@ test('feedback links carry the product and the version', async ({ page }) => {
   const href = await page.locator('.rail-meta a').getAttribute('href');
   expect(href).toMatch(/^https:\/\/nearmark\.co\.uk\/feedback\?product=sparekey&v=\d+\.\d+\.\d+$/);
 });
+
+test('drop project files: stack, services and an API key, values never kept', async ({ page }) => {
+  await mockLookup(page);
+  await page.goto('/#start');
+  await page.locator('#project-files').setInputFiles([
+    { name: 'package.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ dependencies: { astro: '5', tinacms: '2', 'posthog-js': '1' } })) },
+    { name: '.env', mimeType: 'text/plain', buffer: Buffer.from('GOOGLE_BOOKS_API_KEY=AIzaSyREALSECRET\n') },
+  ]);
+  await expect(page.locator('#project-status')).toContainText('Found Astro');
+  await expect(page.locator('#project-status')).toContainText('values were thrown away');
+  await expect(page.locator('#project-stack')).toContainText('Astro');
+  await expect(page.locator('#services')).toContainText('Google Books API key');
+  await page.waitForTimeout(400);
+  const saved = await page.evaluate(() => localStorage.getItem('sparekey:plans'));
+  expect(saved).toContain('GOOGLE_BOOKS_API_KEY');
+  expect(saved).not.toContain('AIzaSyREALSECRET');
+});
+
+test('choose how logins are kept, and download the dates as a calendar', async ({ page }) => {
+  await mockLookup(page);
+  await fillExample(page);
+  await page.locator('#pw-method').selectOption('browser');
+  await expect(page.locator('#risks')).toContainText('The logins are only saved in a browser or Apple Keychain');
+  await page.locator('#pw-method').selectOption('shared-client');
+  await expect(page.locator('#risks')).not.toContainText('Apple Keychain');
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: /Add the dates to a calendar/ }).click();
+  const file = await download;
+  expect(file.suggestedFilename()).toBe('village-arts-trail-dates.ics');
+  await expect(page.locator('#save-status')).toContainText('saved as a calendar file');
+});

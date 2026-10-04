@@ -7,7 +7,9 @@ const answers = {
   'simon-edge.com|1': ['185.230.63.171'],
   'simon-edge.com|2': ['ns14.wixdns.net.', 'ns15.wixdns.net.'],
   'simon-edge.com|15': ['10 aspmx.l.google.com.'],
-  'simon-edge.com|16': ['"v=spf1 include:_spf.google.com ~all"'],
+  'simon-edge.com|16': ['"v=spf1 include:_spf.google.com ~all"', '"google-site-verification=abc123"', '"brevo-code:xyz"'],
+  'blog.simon-edge.com|5': ['simon-edge.ghost.io.'],
+  'k1._domainkey.simon-edge.com|16': ['"k=rsa; p=MIGf"'],
   '_dmarc.simon-edge.com|16': ['"v=DMARC1; p=none"'],
 };
 const TYPE = { A: 1, NS: 2, CNAME: 5, MX: 15, TXT: 16, PTR: 12 };
@@ -25,8 +27,10 @@ globalThis.fetch = async (url) => {
       entities: [{ roles: ['registrar'], vcardArray: ['vcard', [['fn', {}, 'text', 'Wix.com Ltd.']]] }] }));
   }
   if (u.hostname === 'api.certspotter.com') {
+    assert.equal(u.searchParams.get('include_subdomains'), 'true');
     return new Response(JSON.stringify([{ dns_names: ['simon-edge.com', 'www.simon-edge.com'], issuer: { friendly_name: "Let's Encrypt" },
-      not_before: '2020-01-01T00:00:00Z', not_after: '2099-01-01T00:00:00Z', revoked: false }]));
+      not_before: '2020-01-01T00:00:00Z', not_after: '2099-01-01T00:00:00Z', revoked: false },
+    { dns_names: ['blog.simon-edge.com', 'old.simon-edge.com'], not_before: '2020-01-01T00:00:00Z', not_after: '2021-01-01T00:00:00Z' }]));
   }
   const name = u.searchParams.get('name'); const t = TYPE[u.searchParams.get('type')];
   const data = answers[`${name}|${t}`] || [];
@@ -51,6 +55,9 @@ test('describes Simon’s current setup, from the browser', async () => {
   assert.equal(r.registration.registrar, 'Wix.com Ltd.');
   assert.equal(r.dmarc.policy, 'none');
   assert.equal(r.certificate.issuer, "Let's Encrypt");
+  // found automatically: another site on the domain, and linked accounts
+  assert.deepEqual(r.subdomains.map((x) => x.name), ['blog.simon-edge.com']); // old.simon-edge.com no longer resolves
+  assert.deepEqual(r.linked.map((x) => x.name).sort(), ['Brevo', 'Google Search Console', 'Mailchimp']);
   assert.ok(!seen.has('simon-edge.com') && !seen.has('www.simon-edge.com'), 'never connects to the website itself');
 });
 

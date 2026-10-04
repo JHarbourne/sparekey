@@ -21,6 +21,7 @@ export const checkPage = ['Check it yourself', 'How to check for yourself that S
   </tbody>
 </table>
 <details class="more"><summary>The ${RDAP_HOSTS.length} registry addresses on the list</summary><p class="mono-list">${RDAP_HOSTS.join(' · ')}</p></details>
+<p>Project files you drop in step 03 (such as <code>package.json</code>) are read in your browser and never sent anywhere. From an environment file only the names are kept.</p>
 <p>Everything else, the people, services, notes and risks, stays in your browser on this device until you download it. Your plans are kept in this browser’s storage so a reload doesn’t lose them, and “Clear everything” removes them.</p>
 
 <h2>Four ways to check</h2>

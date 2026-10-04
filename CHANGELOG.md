@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.0 – 2026-10-04
+
+- **Found automatically:** other sites on a domain (subdomains named in the public certificate logs, with where each is hosted), and accounts linked to it (Google Search Console, Microsoft 365, Brevo, Apple iCloud+, Stripe and others from verification records; Mailchimp, SendGrid, Klaviyo, Resend and others from email-signing records). Each becomes a service to complete.
+- **How the website is built:** drop `package.json` and `.env.example` in step 03. Spare Key recognises the framework and tools (Astro, Vite, Next.js, Leaflet…), the host, and services with accounts (Tina, PostHog, Supabase, Stripe, Mapbox, Google Maps…), plus any API keys by name. Read in the browser, never sent. From a real `.env` only the names are kept.
+- **Where the code is, and who can reach it**, with a serious risk when only the builder can.
+- **Logins, two-step sign-in and backups** are now clear choices that score as risks, instead of open boxes, with a new page of recommendations (/passwords).
+- **API keys and tokens** are a kind of service with an expiry date, flagged 60 and 30 days before.
+- **Add the dates to a calendar:** every renewal and expiry in the plan as an .ics file, with reminders 30 and 7 days before.
+- The continuity plan includes how the site is built and the new access answers.
+
 ## 0.6.1 – 2026-10-04
 
 - The version shows discreetly in the tool, under the progress meter, with a link to give feedback.

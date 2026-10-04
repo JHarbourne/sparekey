@@ -18,7 +18,7 @@ export async function mockLookup(page) {
 export async function fillExample(page) {
   await page.goto('/#start');
   await page.getByLabel('Name').first().fill('Anita');
-  await page.getByLabel('Organisation').fill('Village Arts Trail');
+  await page.locator('[data-bind="client.organisation"]').fill('Village Arts Trail');
   await page.locator('#domain-input').fill('village-arts-trail.org');
   await page.getByRole('button', { name: 'Look up' }).click();
   await page.locator('.record').first().waitFor();

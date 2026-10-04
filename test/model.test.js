@@ -47,7 +47,7 @@ test('risks reflect the real Tollesbury situation', () => {
 
 test('a well set-up client has few risks', () => {
   const inv = emptyInventory();
-  Object.assign(inv, { passwordsLocation: 'Client 1Password', backupsLocation: 'Weekly export to client Google Drive' });
+  Object.assign(inv, { passwordsMethod: 'shared-client', twoFactor: 'shared', backupMethod: 'client-storage', backupTested: 'year' });
   inv.emergency.name = 'Pat';
   inv.services = servicesFromLookup({ ...tollesbury, emailHost: 'Google (Gmail / Workspace)', senders: [], dmarc: { policy: 'reject' } })
     .map((s) => ({ ...s, accountOwner: 'client', paidBy: 'client', secondAdmin: 'yes', autoRenew: 'yes', renews: s.kind === 'registration' ? '2027-11-10' : '' }));
@@ -60,4 +60,13 @@ test('loading a file validates format', () => {
   assert.equal(inv.client.name, 'A');
   assert.equal(inv.client.contact, '');
   assert.ok(inv.services[0].id);
+});
+
+test('discovered sites and linked accounts become services to complete', async () => {
+  const { servicesFromLookup } = await import('../lib/model.js');
+  const s = servicesFromLookup({ domain: 'example.org', senders: [], linked: [{ name: 'Google Search Console', kind: 'other' }, { name: 'Mailchimp', kind: 'sending' }],
+    subdomains: [{ name: 'shop.example.org', host: 'Shopify' }] });
+  assert.ok(s.some((x) => x.kind === 'other' && x.provider === 'Google Search Console'));
+  assert.ok(s.some((x) => x.kind === 'sending' && x.provider === 'Mailchimp'));
+  assert.ok(s.some((x) => x.kind === 'website' && x.domain === 'shop.example.org' && x.provider === 'Shopify'));
 });

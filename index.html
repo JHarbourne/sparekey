@@ -218,19 +218,47 @@
     <section class="panel" id="services-sec" aria-labelledby="services-h">
       <header class="panel-head"><span class="eyebrow">03</span><h2 id="services-h">Services</h2></header>
       <p class="sub">Everything the website and email depend on. Looked-up services appear here. Complete who owns and pays for each, and add what the lookup can’t see: a database, a mailing list, a booking system.</p>
+
+      <div class="project" id="project">
+        <h3 id="project-h">How the website is built</h3>
+        <p class="sub">Drop the project’s <code>package.json</code> and <code>.env.example</code> here. Spare Key recognises the framework, content editor, analytics, maps and API keys, and adds them below. The files are read in your browser and never sent anywhere. From a real <code>.env</code> only the names are kept.</p>
+        <label class="drop" id="drop" for="project-files"><span class="drop-text">Drop files here, or <span class="drop-link">choose files</span></span>
+          <input type="file" id="project-files" multiple class="file-input" aria-describedby="project-status"></label>
+        <p id="project-status" class="status" role="status" aria-live="polite"></p>
+        <p id="project-stack" class="stack" hidden></p>
+        <div class="grid two">
+          <label>Where is the code? <span class="opt">optional</span><input data-bind="project.repo" placeholder="https://github.com/…" autocomplete="off" spellcheck="false"></label>
+          <label>Who can reach the code?<select data-bind="project.repoAccess" id="repo-access"></select></label>
+        </div>
+      </div>
+
       <div id="services"></div>
       <button type="button" id="add-service" class="btn ghost">+ Add a service</button>
     </section>
 
     <section class="panel" id="access" aria-labelledby="access-h">
       <header class="panel-head"><span class="eyebrow">04</span><h2 id="access-h">Access and backups</h2></header>
-      <label class="block">Where are the passwords kept?
-        <span class="hint">For example “Shared 1Password vault” or “Sealed envelope with my executor”. Never the passwords themselves.</span>
+      <p class="sub">The best set-up is a shared password vault the client owns, sign-in codes that reach the client too, and backups in the client’s own storage. <a href="passwords.html">What we recommend, and why</a>.</p>
+      <label class="block">How are the logins kept?
+        <select data-bind="passwordsMethod" id="pw-method"></select>
+      </label>
+      <label class="block">Details <span class="opt">optional</span>
+        <span class="hint">For example the vault’s name, or who holds the sealed envelope. Never the passwords themselves.</span>
         <textarea data-bind="passwordsLocation" rows="2"></textarea>
       </label>
-      <label class="block">Where are the backups kept?
-        <span class="hint">At least one copy should be outside the hosting account.</span>
+      <label class="block">Where do two-step sign-in codes go?
+        <span class="hint">The text messages, app codes or security key you need as well as a password.</span>
+        <select data-bind="twoFactor" id="two-factor"></select>
+      </label>
+      <label class="block">How are backups kept?
+        <select data-bind="backupMethod" id="backup-method"></select>
+      </label>
+      <label class="block">Details <span class="opt">optional</span>
+        <span class="hint">What is copied, where to, and how often.</span>
         <textarea data-bind="backupsLocation" rows="2"></textarea>
+      </label>
+      <label class="block">Has anyone tried restoring a backup?
+        <select data-bind="backupTested" id="backup-tested"></select>
       </label>
       <label class="block">Can members of the public create accounts on the website?
         <span class="hint">Membership forms, comments, forums. Spammers use open sign-ups to publish adverts on trusted websites.</span>
@@ -253,6 +281,7 @@
       <div class="actions">
         <button type="button" id="download-doc" class="btn primary">Download the plan (.docx)</button>
         <button type="button" id="save-file" class="btn">Save inventory (.json)</button>
+        <button type="button" id="calendar" class="btn">Add the dates to a calendar (.ics)</button>
         <label class="btn" for="open-file">Open inventory</label>
         <input type="file" id="open-file" accept=".json,application/json" class="vh">
         <button type="button" id="clear" class="btn danger">Delete this plan</button>

@@ -30,10 +30,15 @@ A handover inventory is a UTF-8 JSON file. Anyone can read it with a text editor
     }
   ],
   "publicAccounts": "unknown | none | approved | open",
+  "project": { "stack": ["Astro", "Vite"], "hosting": "Vercel", "repo": "https://github.com/…", "repoAccess": "unknown | client-owner | org | builder-only | none | na" },
+  "passwordsMethod": "unknown | shared-client | emergency | sealed | paper | own-only | browser",
+  "twoFactor": "unknown | shared | builder-phone | none",
+  "backupMethod": "unknown | client-storage | git | host-only | builder-storage | none",
+  "backupTested": "unknown | year | older | never",
   "services": [
     {
       "id": "s1",
-      "kind": "registration | dns | website | email | sending | database | other",
+      "kind": "registration | dns | website | email | sending | database | code | cms | analytics | api | other",
       "name": "example.org registration",
       "provider": "GoDaddy.com, LLC",
       "purpose": "Plain-English description",
@@ -64,6 +69,6 @@ A handover inventory is a UTF-8 JSON file. Anyone can read it with a text editor
 | `certificate` | Issuer and expiry of the newest current certificate in the public Certificate Transparency logs, or `{ "missing": true }` |
 | `checkedAt` | When the lookup ran |
 
-`status`, `oldDomains` and `publicAccounts` were added in Spare Key 0.5.0. They are optional, and older files open with `active`, `[]` and `unknown`.
+`project`, `passwordsMethod`, `twoFactor`, `backupMethod`, `backupTested` and the kinds `code`, `cms`, `analytics` and `api` were added in 0.7.0, and lookups gained `subdomains` and `linked`. `status`, `oldDomains` and `publicAccounts` were added in Spare Key 0.5.0. They are optional, and older files open with `active`, `[]` and `unknown`.
 
 Unknown fields are ignored when a file is opened, so later versions can add to the format without breaking older files.

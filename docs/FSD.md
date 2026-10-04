@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Product | Spare Key (sparekey.dev) |
-| Version described | 0.5.0 |
+| Version described | 0.7.0 |
 | Owner | Jonathan Harbourne, hello@jharbourne.com |
 | Status | Live, open source (MIT) |
-| Last updated | 27 September 2026 |
+| Last updated | 4 October 2026 |
 
 ## 1. Purpose
 
@@ -42,6 +42,7 @@ Spare Key helps that person, or the organisation itself, write a **website conti
 | Guide | `/guide` | Six-step timeline, risk explanations, jargon buster, templates |
 | Questions and answers | `/faq` | Filterable FAQs |
 | Domain name policy | `/domain-policy` | Old-address checker, questions, policy to copy, how to report misuse (section 8) |
+| Logins, sign-in codes and backups | `/passwords` | What we recommend, best first, with sources |
 | Check it yourself | `/check` | What is sent where, and how to verify it (section 9) |
 | Privacy, Terms, Feedback | `/privacy`, `/terms`, `/feedback` | Legal pages, and feedback to the Nearmark board or GitHub |
 | security.txt | `/.well-known/security.txt` | How to report security problems |
@@ -53,15 +54,22 @@ Fields: client name, organisation, contact; builder name, contact; emergency con
 
 ### 5.2 Step 02 – Domains
 - **Look up** a domain. The browser queries public DNS, the registry (RDAP) and Certificate Transparency logs. Results: registrar, renewal date, DNS host, website host, email host, sending services, SPF, DMARC, certificate issuer and expiry.
+- **Found automatically:** other sites on the domain (subdomains named in the public certificate logs, with where each is hosted) and accounts linked to the domain (verification records such as Google Search Console, Microsoft 365 or Brevo, and email-signing records for Mailchimp, SendGrid, Klaviyo and others).
 - Each lookup creates draft **services** (registration, DNS, website, email, sending) for the builder to complete.
 - **The plan for each address**: In use / Points to our current website / Retired, and we keep renewing it / We plan to let it go.
 - **Old addresses**: the user adds addresses used before a rename, merger or old project. Spare Key reads the registration record (registrar, registration date, renewal date) and where the address points now. The user records "Is it still yours?" and "Stopped using it in (year)".
 
 ### 5.3 Step 03 – Services
+**How the website is built:** the user drops `package.json` and `.env.example` (or `.env`, `vercel.json`, `netlify.toml`). They are read in the browser and never sent. Spare Key recognises the framework and tools (Astro, Vite, Next.js, Leaflet…), the hosting, and services with accounts (Tina, Sanity, PostHog, Supabase, Stripe, Brevo, Mapbox, Google Maps…), and adds those as services. From environment files only the variable names are kept; values are discarded and a warning is shown if real values were present. Unrecognised secret-looking names become **API key or token** services. Two questions follow: where the code is, and who can reach it.
+
 Each service: name, type, provider, domain, purpose, whose name the account is in, second admin (yes/no/not sure), who pays, cost, renewal date, auto-renew, notes. A service is "complete" when owner, payer and second admin are recorded.
 
 ### 5.4 Step 04 – Access and backups
-Where passwords are kept, where backups are kept, whether the public can create accounts on the website (none / approved / open / not recorded), and notes.
+Choices rather than open boxes, each scored as a risk, with a link to /passwords for the recommendations:
+- **How the logins are kept:** shared vault the client owns / own password manager with emergency access / master password sealed with executor / written down / own password manager only / browser or Apple Keychain only, plus optional details.
+- **Where two-step sign-in codes go:** the client too or recovery codes in the vault / only the builder's phone or key / mostly no two-step sign-in.
+- **How backups are kept:** client's own storage / code in a repository / host only / builder's own storage / none, plus details, and **when a backup was last restored**.
+- Whether the public can create accounts on the website, and notes.
 
 ### 5.5 Step 05 – Risks
 Recalculated on every change. Levels: **Serious**, **Fix soon**, **Check**. Repeated per-service risks are grouped into one line. When the last serious risk is cleared, the key in the logo turns and a toast says "Spare key cut. Nothing serious left."
@@ -70,6 +78,7 @@ Recalculated on every change. Levels: **Serious**, **Fix soon**, **Check**. Repe
 - **Download the plan** (Word). Gaps are highlighted in yellow.
 - **Save the inventory** (JSON), and **open** a saved one.
 - **Delete this plan** (two-press confirm) removes the open plan from the browser.
+- **Add the dates to a calendar (.ics):** every domain renewal, certificate expiry, service renewal, API key expiry and kept old address, each with reminders 30 and 7 days before.
 - If the work came from an owner's request, **Email the plan** opens a pre-written reply to the owner or their nominated recipient.
 
 ### 5.7 Plans in this browser
@@ -100,6 +109,11 @@ Several plans can be kept at once, in the browser's local storage on this device
 | Email on a privately run server | Serious |
 | Security certificate expired | Serious |
 | A domain the organisation plans to let go | Serious |
+| Logins only in a browser or Apple Keychain; only the builder can get into them | Serious |
+| Two-step sign-in codes only go to the builder's phone | Serious |
+| Only the builder can reach the code; the code is only on a computer | Serious |
+| Nothing is backed up | Serious |
+| An API key has expired or expires within 30 days | Serious |
 | Old address registered again after the year the organisation stopped using it | Serious |
 | Old address still held, lapsing within 60 days | Serious |
 | Password or backup location not recorded | Fix soon |
@@ -111,10 +125,17 @@ Several plans can be kept at once, in the browser's local storage on this device
 | Old address not registered (anyone can buy it) | Fix soon |
 | Old address registered again within the last three years (no year given) | Fix soon |
 | Anyone can create an account on the website | Fix soon |
+| Logins written down; how logins are kept not recorded | Fix soon |
+| Most accounts have no two-step sign-in | Fix soon |
+| Backups only kept by the host, or in the builder's own account | Fix soon |
+| Where the code lives is not recorded | Fix soon |
+| An API key expires within 60 days; another service not set to auto-renew is due within 30 days | Fix soon |
 | Second admin not recorded; account holder not recorded | Check |
 | No DMARC record | Check |
 | Old address not yet looked up, or holder not recorded | Check |
 | Whether the public can create accounts is not recorded | Check |
+| Where two-step sign-in codes go is not recorded | Check |
+| No one has restored a backup, or not for over a year | Check |
 
 ## 8. The continuity plan (Word)
 

@@ -7,6 +7,7 @@ import { dirname, join } from 'node:path';
 import { RDAP_HOSTS } from '../lib/lookup.js';
 import { checkPage } from './check-page.mjs';
 import { policyPage } from './policy-page.mjs';
+import { passwordsPage } from './passwords-page.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -79,6 +80,7 @@ const updated = '27 September 2026';
 const PAGES = {
   'check.html': checkPage,
   'domain-policy.html': policyPage,
+  'passwords.html': passwordsPage,
 
   'ask.html': ['For website owners', 'Someone else looks after your website? Ask them for a continuity plan, so you are never stuck without them.', `
 <p class="eyebrow">for website owners</p>
@@ -173,6 +175,7 @@ const PAGES = {
       <li><a href="#templates">Templates</a></li>
     </ol>
     <p class="toc-more"><a href="faq.html">Questions and answers →</a></p>
+    <p class="toc-more"><a href="passwords.html">Passwords and backups →</a></p>
   </nav>
 
   <div class="guide-body">
@@ -266,6 +269,7 @@ const PAGES = {
       <details class="faq"><summary>I don’t build websites. Someone looks after mine. Can I use this?</summary><p>Yes. Go to <a href="ask.html">For website owners</a>, fill in a few details, and we write an email for you to send to your web person. They write the continuity plan and send it back to you, or to whoever you choose, such as your IT or security lead.</p></details>
       <details class="faq"><summary>Can I fill it in without the tool?</summary><p>Yes. Download the <a href="guide.html#templates">Word or Excel template</a> and fill it in by hand.</p></details>
       <details class="faq"><summary>Is anything I type stored on your server?</summary><p>No. There is no Spare Key server. Lookups run in your browser and send only the domain name, to public lookup services. Everything else stays in your browser until you save the inventory file. <a href="check.html">Check it yourself</a>.</p></details>
+      <details class="faq"><summary>Where should the passwords go, then?</summary><p>In a shared vault the client owns, with you as a member. See <a href="passwords.html">logins, sign-in codes and backups</a> for the options, best first.</p></details>
       <details class="faq"><summary>Why doesn’t it store passwords?</summary><p>A service holding the keys to other people’s accounts would be a target, and would itself become a single point of failure. Record where passwords are kept instead, for example a password manager your client can reach.</p></details>
       <details class="faq"><summary>What does my client get?</summary><p>A plain-English Word document explaining what their website and email depend on, who pays for what, what to do in the first week if you were unable to work for a long time, and what still needs fixing. Give them the inventory file too, so anyone can update it later.</p></details>
       <details class="faq"><summary>The lookup says “Unrecognised”. What does that mean?</summary><p>Spare Key recognises the common registrars, hosts and email providers. If it cannot tell who a provider is, it says so rather than guessing. Edit the service and type the provider’s name.</p></details>

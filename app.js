@@ -1,4 +1,7 @@
-import { emptyInventory, newService, servicesFromLookup, mergeServices, validateInventory, newOldDomain, KINDS, WHO, YESNO, DOMAIN_STATUS, PUBLIC_ACCOUNTS } from './lib/model.js';
+import { emptyInventory, newService, servicesFromLookup, mergeServices, validateInventory, newOldDomain, KINDS, WHO, YESNO, DOMAIN_STATUS, PUBLIC_ACCOUNTS,
+  REPO_ACCESS, PASSWORD_METHODS, TWO_FACTOR, BACKUP_METHODS, BACKUP_TESTED } from './lib/model.js';
+import { readProject, servicesFromProject } from './lib/project.js';
+import { buildCalendar, datesInPlan } from './lib/calendar.js';
 import { assessRisks, groupRisks } from './lib/risks.js';
 import { stepStatus } from './lib/progress.js';
 import { buildHandover } from './lib/docgen.js';
@@ -138,6 +141,8 @@ function renderDomains(animateIndex = -1) {
         ${row('email', lk.emailHost || 'No email set up', /^Own mail server/.test(lk.emailHost || ''))}
         ${row('sends as', (lk.senders || []).join(', ') || 'None listed')}
         ${row('certificate', cert, c?.matchesName === false)}
+        ${lk.subdomains?.length ? row('other sites', lk.subdomains.map((x) => x.name).join(', ')) : ''}
+        ${lk.linked?.length ? row('linked accounts', lk.linked.map((x) => x.name).join(', ')) : ''}
         ${row('checked', fmtDate(lk.checkedAt))}
       </dl>${!lk.registration?.registrar && !lk.registration?.expires && !lk.dnsHost && !lk.webHost && !lk.emailHost
         ? `<p class="record-warn">Nothing was found for ${esc(d.name)}. Check the spelling, or remove it.</p>` : ''}` : '<p class="sub">Not looked up yet.</p>'}
@@ -307,7 +312,7 @@ function renderServices(openId) {
         ${field(s, 'secondAdmin', 'Can a second person manage it?', sel('secondAdmin', YESNO))}
         ${field(s, 'paidBy', 'Who pays?', sel('paidBy', WHO))}
         ${field(s, 'cost', 'Cost', inp('cost'))}
-        ${field(s, 'renews', 'Renews on', inp('renews', 'date'))}
+        ${field(s, 'renews', s.kind === 'api' ? 'Expires on' : 'Renews or expires on', inp('renews', 'date'))}
         ${field(s, 'autoRenew', 'Auto-renew on?', sel('autoRenew', YESNO))}
         ${field(s, 'notes', 'Notes for the client or a helper', area('notes'), 'wide')}
         <p class="wide"><button type="button" class="link" data-remove-service="${s.id}">Remove this service<span class="vh">: ${esc(s.name)}</span></button></p>
@@ -419,7 +424,7 @@ function resetView() {
   lastHigh = null;
   ['#domain-input', '#old-input'].forEach((sel) => { const el = $(sel); if (el) el.value = ''; });
   ['#lookup-status', '#old-status', '#save-status'].forEach((sel) => { const el = $(sel); if (el) el.textContent = ''; });
-  $('#public-accounts').innerHTML = options(PUBLIC_ACCOUNTS, inv.publicAccounts);
+  fillSelects();
   fillBound(); renderAll(); requestBanner(); showDraftState(); renderPlans();
 }
 function switchTo(id) {
@@ -546,7 +551,58 @@ function animateTerminal() {
 }
 
 // ---------- start ----------
-function renderAll() { renderDomains(); renderOldDomains(); renderServices(); renderRisks(); }
+function renderAll() { renderDomains(); renderOldDomains(); renderProject(); renderServices(); renderRisks(); }
+// The choice lists, filled from the model so the words live in one place.
+function fillSelects() {
+  for (const [sel, map, path] of [['#public-accounts', PUBLIC_ACCOUNTS, 'publicAccounts'], ['#repo-access', REPO_ACCESS, 'project.repoAccess'],
+    ['#pw-method', PASSWORD_METHODS, 'passwordsMethod'], ['#two-factor', TWO_FACTOR, 'twoFactor'],
+    ['#backup-method', BACKUP_METHODS, 'backupMethod'], ['#backup-tested', BACKUP_TESTED, 'backupTested']]) {
+    $(sel).innerHTML = options(map, getPath(inv, path));
+  }
+}
+
+// ---------- how the website is built ----------
+function renderProject() {
+  const p = inv.project || {};
+  const bits = [...(p.stack || []), ...(p.hosting ? [`hosted on ${p.hosting}`] : [])];
+  $('#project-stack').hidden = !bits.length;
+  $('#project-stack').innerHTML = bits.length ? `<span class="stack-label">Built with</span> ${bits.map((b) => `<span class="chip-s">${esc(b)}</span>`).join(' ')}` : '';
+}
+async function readFiles(fileList) {
+  const files = [];
+  for (const f of [...fileList]) {
+    if (f.size > 300000) continue; // project files are small; skip anything that isn't
+    files.push({ name: f.name, text: await f.text() });
+  }
+  if (!files.length) { $('#project-status').textContent = 'Those files are too large to be project files. Choose package.json and .env.example.'; return; }
+  const result = readProject(files);
+  inv.project = inv.project || { stack: [], hosting: '', repo: '', repoAccess: 'unknown' };
+  for (const x of result.stack) if (!inv.project.stack.includes(x)) inv.project.stack.push(x);
+  if (result.hosting) inv.project.hosting = result.hosting;
+  const before = inv.services.length;
+  inv.services = mergeServices(inv.services, servicesFromProject(result, inv.domains[0]?.name || ''));
+  const added = inv.services.slice(before).map((s) => s.name);
+  const parts = [];
+  if (result.stack.length) parts.push(`Found ${result.stack.join(', ')}.`);
+  parts.push(added.length ? `Added ${added.length} service${added.length === 1 ? '' : 's'} to complete: ${added.join(', ')}.` : 'No new services found.');
+  $('#project-status').textContent = [...parts, ...result.warnings].join(' ');
+  track('project_read', { files: files.length, services_added: added.length });
+  saveDraft(); renderProject(); renderServices(); renderRisks();
+}
+$('#project-files').addEventListener('change', (e) => { readFiles(e.target.files); e.target.value = ''; });
+const drop = $('#drop');
+drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); readFiles(e.dataTransfer.files); });
+
+// ---------- calendar of renewals and expiries ----------
+$('#calendar').addEventListener('click', () => {
+  const dates = datesInPlan(inv);
+  if (!dates.length) { $('#save-status').textContent = 'There are no dates yet. Look up a domain or add renewal dates to the services.'; return; }
+  download(new Blob([buildCalendar(inv)], { type: 'text/calendar' }), `${slug()}-dates.ics`);
+  $('#save-status').textContent = `${dates.length} date${dates.length === 1 ? '' : 's'} saved as a calendar file, with reminders 30 days and 7 days before. Open it to add them to your calendar.`;
+  track('calendar_downloaded', { dates: dates.length });
+});
 function draftName() { return inv.client.organisation || inv.client.name || 'this client'; }
 function showDraftState() {
   const has = hasDraft();
@@ -556,7 +612,7 @@ function showDraftState() {
   $('#start-fresh').hidden = !has;
 }
 showDraftState();
-$('#public-accounts').innerHTML = options(PUBLIC_ACCOUNTS, inv.publicAccounts);
+fillSelects();
 fillBound();
 renderAll();
 showView();
