@@ -488,7 +488,7 @@ form > .actions, .field + .actions { margin-top: 24px; }
 .footer-inner p.foot-line { max-width: none; margin-bottom: 12px; }
 .footer-inner p.footer-links { max-width: none; margin: 0; column-gap: 18px; }
 .toc-more { margin: 14px 0 0; font-size: .8125rem; }
-.toc-more a { color: var(--signal-text); text-decoration: none; }
+.toc-more a { color: var(--signal-text); text-decoration: none; white-space: nowrap; }
 .toc-more a:hover { text-decoration: underline; }
 
 /* ---------- Menu breakpoints (hidden items stay in the footer) ---------- */
@@ -574,7 +574,7 @@ a.btn[data-ext]::after, a.vh[data-ext]::after { content: none; }
 .tab-panel:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 4px; }
 .tabbed .tab-panel > h2:first-child, .tabbed .tab-panel > .old-check:first-child { margin-top: 20px; }
 .tab-next { margin-top: 28px; font-weight: 500; }
-.tab-next a::after { content: " →"; }
+.tab-next a::after { content: "\00a0→"; }
 @media print {
   .tablist, .tab-next { display: none; }
   .tab-panel[hidden] { display: block !important; }
@@ -632,3 +632,11 @@ a.btn[data-ext]::after, a.vh[data-ext]::after { content: none; }
 /* A warning under an email address or phone number that doesn't look right. */
 .field-error { display: block; margin: 4px 0 0; font-size: .8125rem; color: var(--high); }
 input[aria-invalid="true"] { border-color: var(--high); }
+
+/* No lonely last words: balance headings over their lines, and avoid a single word on the last line of a paragraph. */
+h2, h3, .section-title, legend { text-wrap: balance; }
+p, li, dd { text-wrap: pretty; }
+.record .dfields { margin: 0; padding: 14px 16px 16px; }
+.record .advice-slot:not(:empty) { padding: 0 16px 16px; }
+.record .advice-slot .advice { margin: 0; }
+.record .dfields label { font-size: .8125rem; color: var(--muted); }

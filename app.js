@@ -1,4 +1,4 @@
-import { emptyInventory, newService, servicesFromLookup, mergeServices, validateInventory, newOldDomain, KINDS, WHO, YESNO, DOMAIN_STATUS, PUBLIC_ACCOUNTS,
+import { emptyInventory, newService, servicesFromLookup, mergeServices, validateInventory, newOldDomain, KINDS, WHO, YESNO, DOMAIN_STATUS, DOMAIN_ORIGIN, PUBLIC_ACCOUNTS,
   REPO_ACCESS, PASSWORD_METHODS, TWO_FACTOR, BACKUP_METHODS, BACKUP_TESTED,
   BACKUP_WHERE, BACKUP_FREQUENCY, BACKUP_KEEP, SITE_TYPES, guessSiteType, emailProblem, phoneProblem } from './lib/model.js';
 import { readSiteHealth, servicesFromWordPress, wordpressStack } from './lib/wordpress.js';
@@ -6,7 +6,7 @@ import { readProject, servicesFromProject } from './lib/project.js';
 import { buildCalendar, datesInPlan } from './lib/calendar.js';
 import { assessRisks, groupRisks } from './lib/risks.js';
 import { stepStatus } from './lib/progress.js';
-import { adviceFor, adviceHtml } from './lib/advice.js';
+import { adviceFor, adviceHtml, domainAdvice } from './lib/advice.js';
 import { buildHandover } from './lib/docgen.js';
 import { track, incomingRequest } from './lib/site.js';
 import { mailtoUrl, recipient } from './lib/request.js';
@@ -102,6 +102,14 @@ function fillBound() {
   renderAdvice();
   checkAllContacts();
 }
+// What to do when the builder registered the domain in their own name or account.
+function renderDomainAdvice(i) {
+  const slot = document.getElementById(`dadvice-${i}`);
+  const d = inv.domains[i];
+  if (!slot || !d) return;
+  const a = domainAdvice(d.origin, d.name, inv.builder?.name);
+  slot.innerHTML = a ? `<div class="advice ${a.level}" role="status">${adviceHtml(a)}</div>` : '';
+}
 // Check email addresses and phone numbers when you leave the box. A warning, never a block.
 function checkContact(el) {
   const problem = el.type === 'email' ? emailProblem(el.value) : phoneProblem(el.value);
@@ -151,6 +159,16 @@ document.addEventListener('input', (e) => {
     const dm = inv.domains[Number(el.dataset.dstatus)];
     if (!dm) return;
     dm.status = el.value;
+  } else if (el.dataset.dorigin) {
+    const dm = inv.domains[Number(el.dataset.dorigin)];
+    if (!dm) return;
+    dm.origin = el.value;
+    // Fill in whose name the registration is in, if that's still blank.
+    const owner = { client: 'client', 'builder-client': 'client', 'builder-own': 'builder', previous: 'other' }[dm.origin];
+    const reg = inv.services.find((x) => x.kind === 'registration' && x.domain === dm.name);
+    if (owner && reg && !reg.accountOwner) { reg.accountOwner = owner; renderServices(); }
+    renderDomainAdvice(Number(el.dataset.dorigin));
+    renderRisks();
   } else if (el.dataset.sid) {
     const s = inv.services.find((x) => x.id === el.dataset.sid);
     if (!s) return;
@@ -188,10 +206,14 @@ function renderDomains(animateIndex = -1) {
         ${row('checked', fmtDate(lk.checkedAt))}
       </dl>${!lk.registration?.registrar && !lk.registration?.expires && !lk.dnsHost && !lk.webHost && !lk.emailHost
         ? `<p class="record-warn">Nothing was found for ${esc(d.name)}. Check the spelling, or remove it.</p>` : ''}` : '<p class="sub">Not looked up yet.</p>'}
-      <label class="dstatus" for="dstatus-${i}">What’s the plan for this address?
-        <select id="dstatus-${i}" data-dstatus="${i}">${options(DOMAIN_STATUS, d.status || 'active')}</select></label>
+      <div class="grid two dfields">
+        <label for="dorigin-${i}">Who registered it?<select id="dorigin-${i}" data-dorigin="${i}">${options(DOMAIN_ORIGIN, d.origin || 'unknown')}</select></label>
+        <label for="dstatus-${i}">What’s the plan for this address?<select id="dstatus-${i}" data-dstatus="${i}">${options(DOMAIN_STATUS, d.status || 'active')}</select></label>
+      </div>
+      <div class="advice-slot" id="dadvice-${i}"></div>
     </article>`;
   }).join('');
+  inv.domains.forEach((_, i) => renderDomainAdvice(i));
   // stagger the rows for the reveal
   document.querySelectorAll('#domains dl.reveal').forEach((dl) => [...dl.children].forEach((el, n) => el.style.setProperty('--i', Math.floor(n / 2))));
 }
@@ -452,8 +474,8 @@ stepPanelsAll().forEach((p, i) => {
   const nav = document.createElement('nav');
   nav.className = 'step-nav';
   nav.setAttribute('aria-label', `Step ${i + 1} of ${STEP_COUNT}`);
-  nav.innerHTML = `${i > 0 ? `<button type="button" class="btn ghost" data-step-go="${i - 1}"><span aria-hidden="true">←</span> Back<span class="vh">: ${stepNames[i - 1]}</span></button>` : '<span></span>'}`
-    + `${i < STEP_COUNT - 1 ? `<button type="button" class="btn primary" data-step-go="${i + 1}">Next: ${stepNames[i + 1]} <span aria-hidden="true">→</span></button>` : ''}`;
+  nav.innerHTML = `${i > 0 ? `<button type="button" class="btn ghost" data-step-go="${i - 1}"><span aria-hidden="true">←</span>&nbsp;Back<span class="vh">: ${stepNames[i - 1]}</span></button>` : '<span></span>'}`
+    + `${i < STEP_COUNT - 1 ? `<button type="button" class="btn primary" data-step-go="${i + 1}">Next: ${stepNames[i + 1]}&nbsp;<span aria-hidden="true">→</span></button>` : ''}`;
   p.appendChild(nav);
 });
 document.addEventListener('click', (e) => {

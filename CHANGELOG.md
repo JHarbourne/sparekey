@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.6 – 2026-10-04
+
+- **Who registered the domain?** Each domain in step 02 now asks whether the client registered it, you registered it in their name, you registered it in your own name or account, or a previous developer did. If it’s in yours, Spare Key flags it as serious and explains how to move it to the client’s own account with the client named as the legal owner. A previous developer’s registration is flagged to check. The answer fills in whose name the registration service is in, and the continuity plan’s domain table shows who registered each one.
+- Headings balance across their lines, so a single word isn’t left on its own, and arrows on links stay on the same line as their words.
+
 ## 0.8.5 – 2026-10-04
 
 - The template download icons are square tiles, like app icons, with a plain document or spreadsheet symbol instead of a W or X, so they don’t imitate Microsoft’s own icons.

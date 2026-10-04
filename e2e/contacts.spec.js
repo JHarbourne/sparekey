@@ -20,3 +20,14 @@ test('email and phone are checked when you leave the box', async ({ page }) => {
   await phone.blur();
   await expect(page.locator('#err-emergency-phone')).toBeHidden();
 });
+
+import { mockLookup, fillExample } from './fixtures.js';
+test('who registered a domain: advice, risk and the registration service', async ({ page }) => {
+  await mockLookup(page);
+  await fillExample(page);
+  await page.locator('#dorigin-0').selectOption('builder-own');
+  await expect(page.locator('#dadvice-0')).toContainText('registrant');
+  await expect(page.locator('#risks')).toContainText('village-arts-trail.org is registered to');
+  await page.locator('#dorigin-0').selectOption('client');
+  await expect(page.locator('#dadvice-0')).toBeEmpty();
+});

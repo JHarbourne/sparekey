@@ -176,8 +176,8 @@ const PAGES = {
       <li><a href="#jargon">Jargon buster</a></li>
       <li><a href="#templates">Templates</a></li>
     </ol>
-    <p class="toc-more"><a href="faq.html">Questions and answers →</a></p>
-    <p class="toc-more"><a href="passwords.html">Passwords and backups →</a></p>
+    <p class="toc-more"><a href="faq.html">Questions and answers&nbsp;→</a></p>
+    <p class="toc-more"><a href="passwords.html">Passwords and backups&nbsp;→</a></p>
   </nav>
 
   <div class="guide-body">
@@ -395,17 +395,17 @@ const PAGES = {
   <a class="choice-card" data-link="feedbackBoard" href="https://nearmark.co.uk/feedback?product=sparekey">
     <strong>Suggest an improvement</strong>
     <span>Post an idea on the public feedback board, or vote for someone else’s. You sign in with a link sent to your email, no password.</span>
-    <span class="go" aria-hidden="true">Open the board →</span>
+    <span class="go" aria-hidden="true">Open the board&nbsp;→</span>
   </a>
   <a class="choice-card" data-link="issues" href="https://github.com/JHarbourne/sparekey/issues/new">
     <strong>Report a problem</strong>
     <span>Something broken or wrong? Open an issue on GitHub. Please do not include client details or anything private.</span>
-    <span class="go" aria-hidden="true">Report on GitHub →</span>
+    <span class="go" aria-hidden="true">Report on GitHub&nbsp;→</span>
   </a>
   <a class="choice-card" data-link="survey" data-needs-link href="#" hidden>
     <strong>Tell us how it went</strong>
     <span>Two minutes, optional and anonymous: how likely you are to recommend Spare Key, and how easy it was to use.</span>
-    <span class="go" aria-hidden="true">Answer the questions →</span>
+    <span class="go" aria-hidden="true">Answer the questions&nbsp;→</span>
   </a>
 </div>
 <p class="sub">The feedback board is shared with Nearmark and our other projects. Ideas you post from here are tagged “Spare Key” with the version you’re using, so we know which release they’re about.</p>

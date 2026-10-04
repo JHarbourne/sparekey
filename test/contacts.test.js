@@ -26,3 +26,14 @@ test('contact details for documents', () => {
   assert.equal(contactOf({ phone: '07700 900123' }), '07700 900123');
   assert.equal(contactOf({}), '');
 });
+
+import { assessRisks } from '../lib/risks.js';
+import { emptyInventory } from '../lib/model.js';
+test('who registered a domain is scored', () => {
+  const inv = { ...emptyInventory(), builder: { name: 'Jonathan' }, domains: [{ name: 'a.org', origin: 'builder-own' }, { name: 'b.org', origin: 'previous' }, { name: 'c.org', origin: 'client' }, { name: 'd.org' }] };
+  const t = assessRisks(inv).map((r) => `${r.level}: ${r.title}`);
+  assert.ok(t.includes('high: a.org is registered to Jonathan'));
+  assert.ok(t.includes('medium: Check who legally owns b.org'));
+  assert.ok(!t.some((x) => x.includes('c.org')));
+  assert.ok(t.includes('low: Record who registered d.org'));
+});

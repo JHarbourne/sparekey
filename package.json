@@ -1,6 +1,6 @@
 {
   "name": "sparekey",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "private": true,
   "type": "module",
   "description": "Map a client's websites, domains and email, flag single points of failure, and produce a handover document they keep.",
