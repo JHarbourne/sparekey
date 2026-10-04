@@ -1,9 +1,11 @@
 import { emptyInventory, newService, servicesFromLookup, mergeServices, validateInventory, newOldDomain, KINDS, WHO, YESNO, DOMAIN_STATUS, PUBLIC_ACCOUNTS,
-  REPO_ACCESS, PASSWORD_METHODS, TWO_FACTOR, BACKUP_METHODS, BACKUP_TESTED } from './lib/model.js';
+  REPO_ACCESS, PASSWORD_METHODS, TWO_FACTOR, BACKUP_METHODS, BACKUP_TESTED,
+  BACKUP_WHERE, BACKUP_FREQUENCY, BACKUP_KEEP } from './lib/model.js';
 import { readProject, servicesFromProject } from './lib/project.js';
 import { buildCalendar, datesInPlan } from './lib/calendar.js';
 import { assessRisks, groupRisks } from './lib/risks.js';
 import { stepStatus } from './lib/progress.js';
+import { adviceFor, adviceHtml } from './lib/advice.js';
 import { buildHandover } from './lib/docgen.js';
 import { track, incomingRequest } from './lib/site.js';
 import { mailtoUrl, recipient } from './lib/request.js';
@@ -96,11 +98,29 @@ function setPath(obj, path, val) {
 }
 function fillBound() {
   document.querySelectorAll('[data-bind]').forEach((el) => { el.value = getPath(inv, el.dataset.bind) ?? ''; });
+  renderAdvice();
+}
+// What to do next, under an answer that leaves the client exposed.
+function renderAdvice() {
+  // Where, how often and how far back only matter when there are backups to ask about.
+  const bm = inv.backupMethod || 'unknown';
+  const detail = document.getElementById('backup-detail');
+  if (detail) detail.hidden = bm === 'none' || bm === 'git';
+  document.querySelectorAll('[data-advice-for]').forEach((box) => {
+    const f = box.dataset.adviceFor;
+    const a = detail?.hidden && /^backup(Where|Frequency|Keep)$/.test(f) ? null : adviceFor(f, getPath(inv, f));
+    const html = adviceHtml(a);
+    if (box.innerHTML === html) return;
+    box.innerHTML = html;
+    box.className = `advice${a ? ` ${a.level}` : ''}`;
+    box.hidden = !a;
+  });
 }
 document.addEventListener('input', (e) => {
   const el = e.target;
   if (el.dataset.bind) {
     setPath(inv, el.dataset.bind, el.value);
+    if (el.tagName === 'SELECT') renderAdvice();
   } else if (el.dataset.ofield) {
     const od = inv.oldDomains[Number(el.dataset.old)];
     if (!od) return;
@@ -556,7 +576,8 @@ function renderAll() { renderDomains(); renderOldDomains(); renderProject(); ren
 function fillSelects() {
   for (const [sel, map, path] of [['#public-accounts', PUBLIC_ACCOUNTS, 'publicAccounts'], ['#repo-access', REPO_ACCESS, 'project.repoAccess'],
     ['#pw-method', PASSWORD_METHODS, 'passwordsMethod'], ['#two-factor', TWO_FACTOR, 'twoFactor'],
-    ['#backup-method', BACKUP_METHODS, 'backupMethod'], ['#backup-tested', BACKUP_TESTED, 'backupTested']]) {
+    ['#backup-method', BACKUP_METHODS, 'backupMethod'], ['#backup-tested', BACKUP_TESTED, 'backupTested'],
+    ['#backup-where', BACKUP_WHERE, 'backupWhere'], ['#backup-frequency', BACKUP_FREQUENCY, 'backupFrequency'], ['#backup-keep', BACKUP_KEEP, 'backupKeep']]) {
     $(sel).innerHTML = options(map, getPath(inv, path));
   }
 }

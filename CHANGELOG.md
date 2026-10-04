@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.5 – 2026-10-04
+
+- **What to do next:** a risky answer in steps 03 and 04 now shows what to do about it, straight away, under the question. For example, choosing “Only in my own account” for the code explains how to move it into an organisation the client owns, and “Written down” for the logins warns where not to keep them and what is better.
+- **Backups in more detail:** where the copies are (online, on a drive, or both), how often they are made, and how far back they go, each scored as a risk. The passwords page explains how often and how far back is enough.
+- The continuity plan includes the new backup answers.
+
 ## 0.7.4 – 2026-10-04
 
 - Links that leave Spare Key, such as the feedback board, GitHub and the services on the passwords page, open in a new tab, so the tool and anything typed into it stay put. They show a small arrow, and screen readers hear “opens in a new tab”. Email links are unchanged.

@@ -551,3 +551,16 @@ form > .actions, .field + .actions { margin-top: 24px; }
 /* Links that leave the site open in a new tab (links.js); the arrow says so. */
 a[data-ext]::after { content: "\2197" / ""; display: inline-block; margin-left: 2px; font-size: .8em; text-decoration: none; }
 a.btn[data-ext]::after, a.vh[data-ext]::after { content: none; }
+
+/* What to do next, under a risky answer in steps 03 and 04 (lib/advice.js). */
+.advice { margin: 10px 0 4px; padding: 12px 14px; border-radius: var(--radius); border: 1px solid var(--line); border-left: 3px solid var(--low); background: var(--low-bg); font-size: .875rem; line-height: 1.5; }
+.advice.high { border-left-color: var(--high); background: var(--high-bg); }
+.advice.medium { border-left-color: var(--med); background: var(--med-bg); }
+.advice p { margin: 0 0 6px; }
+.advice p:last-child, .advice ol:last-child { margin-bottom: 0; }
+.advice .advice-title strong { font-weight: 600; }
+.advice.high .advice-title strong { color: var(--high); }
+.advice.medium .advice-title strong { color: var(--med); }
+.advice ol { margin: 4px 0 6px; padding-left: 1.25rem; }
+.advice li { margin: 0 0 4px; }
+.advice code { font-family: var(--mono); font-size: .8em; }

@@ -232,6 +232,7 @@
           <label>Who can reach the code?<select data-bind="project.repoAccess" id="repo-access"></select></label>
         </div>
         <p class="hint" id="repo-tip">In the code address, press → to start with https://github.com/</p>
+        <div class="advice" data-advice-for="project.repoAccess" role="status" hidden></div>
       </div>
 
       <div id="services"></div>
@@ -244,6 +245,7 @@
       <label class="block">How are the logins kept?
         <select data-bind="passwordsMethod" id="pw-method"></select>
       </label>
+      <div class="advice" data-advice-for="passwordsMethod" role="status" hidden></div>
       <label class="block">Details <span class="opt">optional</span>
         <span class="hint">For example the vault’s name, or who holds the sealed envelope. Never the passwords themselves.</span>
         <textarea data-bind="passwordsLocation" rows="2"></textarea>
@@ -252,16 +254,27 @@
         <span class="hint">The text messages, app codes or security key you need as well as a password.</span>
         <select data-bind="twoFactor" id="two-factor"></select>
       </label>
+      <div class="advice" data-advice-for="twoFactor" role="status" hidden></div>
       <label class="block">How are backups kept?
         <select data-bind="backupMethod" id="backup-method"></select>
       </label>
+      <div class="advice" data-advice-for="backupMethod" role="status" hidden></div>
+      <div class="grid two" id="backup-detail">
+        <label>Where are the copies?<select data-bind="backupWhere" id="backup-where"></select></label>
+        <label>How often?<select data-bind="backupFrequency" id="backup-frequency"></select></label>
+        <label>How far back can you go?<select data-bind="backupKeep" id="backup-keep"></select></label>
+      </div>
+      <div class="advice" data-advice-for="backupWhere" role="status" hidden></div>
+      <div class="advice" data-advice-for="backupFrequency" role="status" hidden></div>
+      <div class="advice" data-advice-for="backupKeep" role="status" hidden></div>
       <label class="block">Details <span class="opt">optional</span>
-        <span class="hint">What is copied, where to, and how often.</span>
+        <span class="hint">What is copied (files, database, email) and which service or tool does it.</span>
         <textarea data-bind="backupsLocation" rows="2"></textarea>
       </label>
       <label class="block">Has anyone tried restoring a backup?
         <select data-bind="backupTested" id="backup-tested"></select>
       </label>
+      <div class="advice" data-advice-for="backupTested" role="status" hidden></div>
       <label class="block">Can members of the public create accounts on the website?
         <span class="hint">Membership forms, comments, forums. Spammers use open sign-ups to publish adverts on trusted websites.</span>
         <select data-bind="publicAccounts" id="public-accounts"></select>
