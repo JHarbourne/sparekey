@@ -504,3 +504,6 @@ form > .actions, .field + .actions { margin-top: 24px; }
 .pl-open { font: 500 .75rem var(--mono); color: var(--signal-text); }
 .plans .hint { margin: 8px 0 0; }
 .record-warn { margin: 10px 0 0; padding: 8px 12px; border-radius: 6px; background: var(--med-bg); color: var(--med); font-size: .875rem; }
+.rail-meta { margin: 14px 0 0; font: .75rem var(--mono); color: var(--muted); }
+.rail-meta a { color: var(--muted); }
+.rail-meta a:hover { color: var(--ink); }

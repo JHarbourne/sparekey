@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1 – 2026-10-04
+
+- The version shows discreetly in the tool, under the progress meter, with a link to give feedback.
+- Feedback goes to the shared feedback board as **product: Spare Key**, with the version you're using attached to each idea (`/feedback?product=sparekey&v=…`). The board now handles several products (Nearmark, Spare Key, Burgee Crew, Burgee Club).
+- "Report a problem on GitHub" pre-fills the version in the issue.
+
 ## 0.6.0 – 2026-10-03
 
 - **Plans in this browser.** Keep several plans at once and switch between them. A list at the top of the tool shows each plan with its domains and when it last changed, with Open, Remove, New plan and Clear everything. Plans stay in this browser on this device only, and the list says so.

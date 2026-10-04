@@ -43,7 +43,7 @@ test('theme switch is a keyboard-operable switch and is remembered', async ({ pa
 test('footer shows the version and legal links on every page', async ({ page }) => {
   for (const path of ['/', '/guide', '/privacy', '/terms', '/feedback']) {
     await page.goto(path);
-    await expect(page.locator('[data-version]')).toHaveText(/^v\d+\.\d+\.\d+$/);
+    await expect(page.locator('footer [data-version]')).toHaveText(/^v\d+\.\d+\.\d+$/);
     await expect(page.locator('footer')).toContainText('© JHarbourne.com 2026');
     await expect(page.locator('footer').getByRole('link', { name: 'Privacy' })).toBeVisible();
   }
@@ -120,4 +120,11 @@ test('a draft saved by an earlier version is kept as a plan', async ({ page }) =
   await page.reload();
   await expect(page.locator('[data-bind="client.organisation"]')).toHaveValue('Old Draft Ltd');
   expect(await page.evaluate(() => localStorage.getItem('sparekey:draft'))).toBeNull();
+});
+
+test('feedback links carry the product and the version', async ({ page }) => {
+  await page.goto('/#start');
+  await expect(page.locator('.rail-meta')).toContainText(/v\d+\.\d+\.\d+ beta/);
+  const href = await page.locator('.rail-meta a').getAttribute('href');
+  expect(href).toMatch(/^https:\/\/nearmark\.co\.uk\/feedback\?product=sparekey&v=\d+\.\d+\.\d+$/);
 });
