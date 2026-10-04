@@ -625,3 +625,6 @@ a.btn[data-ext]::after, a.vh[data-ext]::after { content: none; }
   #app-view .panel[hidden] { display: block !important; }
   .step-nav, .rail { display: none !important; }
 }
+
+/* Signposts: the small headings inside each step are green, so people can find their way. */
+#app-view legend, #app-view .panel h3 { color: var(--signal-text); }

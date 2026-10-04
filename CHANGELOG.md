@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.3 – 2026-10-04
+
+- The small headings inside each step, such as Client, You, the builder, Emergency contact, Old addresses and How the website is built, are green, so the page is easier to find your way around. The green passes the contrast checks in both themes.
+
 ## 0.8.2 – 2026-10-04
 
 - **Usage counts are switched on**, with PostHog’s EU cloud, set up as the privacy notice describes: no cookies, no profiles, no recordings, named events with numbers only. Moving between steps, the survey and reading WordPress are now counted too. Automated browsers, including our own tests, are never counted.
