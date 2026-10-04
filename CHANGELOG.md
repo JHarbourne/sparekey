@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.1 – 2026-10-04
+
+- Drop-downs draw their own chevron, 14px in from the right edge, in every browser and both themes. A test now checks every drop-down, so it can’t slip again.
+- Step 03 says that an environment file is optional, and how to show hidden files on a Mac.
+- The passwords page links to each service it mentions: 1Password, Bitwarden, Apple Passwords and Legacy Contact, YubiKey, 2FA Directory, GitHub organisations, Google Drive, Dropbox and Backblaze B2.
+
 ## 0.7.0 – 2026-10-04
 
 - **Found automatically:** other sites on a domain (subdomains named in the public certificate logs, with where each is hosted), and accounts linked to it (Google Search Console, Microsoft 365, Brevo, Apple iCloud+, Stripe and others from verification records; Mailchimp, SendGrid, Klaviyo, Resend and others from email-signing records). Each becomes a service to complete.

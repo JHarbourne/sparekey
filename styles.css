@@ -25,6 +25,7 @@
   --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --radius: 8px;
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%235c5c5c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -33,6 +34,7 @@
     --accent: #5aa9ff; --btn: #ededed; --btn-ink: #0a0a0a; --ok: #3ecf6e; --signal: #00ff41; --signal-ink: #04160a; --signal-text: #00ff41;
     --high: #ff8f8f; --high-bg: #2a1214; --med: #f2b650; --med-bg: #261c09; --low: #b9c3ce; --low-bg: #181b20;
     --grid: rgba(255, 255, 255, 0.05); --shadow: none; color-scheme: dark;
+    --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23a3a3a3' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   }
 }
 :root[data-theme="dark"] {
@@ -40,6 +42,7 @@
   --accent: #5aa9ff; --btn: #ededed; --btn-ink: #0a0a0a; --ok: #3ecf6e; --signal: #00ff41; --signal-ink: #04160a; --signal-text: #00ff41;
   --high: #ff8f8f; --high-bg: #2a1214; --med: #f2b650; --med-bg: #261c09; --low: #b9c3ce; --low-bg: #181b20;
   --grid: rgba(255, 255, 255, 0.05); --shadow: none; color-scheme: dark;
+    --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23a3a3a3' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 /* ---------- Base ---------- */
@@ -133,6 +136,14 @@ input, textarea, select {
 input:hover, textarea:hover, select:hover { border-color: var(--ink); }
 input:focus-visible, textarea:focus-visible, select:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
 textarea { resize: vertical; }
+/* Draw our own chevron so it always sits 12px in from the right edge, in every browser. */
+select {
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  padding-right: 38px; text-overflow: ellipsis;
+  background-image: var(--chevron); background-repeat: no-repeat; background-position: right 14px center; background-size: 12px 8px;
+}
+select::-ms-expand { display: none; }
+select[multiple], select[size] { padding-right: 10px; background-image: none; }
 
 .lookup { display: flex; align-items: stretch; gap: 8px; border: 1px solid var(--field); border-radius: 8px; padding: 4px 4px 4px 12px; background: var(--bg); }
 .lookup:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
