@@ -34,7 +34,12 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save @playwright/test @axe-core/playwright
-      - run: npx playwright install --with-deps chromium
+      # The runner image lists Microsoft's package repository, which we don't need and which
+      # sometimes refuses connections (403), failing the browser install and blocking deploys.
+      - name: Remove unused package sources
+        run: sudo rm -f /etc/apt/sources.list.d/microsoft-prod*
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium || (sleep 20 && npx playwright install --with-deps chromium)
       - run: npx playwright test
       - uses: actions/upload-artifact@v4
         if: failure()
