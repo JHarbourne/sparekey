@@ -227,9 +227,10 @@
         <p id="project-status" class="status" role="status" aria-live="polite"></p>
         <p id="project-stack" class="stack" hidden></p>
         <div class="grid two">
-          <label>Where is the code? <span class="opt">optional</span><input data-bind="project.repo" placeholder="https://github.com/…" autocomplete="off" spellcheck="false"></label>
+          <label>Where is the code? <span class="opt">optional</span><input data-bind="project.repo" placeholder="https://github.com/…" data-suggest="https://github.com/" aria-describedby="repo-tip" autocomplete="off" spellcheck="false"></label>
           <label>Who can reach the code?<select data-bind="project.repoAccess" id="repo-access"></select></label>
         </div>
+        <p class="hint" id="repo-tip">In the code address, press → to start with https://github.com/</p>
       </div>
 
       <div id="services"></div>

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.3 – 2026-10-04
+
+- Fields and drop-downs are all the same height, and fields in a row line up along the bottom however long their labels are. A test checks every row.
+- In the code address, press → to start with https://github.com/ rather than typing it.
+
 ## 0.7.2 – 2026-10-04
 
 - **Set up your own vault:** the passwords page has a section for website owners on setting up a password vault in their own name and inviting their builder, with which one to choose (Apple Passwords shared group, a free Bitwarden organisation, or 1Password or Bitwarden Teams).

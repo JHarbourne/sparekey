@@ -595,6 +595,24 @@ drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.ad
 drop.addEventListener('dragleave', () => drop.classList.remove('over'));
 drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); readFiles(e.dataTransfer.files); });
 
+// ---------- suggested start: press → in an empty field to use the example's start ----------
+document.addEventListener('keydown', (e) => {
+  const el = e.target;
+  if (!(el instanceof HTMLInputElement) || !el.dataset.suggest || el.value || e.key !== 'ArrowRight') return;
+  e.preventDefault();
+  el.value = el.dataset.suggest;
+  el.setSelectionRange(el.value.length, el.value.length);
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+});
+// Don't keep the start on its own if nothing was added to it.
+document.addEventListener('focusout', (e) => {
+  const el = e.target;
+  if (el instanceof HTMLInputElement && el.dataset.suggest && el.value === el.dataset.suggest) {
+    el.value = '';
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+});
+
 // ---------- calendar of renewals and expiries ----------
 $('#calendar').addEventListener('click', () => {
   const dates = datesInPlan(inv);
