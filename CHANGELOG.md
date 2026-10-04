@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.6 – 2026-10-04
+
+- The domain policy page points organisations that already have a policy to the Domain Release Clause on jharbourne.com, to add to it rather than replace it.
+
 ## 0.7.5 – 2026-10-04
 
 - **What to do next:** a risky answer in steps 03 and 04 now shows what to do about it, straight away, under the question. For example, choosing “Only in my own account” for the code explains how to move it into an organisation the client owns, and “Written down” for the logins warns where not to keep them and what is better.

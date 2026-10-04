@@ -39,6 +39,7 @@ export const policyPage = ['Domain name policy', 'The questions every organisati
   <a class="btn primary" href="templates/spare-key-domain-policy.docx" download>Download as Word</a>
   <a class="btn" href="./#start">Record your domains in Spare Key</a>
 </div>
+<p><strong>Already have a domain policy?</strong> You don’t need to replace it. Add <a href="https://www.jharbourne.com/domain-release-clause.html">the Domain Release Clause</a>: the checks to make before giving up an address, written as one clause to paste into the policy you have. It’s free to copy and adapt under a Creative Commons licence.</p>
 
 <h2>If an old address is already being misused</h2>
 <p>Open it in a browser and take a dated screenshot first. Then tell:</p>
