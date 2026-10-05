@@ -7,6 +7,7 @@ import { buildCalendar, datesInPlan } from './lib/calendar.js';
 import { assessRisks, groupRisks } from './lib/risks.js';
 import { stepStatus } from './lib/progress.js';
 import { adviceFor, adviceHtml, domainAdvice } from './lib/advice.js';
+import { BEFORE_INTRO, beforeList } from './lib/checklist.js';
 import { buildHandover } from './lib/docgen.js';
 import { track, incomingRequest } from './lib/site.js';
 import { mailtoUrl, recipient } from './lib/request.js';
@@ -442,6 +443,23 @@ $('#risks').addEventListener('click', (e) => {
   const d = document.getElementById(`svc-${a.dataset.open}`);
   if (d) { showStep(stepOf(d), { focus: false }); d.open = true; d.querySelector('summary').focus(); }
 });
+
+// ---------- before you start: what to have to hand, until closed ----------
+(function beforeYouStart() {
+  const box = document.getElementById('before');
+  if (!box) return;
+  let hidden = false;
+  try { hidden = localStorage.getItem('sparekey:before-hidden') === '1'; } catch { /* fine */ }
+  document.getElementById('before-intro').textContent = BEFORE_INTRO;
+  document.getElementById('before-items').innerHTML = beforeList();
+  box.hidden = hidden;
+  document.getElementById('before-hide').addEventListener('click', () => {
+    box.hidden = true;
+    try { localStorage.setItem('sparekey:before-hidden', '1'); } catch { /* fine */ }
+    document.querySelector('[data-bind="client.name"]')?.focus();
+    track('before_hidden');
+  });
+}());
 
 // ---------- six steps, one at a time ----------
 // The rail down the left (a bar across the top on a phone) is the list of steps.

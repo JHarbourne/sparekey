@@ -640,3 +640,12 @@ p, li, dd { text-wrap: pretty; }
 .record .advice-slot:not(:empty) { padding: 0 16px 16px; }
 .record .advice-slot .advice { margin: 0; }
 .record .dfields label { font-size: .8125rem; color: var(--muted); }
+
+/* Before you start: what to have to hand (step 01 and the guide). */
+.before { margin: 4px 0 20px; padding: 16px 18px; border: 1px solid var(--line); border-left: 3px solid var(--signal-text); border-radius: var(--radius); background: var(--bg); }
+.before h3 { margin: 0 0 6px; font-size: 1rem; }
+.before p { margin: 0 0 8px; color: var(--muted); font-size: .9375rem; }
+.before-list { margin: 0 0 12px; padding-left: 1.2rem; font-size: .9375rem; }
+.before-list li { margin: 0 0 6px; }
+.before-list code { font-family: var(--mono); font-size: .85em; }
+.before .before-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 0; }

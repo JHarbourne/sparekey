@@ -2,6 +2,7 @@
 // content pages (guide, privacy, terms, feedback). Run: node scripts/pages.mjs
 // A test fails if the committed pages are out of date.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { BEFORE_INTRO, beforeList } from '../lib/checklist.js';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { RDAP_HOSTS } from '../lib/lookup.js';
@@ -170,6 +171,7 @@ const PAGES = {
   <nav class="toc" aria-label="On this page">
     <p class="toc-title">On this page</p>
     <ol>
+      <li><a href="#before">What you’ll need</a></li>
       <li><a href="#steps">Six steps</a></li>
       <li><a href="#risks">What the risks mean</a></li>
       <li><a href="#code">Where the code lives</a></li>
@@ -181,6 +183,12 @@ const PAGES = {
   </nav>
 
   <div class="guide-body">
+    <section id="before" aria-labelledby="before-guide-h">
+      <h2 id="before-guide-h" class="section-title"><span class="eyebrow">before you start</span>What to have to hand</h2>
+      <p>${BEFORE_INTRO}</p>
+      ${beforeList()}
+    </section>
+
     <section id="steps" aria-labelledby="steps-h">
       <h2 id="steps-h" class="section-title"><span class="eyebrow">six steps</span>From domain name to continuity plan</h2>
       <ol class="timeline">

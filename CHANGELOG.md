@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.7 – 2026-10-05
+
+- **Before you start.** Step 01 opens with a short list of what to have to hand: the web addresses, access to the domain, hosting and email accounts, the project file or WordPress dashboard, contact details, and how logins and backups are kept. It says none are required and that work is saved in the browser. “Got it, hide this” closes it for good on that browser. The same list is in the guide, under “What you’ll need”, which prints cleanly.
+
 ## 0.8.6 – 2026-10-04
 
 - **Who registered the domain?** Each domain in step 02 now asks whether the client registered it, you registered it in their name, you registered it in your own name or account, or a previous developer did. If it’s in yours, Spare Key flags it as serious and explains how to move it to the client’s own account with the client named as the legal owner. A previous developer’s registration is flagged to check. The answer fills in whose name the registration service is in, and the continuity plan’s domain table shows who registered each one.
