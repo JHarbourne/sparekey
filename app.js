@@ -7,7 +7,7 @@ import { buildCalendar, datesInPlan } from './lib/calendar.js';
 import { assessRisks, groupRisks } from './lib/risks.js';
 import { stepStatus } from './lib/progress.js';
 import { adviceFor, adviceHtml, domainAdvice } from './lib/advice.js';
-import { BEFORE_INTRO, beforeList } from './lib/checklist.js';
+import { BEFORE_INTRO, BEFORE_ITEMS, beforeList } from './lib/checklist.js';
 import { buildHandover } from './lib/docgen.js';
 import { track, incomingRequest } from './lib/site.js';
 import { mailtoUrl, recipient } from './lib/request.js';
@@ -445,21 +445,15 @@ $('#risks').addEventListener('click', (e) => {
 });
 
 // ---------- before you start: what to have to hand, until closed ----------
-(function beforeYouStart() {
+// Open on an empty plan, closed once there's something in it. The arrow opens and closes it.
+document.getElementById('before-h').textContent = `Before you start, have these ${BEFORE_ITEMS.length} things to hand`;
+document.getElementById('before-intro').textContent = BEFORE_INTRO;
+document.getElementById('before-items').innerHTML = beforeList();
+function showBefore() {
   const box = document.getElementById('before');
-  if (!box) return;
-  let hidden = false;
-  try { hidden = localStorage.getItem('sparekey:before-hidden') === '1'; } catch { /* fine */ }
-  document.getElementById('before-intro').textContent = BEFORE_INTRO;
-  document.getElementById('before-items').innerHTML = beforeList();
-  box.hidden = hidden;
-  document.getElementById('before-hide').addEventListener('click', () => {
-    box.hidden = true;
-    try { localStorage.setItem('sparekey:before-hidden', '1'); } catch { /* fine */ }
-    document.querySelector('[data-bind="client.name"]')?.focus();
-    track('before_hidden');
-  });
-}());
+  if (box) box.open = !hasDraft();
+}
+showBefore();
 
 // ---------- six steps, one at a time ----------
 // The rail down the left (a bar across the top on a phone) is the list of steps.
@@ -573,6 +567,7 @@ $('#survey-no')?.addEventListener('click', () => closeSurvey('declined'));
 // ---------- plans in this browser ----------
 function resetView() {
   lastHigh = null;
+  showBefore();
   ['#domain-input', '#old-input'].forEach((sel) => { const el = $(sel); if (el) el.value = ''; });
   ['#lookup-status', '#old-status', '#save-status'].forEach((sel) => { const el = $(sel); if (el) el.textContent = ''; });
   fillSelects();

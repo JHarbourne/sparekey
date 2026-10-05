@@ -1,17 +1,27 @@
-// What to have to hand: shown at the start of step 01 until closed, and in the guide.
+// What to have to hand: open on an empty plan, closed once there's something in it,
+// and back again after starting afresh. Also in the guide.
 import { test, expect } from '@playwright/test';
 
-test('the before-you-start list shows until it is closed', async ({ page }) => {
+test('the before-you-start list opens on an empty plan', async ({ page }) => {
   await page.goto('/#start');
   const box = page.locator('#before');
-  await expect(box).toBeVisible();
-  await expect(box).toContainText('package.json');
-  await expect(box).toContainText('saved in this browser');
-  await page.getByRole('button', { name: 'Got it, hide this' }).click();
-  await expect(box).toBeHidden();
-  await expect(page.locator('[data-bind="client.name"]')).toBeFocused();
+  await expect(box).toHaveAttribute('open', '');
+  await expect(box.locator('summary')).toHaveText('Before you start, have these 6 things to hand');
+  await expect(box.locator('ol li')).toHaveCount(6);
+
+  await box.locator('summary').click();
+  await expect(box).not.toHaveAttribute('open', '');
+  await box.locator('summary').click();
+  await expect(box).toHaveAttribute('open', '');
+
+  await page.locator('[data-bind="client.organisation"]').fill('Village Arts Trail');
+  await page.waitForTimeout(400);
   await page.reload();
-  await expect(box).toBeHidden();
+  await expect(box).not.toHaveAttribute('open', '');
+
+  await page.getByRole('button', { name: 'New plan' }).click();
+  await expect(box).toHaveAttribute('open', '');
+
   await page.goto('/guide#before');
-  await expect(page.locator('#before')).toContainText('emergency contact you trust');
+  await expect(page.locator('#before ol li')).toHaveCount(6);
 });

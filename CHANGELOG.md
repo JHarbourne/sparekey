@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.8 – 2026-10-06
+
+- “Before you start” is now a panel that opens and closes with its arrow, headed with how many things there are, and the list is numbered. It opens on an empty plan, including after New plan or Clear everything, and starts closed once a plan has something in it. The “Got it, hide this” and guide buttons are gone.
+
 ## 0.8.7 – 2026-10-05
 
 - **Before you start.** Step 01 opens with a short list of what to have to hand: the web addresses, access to the domain, hosting and email accounts, the project file or WordPress dashboard, contact details, and how logins and backups are kept. It says none are required and that work is saved in the browser. “Got it, hide this” closes it for good on that browser. The same list is in the guide, under “What you’ll need”, which prints cleanly.
